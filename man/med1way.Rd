@@ -5,10 +5,10 @@
 Heteroscedastic one-way ANOVA for medians.
 }
 \description{
-This function computes a one-way ANOVA for the medians. Homoscedasticity assumption not required. 
+This function computes a one-way ANOVA for the medians. Homoscedasticity assumption not required. There shouldn't be too many ties.
 }
 \usage{
-med1way(formula, data, alpha = 0.05, crit = NA, iter = 1000, SEED = TRUE)
+med1way(formula, data, alpha = 0.05, crit = NA, iter = 1000)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,9 +26,6 @@ if \code{NA} an appropriate critical value is determined for the alpha value spe
 }
   \item{iter}{
 number of iterations.
-}
-  \item{SEED}{
-whether a seed for the random numbers should be set.
 }
 }
 \value{

@@ -1,0 +1,17 @@
+citHeader("To cite package 'WRS2' in publications use:")
+year <- sub("-.*", "", meta$Date)
+vers <- meta$Version
+note <- sprintf("R package version %s", meta$Version)
+
+# Package Citation
+citEntry(header = paste0("\n", paste0(rep("#", getOption("width")), collapse=""), "\nThe current Package Version:\n"),
+         entry  = "MANUAL",
+         title  = "{WRS2: Wilcox robust estimation and testing}",
+         author = c(person("Patrick", "Mair"), person("Felix", "Schoenbrodt"), person("Rand", "Wilcox")),
+         year   = year,
+         note   = vers,
+         textVersion = paste0("Mair, P., Schoenbrodt, F., & Wilcox, R (",
+                              year,
+                              "). WRS2: Wilcox robust estimation and testing. ")
+)
+

@@ -1,5 +1,5 @@
 med1way <-
-function(formula, data, alpha = 0.05, crit = NA, iter = 1000, SEED = TRUE) {
+function(formula, data, alpha = 0.05, crit = NA, iter = 1000) {
   
   if (missing(data)) {
     mf <- model.frame(formula)
@@ -8,6 +8,7 @@ function(formula, data, alpha = 0.05, crit = NA, iter = 1000, SEED = TRUE) {
   }
   cl <- match.call()
   
+  SEED = FALSE
   x <- split(model.extract(mf, "response"), mf[,2])   
   
   grp <- 1:length(x)      
@@ -20,7 +21,7 @@ function(formula, data, alpha = 0.05, crit = NA, iter = 1000, SEED = TRUE) {
     xx <- !is.na(x[[j]])
     val <- x[[j]]
     x[[j]] <- val[xx]  # Remove missing values
-    w[j] <- 1/msmedse(x[[grp[j]]])^2
+    w[j] <- 1/msmedse(x[[grp[j]]], sewarn = FALSE)^2
     xbar[j]<-median(x[[grp[j]]])
     n[j]<-length(x[[grp[j]]])
  }

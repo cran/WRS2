@@ -1,12 +1,16 @@
-import("MASS")
+import("MASS", "reshape")
 
 export(med1way)
+export(med2way)
 export(t1way)
 export(t1waybt)
 export(t2way)
 export(t3way)
 export(rmanova)
 export(rmanovab)
+export(ancova)
+export(ancboot)
+export(tsplit)
 
 S3method(print, med1way)
 S3method(print, t1way)
@@ -14,4 +18,4 @@ S3method(print, t1waybt)
 S3method(print, t2way)
 S3method(print, t3way)
 S3method(print, rmanovab)
-
+S3method(print, ancova)
