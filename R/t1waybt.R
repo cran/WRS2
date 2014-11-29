@@ -1,5 +1,5 @@
 t1waybt <-
-function(formula, data, tr = 0.2, nboot = 599, SEED = TRUE){
+function(formula, data, tr = 0.2, nboot = 599){
   
   if (missing(data)) {
     mf <- model.frame(formula)
@@ -21,7 +21,7 @@ function(formula, data, tr = 0.2, nboot = 599, SEED = TRUE){
   }
   bvec  <-  array(0,c(J,2,nboot))
   hval <- vector("numeric",J)
-  if(SEED)set.seed(2) # set seed of random number generator so that
+  #if(SEED)set.seed(2) # set seed of random number generator so that
   for(j in 1:J){
     hval[j] <- length(x[[grp[j]]])-2*floor(tr*length(x[[grp[j]]]))
     xcen <- x[[grp[j]]]-mean(x[[grp[j]]],tr)

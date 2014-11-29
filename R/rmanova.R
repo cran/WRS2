@@ -1,4 +1,4 @@
-rmanova<-function(y, groups, blocks, tr = 0.2){
+rmanova <- function(y, groups, blocks, tr = 0.2){
   
   cols1 <- deparse(substitute(y))
   cols2 <- deparse(substitute(groups))

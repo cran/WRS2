@@ -1,4 +1,4 @@
-rmanovab <- function(y, groups, blocks, tr = 0.2, nboot = 599, SEED = TRUE){
+rmanovab <- function(y, groups, blocks, tr = 0.2, nboot = 599){
   
   cols1 <- deparse(substitute(y))
   cols2 <- deparse(substitute(groups))
@@ -22,7 +22,7 @@ rmanovab <- function(y, groups, blocks, tr = 0.2, nboot = 599, SEED = TRUE){
   J<-ncol(mat)
   connum<-(J^2-J)/2
   bvec<-matrix(0,connum,nboot)
-  if (SEED) set.seed(2) # set seed of random number generator so that
+ # if (SEED) set.seed(2) # set seed of random number generator so that
   #             results can be duplicated.
   data<-matrix(sample(nrow(mat),size=nrow(mat)*nboot,replace=TRUE),nrow=nboot)
   xcen<-matrix(0,nrow(mat),ncol(mat))

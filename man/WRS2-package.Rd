@@ -10,13 +10,13 @@ A user-friendly version of Wilcox' robust statistics functions (WRS package). It
 \tabular{ll}{
 Package: \tab WRS2\cr
 Type: \tab Package\cr
-Version: \tab 0.1-0\cr
-Date: \tab 2014-10-01\cr
+Version: \tab 0.3-1\cr
+Date: \tab 2014-11-29\cr
 License: \tab GPL-2\cr
 }
 The \pkg{WRS2} package provides wrapper functions for the \pkg{WRS} package such that these functions can be applied in a user-friendly manner.
 It interfaces various functions in the \pkg{WRS} package in terms of easy-to-use input arguments and corresponding S3 methods for presenting 
-the output. At the moment some basic robust ANOVA functions are implemented. Additional functions will be added subsequently. 
+the output. Several robust ANOVA and ANCOVA functions have been implemented so far. Additional functions will be added subsequently. 
 }
 \author{
 Maintainer: Patrick Mair (\email{mair@fas.harvard.edu}

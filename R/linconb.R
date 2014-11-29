@@ -85,7 +85,7 @@ dimnames(test)<-list(NULL,c("con.num","test","se","p.value"))
 for (d in 1:ncol(con)){
 test[d,1]<-d
 psihat[d,1]<-d
-testit<-lincon(x,con[,d],tr,pr=FALSE)
+testit<-lincon1(x,con[,d],tr,pr=FALSE)
 test[d,2]<-testit$test[1,2]
 pval<-mean((abs(testit$test[1,2])<boot[d,]))
 test[d,4]<-pval

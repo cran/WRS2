@@ -6,34 +6,30 @@ tsplit <- function(formula, random, data, tr = 0.2){
     mf <- model.frame(formula, data)
   }
   cl <- match.call()
-  idRandom <- strsplit(strsplit(as.character(random)[2], "[>|]")[[1]][2], "[/]")[[1]]
+  idRandom <- strsplit(strsplit(as.character(random)[2], "[>|]")[[1]][2],"[/]")[[1]]
   idvar <- gsub("\\s", "", idRandom[1])
   ranvar <- gsub("\\s", "", idRandom[2])
   depvar <- colnames(mf)[1]
-  if(colnames(mf)[2] == ranvar) fixvar <- colnames(mf)[3] else fixvar <- colnames(mf)[2]
-  
-  K <- length(table(mf[,ranvar])) 
-  J <- length(table(mf[,fixvar]))
-  rowend <- table(mf[,fixvar])/K
-  data$rowind <- c(1:rowend[1], 1:rowend[2])
-  rowform <- as.formula(paste("rowind ~", fixvar, "+", ranvar))
-  
-  p <- J*K
+  if (colnames(mf)[2] == ranvar) fixvar <- colnames(mf)[3] else fixvar <- colnames(mf)[2]
+  K <- length(table(mf[, ranvar]))  ## number of repeated measurements
+  J <- length(table(mf[, fixvar]))  ## number of levels
+  rowend <- table(mf[, fixvar])/K
+  rowend2 <- as.vector(sequence(rowend))
+  maxrow <- max(rowend2)
+  mf$rowind <- rowend2
+  p <- J * K
   grp <- 1:p
-  dataWide <- cast(data,  rowform, value = depvar)
-  dataWide$rowind <- NULL
+  data.temp <- split(mf[,depvar], list(mf[,fixvar], mf[,ranvar]))
+  data.temp1 <- data.temp[1:J]
+  data.temp2 <- data.temp[(J+1):(J*K)]
+  data.temp <- unlist(mapply(data.temp1, data.temp2, FUN = list, SIMPLIFY = FALSE), recursive = FALSE)
   
-  data <- dataWide  
+  data <- lapply(data.temp, function(xx) {
+    yy <- rep(NA, maxrow)
+    yy[1:length(xx)] <- xx
+    return(yy)
+  })
   
-  if(is.data.frame(data))data=as.matrix(data)
-  x<-data
-  if(is.matrix(x)) {
-    y <- list()
-    for(j in 1:ncol(x))
-      y[[j]] <- x[, j]
-    data <- y
-  }
-
   tmeans<-0
   h<-0
   v<-matrix(0,p,p)

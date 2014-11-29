@@ -1,5 +1,5 @@
 med1way <-
-function(formula, data, alpha = 0.05, crit = NA, iter = 1000) {
+function(formula, data, iter = 1000) {
   
   if (missing(data)) {
     mf <- model.frame(formula)
@@ -8,7 +8,9 @@ function(formula, data, alpha = 0.05, crit = NA, iter = 1000) {
   }
   cl <- match.call()
   
-  SEED = FALSE
+  alpha <- 0.05
+  crit <- NA
+  SEED <- FALSE
   x <- split(model.extract(mf, "response"), mf[,2])   
   
   grp <- 1:length(x)      
