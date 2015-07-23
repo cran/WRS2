@@ -4,7 +4,7 @@
 \title{Arachnophobes}
 \description{24 arachnophobes were used in all. 12 were asked to play with a big hairy tarantula spider with big fangs and an evil look. Their subsequent anxiety was measured. The remaining 12 were shown only picture of the same hairy tarantula. Again, the anxiety was measured.
 }
-\usage{viagra}
+\usage{spider}
 \format{
   A data frame with 2 variables and 24 observations:
   \describe{

@@ -1,5 +1,5 @@
-661a0751d2b74bb878260972a446e006 *DESCRIPTION
-e6c3b1265298bab2a895c86b34cbb328 *NAMESPACE
+c2ae160e23cd72bcd3e75b2ff1571022 *DESCRIPTION
+e7f8998f2ce9578500154add74e0b7de *NAMESPACE
 37361c0c32351c8916f6a700d6daf843 *R/ancboot.R
 b8a32e068ee69d4032f121ed6d5947cc *R/ancova.R
 a102f2abca0236207d4611d4933f5d87 *R/apgdis.R
@@ -124,7 +124,7 @@ ca576a68d650c42d55f587f4f13e2477 *R/yuen1.R
 3140ef57753b0dd0c5abdc0b9ad5b3b6 *inst/CITATION
 8f20055f01de3cd58fd8c36572332252 *inst/NEWS.Rd
 4e4e59bb75337807d8e098cd31a99b07 *inst/NEWSRd2txt.R
-0d7572231f2c7c3855f9d9778db1f5b0 *man/WRS2-package.Rd
+9b34745832ee770af81257c227475a07 *man/WRS2-package.Rd
 b953588b38673bc7c35e4419b69e592d *man/WineTasting.Rd
 8a8c0ad2d9029bdaba596af39b6efddb *man/ancova.Rd
 a13194d160cc504b929bce7579329241 *man/bush.Rd
@@ -136,7 +136,7 @@ bbe3a4bb20e7488b63661fe886fd7218 *man/invisibility.Rd
 96b0ed7c71d04dc308cbc310d0b91a4f *man/picture.Rd
 626db1eba73994b319b90bfc7788cb13 *man/rmanova.Rd
 86ea198f0b265009130396bcc5a54011 *man/rmanovab.Rd
-145dd381e7de73eca70f106a90308c42 *man/spider.Rd
+ab0cb6c04dc9007d25936d3bc2824825 *man/spider.Rd
 e334a6a4ddcc946dde628c561ee999ab *man/t1way.Rd
 856352e4fa0c560de3fe09e1a0b2c0ec *man/t1waybt.Rd
 d310cf5e62a02441744a9b5cd1399c2b *man/t2way.Rd

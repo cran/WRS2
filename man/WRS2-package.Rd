@@ -10,8 +10,8 @@ A user-friendly version of Wilcox' robust statistics functions (WRS package). It
 \tabular{ll}{
 Package: \tab WRS2\cr
 Type: \tab Package\cr
-Version: \tab 0.3-1\cr
-Date: \tab 2014-11-29\cr
+Version: \tab 0.3-2\cr
+Date: \tab 2015-07-23\cr
 License: \tab GPL-2\cr
 }
 The \pkg{WRS2} package provides wrapper functions for the \pkg{WRS} package such that these functions can be applied in a user-friendly manner.

@@ -1,5 +1,7 @@
-import("MASS", "reshape")
-importFrom(plyr, alply)
+import("MASS", "reshape", "stats", "graphics")
+importFrom("plyr", "alply")
+importFrom("grDevices", "chull")
+importFrom("utils", "head")
 
 export(med1way)
 export(med2way)
