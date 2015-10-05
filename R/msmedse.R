@@ -8,7 +8,7 @@ x=elimna(x)
 chk=sum(duplicated(x))
 if (sewarn) {
 if(chk>0){
-warning("Tied values detected. Estimate of standard error might be inaccurate, even with n large")
+warning("Tied values detected. Estimate of standard error might be inaccurate.")
 }}
 y<-sort(x)
 n<-length(x)

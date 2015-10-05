@@ -7,19 +7,22 @@ t2way <- function(formula, data, tr = 0.2){
   }
   cl <- match.call()
   
-  J <- nlevels(mf[,2])
+  ## sanity check for incomplete design
+  if (any(table(mf[,2], mf[,3]) == 0)) stop("Estimation not possible due to incomplete design.")
+  
+  J <- nlevels(mf[,2])  # FIXME: convert into factor
   K <- nlevels(mf[,3])
   p <- J*K
   grp <- c(1:p)
   lev.col <- 2:3
   var.col <- 1
   if(tr==.5){
-   stop("For medians, use med2way if there are no ties. With ties, use linear contrasts in conjunction with medpb.")
+   stop("For medians, use med2way if there are no ties.")
   }
 
   x <- as.matrix(mf)
   temp=selby2(x,lev.col,var.col)
-  selby(x,lev.col[1],var.col)$grpn
+  #selby(x,lev.col[1],var.col)$grpn
   lev1=length(unique(temp$grpn[,1]))
   lev2=length(unique(temp$grpn[,2]))
   gv=apply(temp$grpn,2,rank)

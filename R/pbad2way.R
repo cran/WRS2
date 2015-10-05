@@ -6,6 +6,7 @@ pbad2way<-function(formula, data, est = "mom", nboot = 599){
     mf <- model.frame(formula, data)
   }
   cl <- match.call()
+  est <- match.arg(est, c("mom", "onestep", "median"), several.ok = FALSE)
   
   J <- nlevels(mf[,2])
   K <- nlevels(mf[,3])
@@ -22,22 +23,25 @@ pbad2way<-function(formula, data, est = "mom", nboot = 599){
   
   nfac <- tapply(mf[,1], list(mf[,2],mf[,3]), length, simplify = FALSE)
   nfac1 <- nfac[unique(mf[,2]), unique(mf[,3])]    ## reordering factor levels
-  data$row <- unlist(alply(nfac1, 1, sequence), use.names = FALSE)
+  #data$row <- unlist(alply(nfac1, 1, sequence), use.names = FALSE)
+  mf$row <-  unlist(alply(nfac1, 1, sequence), use.names = FALSE)
   
-  dataMelt <- melt(data, id = c("row", colnames(mf)[2], colnames(mf)[3]), measured = mf[,1])
+  dataMelt <- melt(mf, id = c("row", colnames(mf)[2], colnames(mf)[3]), measured = mf[,1])
   dataWide <- cast(dataMelt, as.formula(paste(colnames(dataMelt)[1], "~", colnames(mf)[2], "+", colnames(mf)[3]))) 
   dataWide$row <- NULL
+  #dataMelt <- melt(data, id = c("row", colnames(mf)[2], colnames(mf)[3]), measured = mf[,1])
+  #dataWide <- cast(dataMelt, as.formula(paste(colnames(dataMelt)[1], "~", colnames(mf)[2], "+", colnames(mf)[3]))) 
+  #dataWide$row <- NULL
   x <- dataWide
   
-  if(is.matrix(x))
-    x <- listm(x)
-  if(!is.na(grp[1])) {
-    yy <- x
-    for(j in 1:length(grp))
-      x[[j]] <- yy[[grp[j]]]
-  }
-  if(!is.list(x))
-    stop("Data must be stored in list mode or a matrix.")
+  if(is.matrix(x)) x <- as.data.frame(x)
+  x <- listm(x)
+  #if(!is.na(grp[1])) {
+  #  yy <- x
+  #  for(j in 1:length(grp))
+  #    x[[j]] <- yy[[grp[j]]]
+  #}
+  #if(!is.list(x)) stop("Data must be stored in list mode or a matrix.")
   for(j in 1:JK) {
     xx <- x[[j]]
     x[[j]] <- xx[!is.na(xx)]
@@ -86,9 +90,11 @@ pbad2way<-function(formula, data, est = "mom", nboot = 599){
   #print("Taking bootstrap samples. Please wait.")
   for(j in 1:JK){
     data<-matrix(sample(x[[j]],size=length(x[[j]])*nboot,replace=TRUE),nrow=nboot)
-    bvec[j,]<-apply(data,1,est) # J by nboot matrix, jth row contains
-    #                          bootstrapped  estimates for jth group
+    bvec[j,]<-apply(data,1,est) # J by nboot matrix, jth row contains bootstrapped  estimates for jth group
+    naind <- which(is.na(bvec[j,]))
+    if (length(naind) > 0) bvec[j,][naind] <- mean(bvec[j,], na.rm = TRUE)    ## fix for missing est values
   }
+  
   bconA<-t(conA)%*%bvec #C by nboot matrix
   tvecA<-t(conA)%*%mvec
   tvecA<-tvecA[,1]
@@ -98,7 +104,7 @@ pbad2way<-function(formula, data, est = "mom", nboot = 599){
   smatA<-var(bconA-tempcenA+tvecA)
   bconA<-rbind(bconA,veczA)
   if(!pro.dis){
-    if(!op)dv<-mahalanobis(bconA,tvecA,smatA)
+    if(!op) dv<-mahalanobis(bconA,tvecA,smatA)
     if(op){
       dv<-out(bconA)$dis
     }}

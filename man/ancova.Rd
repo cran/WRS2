@@ -3,17 +3,16 @@
 \alias{ancboot}
 \alias{print.ancova}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{Robust ANCOVA for 2 independent groups and one covariate.
+\title{Robust ANCOVA
 }
 \description{
 This function computes robust ANCOVA for 2 independent groups and one covariate. It compares trimmed means. No parametric assumption (e.g. homogeneity) is made about the form of the regression lines. A running interval smoother is used. A bootstrap version which computes
 confidence intervals using a percentile t-bootstrap is provided as well.
 }
 \usage{
-ancova(formula, data, tr = 0.2, sm = FALSE, fr1 = 1, fr2 = 1, pr = TRUE, pts = NA)
+ancova(formula, data, tr = 0.2, fr1 = 1, fr2 = 1, pts = NA)
 
-ancboot(formula, data, tr = 0.2, nboot = 599, sm = FALSE, fr1 = 1, fr2 = 1, 
-pr = TRUE, pts = NA)
+ancboot(formula, data, tr = 0.2, nboot = 599, fr1 = 1, fr2 = 1, pts = NA)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{ 
@@ -26,18 +25,12 @@ an optional data frame for the input data.
  \item{tr}{
 trim level for the mean.
 }
- \item{sm}{
- if \code{TRUE} it create smooths using bootstrap bagging.
-}
  \item{fr1}{
 values of the span for the first group (1 means unspecified)
 }
  \item{fr2}{
 values of the span for the second group (1 means unspecified)
 }
- \item{pr}{
- if \code{TRUE} confidence intervals are adjusted to control the probability of at least one Type I error (but p-values are not)
- }
  \item{pts}{
 can be used to specify the design points where the regression lines are to be compared; if \code{NA} design points are chosen.
 }
@@ -58,6 +51,7 @@ Returns an object of class \code{ancova} containing:
 \item{test}{values of the test statistic}
 \item{crit.vals}{critical values}
 \item{p.vals}{p-values}
+\item{fitted.values}{fitted values from interval smoothing}
 \item{call}{function call}
 }
 \references{
@@ -71,7 +65,7 @@ head(invisibility)
 ancova(mischief2 ~ cloak + mischief1, data = invisibility)
 
 ## specifying covariate evaluation points
-ancova(formula = mischief2 ~ cloak + mischief1, data = invisibility, pts = c(3, 4, 8, 1))
+ancova(mischief2 ~ cloak + mischief1, data = invisibility, pts = c(3, 4, 8, 1))
 
 ## bootstrap version
 ancboot(mischief2 ~ cloak + mischief1, data = invisibility)

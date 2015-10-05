@@ -32,7 +32,7 @@ pb2gen <- function(formula, data, est = "mom", nboot = 599){
   se<-var(bvec)
   
   result <- list(test = est(x)-est(y), conf.int = c(bvec[low],bvec[up]), p.value = sig.level, call = cl)
-  class(result) <- "yuen"
+  class(result) <- "pb2"
   result
   
 }

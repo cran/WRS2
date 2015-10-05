@@ -1,4 +1,4 @@
-sppbb <- function(formula, random, data, est = "mom", nboot = 500){
+sppbb <- function(formula, id, data, est = "mom", nboot = 500){
 #
   if (missing(data)) {
     mf <- model.frame(formula)
@@ -6,32 +6,40 @@ sppbb <- function(formula, random, data, est = "mom", nboot = 500){
     mf <- model.frame(formula, data)
   }
   cl <- match.call()
-  idRandom <- strsplit(strsplit(as.character(random)[2], "[>|]")[[1]][2],"[/]")[[1]]
-  idvar <- gsub("\\s", "", idRandom[1])
-  ranvar <- gsub("\\s", "", idRandom[2])
+  est <- match.arg(est, c("mom", "onestep", "median"), several.ok = FALSE)
+  
+  mf1 <- match.call()
+  m <- match(c("formula", "data", "id"), names(mf1), 0L)
+  mf1 <- mf1[c(1L, m)]
+  mf1$drop.unused.levels <- TRUE
+  mf1[[1L]] <- quote(stats::model.frame)
+  mf1 <- eval(mf1, parent.frame())  
+  
+  random1 <- mf1[, "(id)"]
   depvar <- colnames(mf)[1]
-  if (colnames(mf)[2] == ranvar) fixvar <- colnames(mf)[3] else fixvar <- colnames(mf)[2]
+  
+  ## check which one is the within subjects factor
+  if (all(length(table(random1)) == table(mf[,3]))) {
+    ranvar <- colnames(mf)[3]
+    fixvar <- colnames(mf)[2]
+  } else {
+    ranvar <- colnames(mf)[2]
+    fixvar <- colnames(mf)[3]
+  }
+  
+  MC <- FALSE
   K <- length(table(mf[, ranvar]))  ## number of repeated measurements
   J <- length(table(mf[, fixvar]))  ## number of levels
-  rowend <- table(mf[, fixvar])/K
-  rowend2 <- as.vector(sequence(rowend))
-  maxrow <- max(rowend2)
-  mf$rowind <- rowend2
-  p <- J * K
+  p <- J*K
   grp <- 1:p
-  est <- get(est)    ## converting string into function
-  data.temp <- split(mf[,depvar], list(mf[,fixvar], mf[,ranvar]))
-  data.temp1 <- data.temp[1:J]
-  data.temp2 <- data.temp[(J+1):(J*K)]
-  data.temp <- unlist(mapply(data.temp1, data.temp2, FUN = list, SIMPLIFY = FALSE), recursive = FALSE)
+  est <- get(est)  
   
-  data <- lapply(data.temp, function(xx) {
-    yy <- rep(NA, maxrow)
-    yy[1:length(xx)] <- xx
-    return(yy)
-  })
+  fixsplit <- split(mf[,depvar], mf[,fixvar])
+  indsplit <- split(mf[,ranvar], mf[,fixvar])
+  dattemp <- mapply(split, fixsplit, indsplit, SIMPLIFY = FALSE)
+  data <- do.call(c, dattemp)
+  x <- data
   
-  x<-data
   
   jp<-1-K
   kv<-0

@@ -36,7 +36,7 @@ number of bootstrap samples.
 \item{crit}{critical value}
 \item{call}{function call}
 
-\code{pairdepb} returns an object of class \code{"mcp1"} containing:
+\code{pairdepb} returns an object of class \code{"mcp2"} containing:
 
 \item{comp}{inference for all pairwise comparisons}
 \item{fnames}{names of the factor levels}

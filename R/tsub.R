@@ -9,6 +9,6 @@ tsub<-function(isub,x,y,tr){
 #
 #  This function is used by ydbt
 #
-tsub<-yuend(x[isub],y[isub],tr=tr)$teststat
+tsub<-yuend(x[isub],y[isub],tr=tr)$test
 tsub
 }

@@ -1,6 +1,18 @@
 \name{NEWS}
 \title{News for Package \pkg{WRS2}}
 \encoding{UTF-8}
+\section{Changes in Version 0.4-0}{
+  \itemize{
+    \item Vignette added.
+    \item Sanity check for incomplete designs in \code{t2way}. 
+    \item \code{mest} for M-estimator and \code{winmean} for Winsorized mean computation added.
+    \item Bugs in \code{pbad2way} for unbalanced designs and onestep M-estimator fixed.
+    \item Some datasets added.
+    \item Yuen's dependent samples t-test added (\code{yuend}).
+    \item Running interval smoothers added.
+    \item Bug in \code{bwtrim} removed.
+    } 
+}
 \section{Changes in Version 0.3-1}{
   \itemize{
     \item bugfixes in \code{tsplit}, \code{sppbb}, \code{sppba}, \code{sppbi}.

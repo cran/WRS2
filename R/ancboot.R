@@ -1,4 +1,4 @@
-ancboot <- function(formula, data, tr = 0.2, nboot = 599, sm = FALSE, fr1 = 1, fr2 = 1, pr = TRUE, pts = NA){
+ancboot <- function(formula, data, tr = 0.2, nboot = 599, fr1 = 1, fr2 = 1, pts = NA){
  
   # Confidence intervals are computed using a percentile t bootstrap
   # method. Comparisons are made at five empirically chosen design points.
@@ -8,6 +8,8 @@ ancboot <- function(formula, data, tr = 0.2, nboot = 599, sm = FALSE, fr1 = 1, f
   alpha <- .05
   xout <- FALSE
   LP <- TRUE
+  pr <- TRUE
+  sm <- FALSE
   
   if (missing(data)) {
     mf <- model.frame(formula)
@@ -25,6 +27,8 @@ ancboot <- function(formula, data, tr = 0.2, nboot = 599, sm = FALSE, fr1 = 1, f
   }
   
   grnames <- levels(mf[,datfac])
+  if (is.null(grnames)) stop("Group variable needs to be provided as factor!")
+  if (length(grnames) > 2) stop("Robust ANCOVA implemented for 2 groups only!")
   yy <- split(mf[,1], mf[, datfac])
   y1 <- yy[[1]]
   y2 <- yy[[2]]
@@ -41,6 +45,8 @@ ancboot <- function(formula, data, tr = 0.2, nboot = 599, sm = FALSE, fr1 = 1, f
     y1 <- y2
     y2 <- dummy
     change = TRUE
+  } else {
+    change <- FALSE
   }
   
   

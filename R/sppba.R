@@ -1,4 +1,4 @@
-sppba <- function(formula, random, data, est = "mom", avg = TRUE, nboot = 500, MDIS = FALSE){
+sppba <- function(formula, id, data, est = "mom", avg = TRUE, nboot = 500, MDIS = FALSE){
   
   if (missing(data)) {
     mf <- model.frame(formula)
@@ -6,41 +6,41 @@ sppba <- function(formula, random, data, est = "mom", avg = TRUE, nboot = 500, M
     mf <- model.frame(formula, data)
   }
   cl <- match.call()
-  idRandom <- strsplit(strsplit(as.character(random)[2], "[>|]")[[1]][2],"[/]")[[1]]
+  est <- match.arg(est, c("mom", "onestep", "median"), several.ok = FALSE)
   
-  print(head(mf))
-  print(idRandom)
-  
-  idvar <- gsub("\\s", "", idRandom[1])
-  ranvar <- gsub("\\s", "", idRandom[2])
+ 
+  mf1 <- match.call()
+  m <- match(c("formula", "data", "id"), names(mf1), 0L)
+  mf1 <- mf1[c(1L, m)]
+  mf1$drop.unused.levels <- TRUE
+  mf1[[1L]] <- quote(stats::model.frame)
+  mf1 <- eval(mf1, parent.frame())  
+
+  random1 <- mf1[, "(id)"]
   depvar <- colnames(mf)[1]
-  if (colnames(mf)[2] == ranvar) fixvar <- colnames(mf)[3] else fixvar <- colnames(mf)[2]
-  
+
+## check which one is the within subjects factor
+  if (all(length(table(random1)) == table(mf[,3]))) {
+    ranvar <- colnames(mf)[3]
+    fixvar <- colnames(mf)[2]
+  } else {
+    ranvar <- colnames(mf)[2]
+    fixvar <- colnames(mf)[3]
+  }
+
   MC <- FALSE
-  K <- length(table(mf[,ranvar])) 
-  J <- length(table(mf[,fixvar]))
-  JK <- J*K
-  grp <- 1:JK
-  est <- get(est)    ## converting string into function
-   
-  rowend <- table(mf[,ranvar])
-  #data$rowind <- c(1:rowend[1], 1:rowend[2])
-  mf$rowind <- sequence(rowend)
-  rowend <- table(mf[, ranvar])
-  rowend2 <- as.vector(sequence(rowend))
-  maxrow <- max(rowend2)
-  data.temp <- split(mf[,depvar], list(mf[,fixvar], mf[,ranvar]))
-  data.temp1 <- data.temp[1:J]
-  data.temp2 <- data.temp[(J+1):(J*K)]
-  data.temp <- unlist(mapply(data.temp1, data.temp2, FUN = list, SIMPLIFY = FALSE), recursive = FALSE)
-  
-  data <- lapply(data.temp, function(xx) {
-    yy <- rep(NA, maxrow)
-    yy[1:length(xx)] <- xx
-    return(yy)
-  })
-  x<-data
-    
+  K <- length(table(mf[, ranvar]))  ## number of repeated measurements
+  J <- length(table(mf[, fixvar]))  ## number of levels
+  p <- J*K
+  grp <- 1:p
+  est <- get(est)  
+
+  fixsplit <- split(mf[,depvar], mf[,fixvar])
+  indsplit <- split(mf[,ranvar], mf[,fixvar])
+  dattemp <- mapply(split, fixsplit, indsplit, SIMPLIFY = FALSE)
+  data <- do.call(c, dattemp)
+  x <- data
+
   jp<-1-K
   kv<-0
   kv2<-0

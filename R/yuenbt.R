@@ -1,7 +1,7 @@
-yuenbt <- function(formula, data, tr = 0.2, nboot = 599, side = FALSE){
+yuenbt <- function(formula, data, tr = 0.2, nboot = 599){
 #
 
-#
+  side <- TRUE
   if (missing(data)) {
     mf <- model.frame(formula)
   } else {
@@ -51,8 +51,9 @@ yuenbt <- function(formula, data, tr = 0.2, nboot = 599, side = FALSE){
     yuenbt[2]<-mean(x,tr)-mean(y,tr)+tval[icrit]*se
     p.value<-(sum(abs(test)<=abs(tval)))/nboot
   }
+  mdiff <- mean(x,tr)-mean(y,tr)
   
-  result <- list(test = test, conf.int = yuenbt, p.value = p.value, call = cl)
+  result <- list(test = test, conf.int = yuenbt, p.value = p.value, df = NA, diff = mdiff, call = cl)
   class(result) <- "yuen"
   result
   

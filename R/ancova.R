@@ -1,8 +1,9 @@
-ancova <- function(formula, data, tr = 0.2, sm = FALSE, fr1 = 1, fr2 = 1, pr = TRUE, pts = NA){
+ancova <- function(formula, data, tr = 0.2, fr1 = 1, fr2 = 1, pts = NA){
 
   alpha <- .05
   xout <- FALSE
   LP <- TRUE
+  pr <- TRUE
   
   if (missing(data)) {
     mf <- model.frame(formula)
@@ -20,6 +21,9 @@ ancova <- function(formula, data, tr = 0.2, sm = FALSE, fr1 = 1, fr2 = 1, pr = T
   }
   
   grnames <- levels(mf[,datfac])
+  if (is.null(grnames)) stop("Group variable needs to be provided as factor!")
+  if (length(grnames) > 2) stop("Robust ANCOVA implemented for 2 groups only!")
+  
   yy <- split(mf[,1], mf[, datfac])
   y1 <- yy[[1]]
   y2 <- yy[[2]]
@@ -35,7 +39,9 @@ ancova <- function(formula, data, tr = 0.2, sm = FALSE, fr1 = 1, fr2 = 1, pr = T
     dummy <- y1
     y1 <- y2
     y2 <- dummy
-    change = TRUE
+    change <- TRUE
+  } else {
+    change <- FALSE
   }
  
   xy=elimna(cbind(x1,y1))
@@ -45,6 +51,12 @@ ancova <- function(formula, data, tr = 0.2, sm = FALSE, fr1 = 1, fr2 = 1, pr = T
   x2=xy[,1]
   y2=xy[,2]
  
+  ## --- smoothing for each group
+  fitted1 <- runmean(x1, y1, fr = fr1, tr = tr)
+  fitted2 <- runmean(x2, y2, fr = fr2, tr = tr)
+  fitted.values <- list(fitted1, fitted2)
+  names(fitted.values) <- grnames
+  
   if(is.na(pts[1])){
     npt<-5
     isub<-c(1:5)  # Initialize isub
@@ -132,9 +144,13 @@ ancova <- function(formula, data, tr = 0.2, sm = FALSE, fr1 = 1, fr2 = 1, pr = T
       mat[i,10]<-critv
     }}
   
+  
   mat <- as.data.frame(mat)
   if(change) grnames <- grnames[2:1]
-  result <- list(evalpts = mat$X, n1 = mat$n1, n2 = mat$n2, trDiff = mat$DIF, se = mat$se, ci.low = mat$ci.low, ci.hi = mat$ci.hi, test = mat$TEST,  crit.vals = mat$crit.val, p.vals = mat$p.value, cnames = colnames(mf[,c(1, datfac, datcov)]), faclevels = grnames, call = mcl)
+  result <- list(evalpts = mat$X, n1 = mat$n1, n2 = mat$n2, trDiff = mat$DIF, se = mat$se, ci.low = mat$ci.low, ci.hi = mat$ci.hi, 
+                 test = mat$TEST,  crit.vals = mat$crit.val, p.vals = mat$p.value, fitted.values = fitted.values,
+                 cnames = colnames(mf[,c(1, datfac, datcov)]), 
+                 faclevels = grnames, call = mcl)
   class(result) <- c("ancova")
   result
 }

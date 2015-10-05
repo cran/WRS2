@@ -34,6 +34,7 @@ pairdepb <- function(y, groups, blocks, tr = 0.2, nboot = 599){
   data<-matrix(sample(nrow(mat),size=nrow(mat)*nboot,replace=TRUE),nrow=nboot)
   xcen<-matrix(0,nrow(mat),ncol(mat))
   for (j in 1:J)xcen[,j]<-mat[,j]-mean(mat[,j],tr) #Center data
+  
   it<-0
   for (j in 1:J){
     for (k in 1:J){
@@ -65,7 +66,7 @@ pairdepb <- function(y, groups, blocks, tr = 0.2, nboot = 599){
         psihat[it,5]<-dif+crit*estse
         test[it,1]<-grp[j]
         test[it,2]<-grp[k]
-        test[it,3]<-yuend(mat[,j],mat[,k])$teststat
+        test[it,3]<-yuend(mat[,j],mat[,k])$test
         test[it,4]<-estse
       }}}
  

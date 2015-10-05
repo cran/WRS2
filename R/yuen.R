@@ -1,6 +1,5 @@
 yuen <- function(formula, data, tr = 0.2){
 
-
   if (missing(data)) {
     mf <- model.frame(formula)
   } else {
@@ -43,7 +42,7 @@ yuen <- function(formula, data, tr = 0.2){
   test<-abs(dif/sqrt(q1+q2))
   yuen<-2*(1-pt(test,df))
   
-  result <- list(test = test, conf.int = c(low, up), p.value = yuen, call = cl)
+  result <- list(test = test, conf.int = c(low, up), p.value = yuen, df = df, diff = dif, call = cl)
   class(result) <- "yuen"
   result
 }

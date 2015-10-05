@@ -46,7 +46,7 @@ Returns an object of class \code{t3way} containing:
 Wilcox, R. (2012). Introduction to Robust Estimation and Hypothesis Testing (3rd ed.). Elsevier.
 }
 \seealso{
-code{\link{t1way}}, code{\link{t2way}}
+\code{\link{t1way}}, \code{\link{t2way}}
 }
 \examples{
 t3way(aggressive ~ degree*gender*type, data = movie)
