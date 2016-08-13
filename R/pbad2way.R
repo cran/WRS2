@@ -1,4 +1,4 @@
-pbad2way<-function(formula, data, est = "mom", nboot = 599){
+pbad2way<-function(formula, data, est = "mom", nboot = 599, pro.dis = FALSE){
   
   if (missing(data)) {
     mf <- model.frame(formula)
@@ -14,7 +14,6 @@ pbad2way<-function(formula, data, est = "mom", nboot = 599){
   alpha=.05
   conall = TRUE 
   op=FALSE
-  pro.dis=FALSE
   MM=FALSE
   
   grp <- NA
@@ -23,25 +22,19 @@ pbad2way<-function(formula, data, est = "mom", nboot = 599){
   
   nfac <- tapply(mf[,1], list(mf[,2],mf[,3]), length, simplify = FALSE)
   nfac1 <- nfac[unique(mf[,2]), unique(mf[,3])]    ## reordering factor levels
-  #data$row <- unlist(alply(nfac1, 1, sequence), use.names = FALSE)
-  mf$row <-  unlist(alply(nfac1, 1, sequence), use.names = FALSE)
   
-  dataMelt <- melt(mf, id = c("row", colnames(mf)[2], colnames(mf)[3]), measured = mf[,1])
+  data <- na.omit(data[variable.names(mf)])
+  data <- data[order(mf[,2], mf[,3]),]              
+  data$row <- unlist(alply(nfac1, 1, sequence), use.names = FALSE)
+  dataMelt <- melt(data, id = c("row", colnames(mf)[2], colnames(mf)[3]), measured = mf[,1])
+  
   dataWide <- cast(dataMelt, as.formula(paste(colnames(dataMelt)[1], "~", colnames(mf)[2], "+", colnames(mf)[3]))) 
   dataWide$row <- NULL
-  #dataMelt <- melt(data, id = c("row", colnames(mf)[2], colnames(mf)[3]), measured = mf[,1])
-  #dataWide <- cast(dataMelt, as.formula(paste(colnames(dataMelt)[1], "~", colnames(mf)[2], "+", colnames(mf)[3]))) 
-  #dataWide$row <- NULL
   x <- dataWide
+  
   
   if(is.matrix(x)) x <- as.data.frame(x)
   x <- listm(x)
-  #if(!is.na(grp[1])) {
-  #  yy <- x
-  #  for(j in 1:length(grp))
-  #    x[[j]] <- yy[[grp[j]]]
-  #}
-  #if(!is.list(x)) stop("Data must be stored in list mode or a matrix.")
   for(j in 1:JK) {
     xx <- x[[j]]
     x[[j]] <- xx[!is.na(xx)]
@@ -85,9 +78,7 @@ pbad2way<-function(formula, data, est = "mom", nboot = 599){
     mvec[j]<-est(temp)
   }
   bvec<-matrix(NA,nrow=JK,ncol=nboot)
-  #set.seed(2) # set seed of random number generator so that
-  #             results can be duplicated.
-  #print("Taking bootstrap samples. Please wait.")
+  
   for(j in 1:JK){
     data<-matrix(sample(x[[j]],size=length(x[[j]])*nboot,replace=TRUE),nrow=nboot)
     bvec[j,]<-apply(data,1,est) # J by nboot matrix, jth row contains bootstrapped  estimates for jth group
@@ -126,6 +117,7 @@ pbad2way<-function(formula, data, est = "mom", nboot = 599){
     }}
   if(pro.dis)dv=pdis(bconB,MM=MM)
   sig.levelB<-1-sum(dv[bplus]>=dv[1:nboot])/nboot
+  
   bconAB<-t(conAB)%*%bvec #C by nboot matrix
   tvecAB<-t(conAB)%*%mvec
   tvecAB<-tvecAB[,1]

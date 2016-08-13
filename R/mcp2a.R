@@ -6,6 +6,7 @@ mcp2a <- function(formula, data, est = "mom", nboot = 599){
     mf <- model.frame(formula, data)
   }
   cl <- match.call()
+  est <- match.arg(est, c("mom", "onestep", "median"), several.ok = FALSE)
   
   J <- nlevels(mf[,2])
   K <- nlevels(mf[,3])
@@ -20,15 +21,17 @@ mcp2a <- function(formula, data, est = "mom", nboot = 599){
   
   nfac <- tapply(mf[,1], list(mf[,2],mf[,3]), length, simplify = FALSE)
   nfac1 <- nfac[unique(mf[,2]), unique(mf[,3])]    ## reordering factor levels
-  data$row <- unlist(alply(nfac1, 1, sequence), use.names = FALSE)
   
+  data <- na.omit(data[variable.names(mf)])
+  data <- data[order(mf[,2], mf[,3]),]              
+  data$row <- unlist(alply(nfac1, 1, sequence), use.names = FALSE)
   dataMelt <- melt(data, id = c("row", colnames(mf)[2], colnames(mf)[3]), measured = mf[,1])
+  
   dataWide <- cast(dataMelt, as.formula(paste(colnames(dataMelt)[1], "~", colnames(mf)[2], "+", colnames(mf)[3]))) 
   dataWide$row <- NULL
   x <- dataWide
   
-  if(is.matrix(x))
-    x <- listm(x)
+  x <- listm(x)
   if(!is.na(grp)) {
     yy <- x
     for(j in 1:length(grp))

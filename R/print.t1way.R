@@ -9,4 +9,7 @@ function(x,...)
   cat("Degrees of Freedom 2:", round(x$df2, 2) ,"\n")
   cat("p-value:", round(x$p.value, 5), "\n")
   cat("\n")
+  if (!is.null(x$effsize)) {
+    cat("Explanatory measure of effect size:", round(x$effsize, 2), "\n\n")
+  }
 }

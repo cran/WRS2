@@ -6,13 +6,32 @@ require(MASS)
 require(colorspace)
 require(reshape)
 require(ez)
+require(MBESS)
+
+## ------------------------------------------------------------------------
+timevec <- c(77, 87, 88, 114, 151, 210, 219, 246, 253, 262, 296, 299, 306, 
+             376, 428, 515, 666, 1310, 2611)
+
+## ------------------------------------------------------------------------
+mean(timevec, 0.1)
+trimse(timevec, 0.1)
+
+## ------------------------------------------------------------------------
+winmean(timevec, 0.1)
+winse(timevec, 0.1)
+median(timevec)
+msmedse(timevec)
+
+## ------------------------------------------------------------------------
+mest(timevec)
+mestse(timevec)
 
 ## ----soccer-plot, eval=FALSE, echo = FALSE-------------------------------
 #  SpainGer <- subset(eurosoccer, League == "Spain" | League == "Germany")
 #  SpainGer <- droplevels(SpainGer)
 #  op <- par(mfrow = c(1,2))
 #  boxplot(GoalsGame ~ League, data = SpainGer, main = "Boxplot Goals Scored per Game")
-#  points(1:2, tapply(SpainGer$GoalsGame, SpainGer$League, mean, trim = 0.2), pch = 19, col = "red")
+#  #points(1:2, tapply(SpainGer$GoalsGame, SpainGer$League, mean, trim = 0.2), pch = 19, col = "red")
 #  beanplot(GoalsGame ~ League, data = SpainGer, log = "", main = "Beanplot Goals Scored per Game",
 #           col = "coral")
 #  par(op)
@@ -22,13 +41,23 @@ SpainGer <- subset(eurosoccer, League == "Spain" | League == "Germany")
 SpainGer <- droplevels(SpainGer)
 op <- par(mfrow = c(1,2))
 boxplot(GoalsGame ~ League, data = SpainGer, main = "Boxplot Goals Scored per Game")
-points(1:2, tapply(SpainGer$GoalsGame, SpainGer$League, mean, trim = 0.2), pch = 19, col = "red")
+#points(1:2, tapply(SpainGer$GoalsGame, SpainGer$League, mean, trim = 0.2), pch = 19, col = "red")
 beanplot(GoalsGame ~ League, data = SpainGer, log = "", main = "Beanplot Goals Scored per Game", 
          col = "coral")
 par(op)
 
 ## ------------------------------------------------------------------------
 yuen(GoalsGame ~ League, data = SpainGer)
+
+## ------------------------------------------------------------------------
+akp.effect(GoalsGame ~ League, data = SpainGer)
+
+## ------------------------------------------------------------------------
+akp.effect(GoalsGame ~ League, data = SpainGer, EQVAR = FALSE)
+
+## ----echo=2--------------------------------------------------------------
+set.seed(123)
+yuen.effect.ci(GoalsGame ~ League, data = SpainGer)
 
 ## ------------------------------------------------------------------------
 pb2gen(GoalsGame ~ League, data = SpainGer, est = "median")
@@ -55,7 +84,7 @@ med1way(GoalsGame ~ League, data = eurosoccer)
 ## ------------------------------------------------------------------------
 lincon(GoalsGame ~ League, data = eurosoccer)
 
-## ----goggles-plot, eval=FALSE, echo=FALSE--------------------------------
+## ----goggles-plot, eval=FALSE, echo=FALSE, message=FALSE,results='hide', warning=FALSE----
 #  attach(goggles)
 #  op <- par(mfrow = c(1,2))
 #  interaction.plot(gender, alcohol, attractiveness, fun = median, ylab = "Attractiveness", xlab = "Gender", type = "b", pch = 20,
@@ -67,7 +96,7 @@ lincon(GoalsGame ~ League, data = eurosoccer)
 #  par(op)
 #  detach(goggles)
 
-## ----goggles-plot1, echo=FALSE, fig.height = 6, fig.width = 12, dev='postscript'----
+## ----goggles-plot1, echo=FALSE, fig.height = 6, fig.width = 12, dev='postscript',message=FALSE,results='hide', warning=FALSE----
 attach(goggles)
 op <- par(mfrow = c(1,2))
 interaction.plot(gender, alcohol, attractiveness, fun = median, ylab = "Attractiveness", xlab = "Gender", type = "b", pch = 20,
@@ -79,9 +108,9 @@ legend("bottomleft", legend = c("female", "male"), col = c("coral", "black"), lt
 par(op)
 detach(goggles)
 
-## ----echo=3:6------------------------------------------------------------
+## ----echo=3:6, message=FALSE, results='hide'-----------------------------
 set.seed(123)
-goggles$alcohol <- relevel(goggles$alcohol, ref = "None") #FIXME
+goggles$alcohol <- relevel(goggles$alcohol, ref = "None") 
 t2way(attractiveness ~ gender*alcohol, data = goggles)
 med2way(attractiveness ~ gender*alcohol, data = goggles)
 pbad2way(attractiveness ~ gender*alcohol, data = goggles, est = "onestep")
@@ -98,7 +127,7 @@ mcp2atm(attractiveness ~ gender*alcohol, data = goggles)
 #  interaction.plot(optpes.male$Event, optpes.male$Optim, optpes.male$Ratio, fun = tmean20,
 #                   xlab = "Event", ylab = "Ratio", main = "Interaction Men",
 #                   type = "b", pch = 20, lty = 1, col = 1:2, legend = FALSE)
-#  legend("topleft", legend = c("Optimists", "Pessimists"), col = 1:2, lty = 1, cex = 0.8)
+#  legend("left", legend = c("Optimists", "Pessimists"), col = 1:2, lty = 1, cex = 0.8)
 #  interaction.plot(optpes.female$Event, optpes.female$Optim, optpes.female$Ratio, fun = tmean20,
 #                   xlab = "Event", ylab = "Ratio", main = "Interaction Women",
 #                   type = "b", pch = 20, lty = 1, col = 1:2, legend = FALSE)
@@ -113,7 +142,7 @@ op <- par(mfrow = c(1,2))
 interaction.plot(optpes.male$Event, optpes.male$Optim, optpes.male$Ratio, fun = tmean20, 
                  xlab = "Event", ylab = "Ratio", main = "Interaction Men", 
                  type = "b", pch = 20, lty = 1, col = 1:2, legend = FALSE)
-legend("topleft", legend = c("Optimists", "Pessimists"), col = 1:2, lty = 1, cex = 0.8)
+legend("left", legend = c("Optimists", "Pessimists"), col = 1:2, lty = 1, cex = 0.8)
 interaction.plot(optpes.female$Event, optpes.female$Optim, optpes.female$Ratio, fun = tmean20,
                  xlab = "Event", ylab = "Ratio", main = "Interaction Women", 
                  type = "b", pch = 20, lty = 1, col = 1:2, legend = FALSE)
@@ -151,7 +180,7 @@ par(op)
 
 ## ------------------------------------------------------------------------
 anorexiaFT <- subset(anorexia, subset = Treat == "FT")
-yuend(anorexiaFT$Prewt, anorexiaFT$Postwt)
+with(anorexiaFT, yuend(Prewt, Postwt))
 
 ## ----ano-plot, echo=FALSE, eval=FALSE------------------------------------
 #  colpal <- c(rainbow_hcl(17, c = 50))
@@ -219,11 +248,27 @@ bwtrim(symptoms ~ group*time, id = id, data = hangover, tr = 0)
 fitF <- ezANOVA(hangover, symptoms, between = group, within = time, wid = id)
 fitF$ANOVA
 
-## ----echo=2:4------------------------------------------------------------
+## ----echo=2:4, eval=FALSE------------------------------------------------
+#  set.seed(123)
+#  sppba(symptoms ~ group*time, id, data = hangover)
+#  sppbb(symptoms ~ group*time, id, data = hangover)
+#  sppbi(symptoms ~ group*time, id, data = hangover)
+
+## ----cache=TRUE, echo=2--------------------------------------------------
 set.seed(123)
-sppba(symptoms ~ group*time, id, data = hangover)
-sppbb(symptoms ~ group*time, id, data = hangover)
-sppbi(symptoms ~ group*time, id, data = hangover)
+sppbb(errorRatio ~ group*essay, id, data = essays)
+
+## ----cache=TRUE, echo=2--------------------------------------------------
+set.seed(123)
+sppba(errorRatio ~ group*essay, id, data = essays, avg = FALSE)
+
+## ----cache=TRUE, echo=2--------------------------------------------------
+set.seed(123)
+sppba(errorRatio ~ group*essay, id, data = essays)
+
+## ----cache=TRUE, echo=2--------------------------------------------------
+set.seed(123)
+sppbi(errorRatio ~ group*essay, id, data = essays)
 
 ## ----smooth-plot, eval=FALSE, echo=FALSE---------------------------------
 #  colpal <- c(rainbow_hcl(5, c = 100))
@@ -320,4 +365,55 @@ lines(elct$Pretest[ordct], fitanc$fitted.values$control[ordct], col = 2, lwd = 2
 abline(lm(elct$Posttest ~ elct$Pretest), col = 2, lty = 2)
 abline(v = comppts, lty = 2, col = "gray")
 legend(30, 120, legend = c("treatment", "control"), lty = 1, col = 1:2)
+
+## ----echo=2:4------------------------------------------------------------
+set.seed(123)
+method1 <- c(2,4,4,2,2,2,4,3,2,4,2,3,2,4,3,2,2,3,5,5,2,2)
+method2 <- c(5,1,4,4,2,3,3,1,1,1,1,2,2,1,1,5,3,5)
+binband(method1, method2, KMS = TRUE)
+
+## ----cache=TRUE, echo=2:4------------------------------------------------
+set.seed(123)
+fitqt <- qcomhd(GoalsGame ~ League, data = SpainGer, 
+                q = c(0.1, 0.25, 0.5, 0.75, 0.95), nboot = 500)
+fitqt
+
+## ----cache=TRUE, warning=FALSE, echo=2:4---------------------------------
+set.seed(123)
+fitqa <- Qanova(GoalsGame ~ League, data = eurosoccer, 
+                q = c(0.25, 0.5, 0.75))
+fitqa
+
+## ------------------------------------------------------------------------
+with(chile, pbcor(length, heat))
+
+## ------------------------------------------------------------------------
+hangctr <- subset(hangover, subset = group == "alcoholic")
+hangwide <- cast(hangctr, id ~ time, value = "symptoms")[,-1]
+winall(hangwide)
+
+## ----cache=TRUE, echo=c(1:4, 6)------------------------------------------
+ct1 <- subset(hangover, subset = (group == "control" & time == 1))$symp
+ct2 <- subset(hangover, subset = (group == "control" & time == 2))$symp
+at1 <- subset(hangover, subset = (group == "alcoholic" & time == 1))$symp
+at2 <- subset(hangover, subset = (group == "alcoholic" & time == 2))$symp
+set.seed(123)
+twocor(ct1, ct2, at1, at2, corfun = "pbcor", beta = 0.15)
+
+## ----cache=TRUE, message=FALSE,results='hide', echo=2:6------------------
+set.seed(123)
+fit.yx <- lm(Efficacy ~ MatCare, data = Leerkes)
+fit.mx <- lm(Esteem ~ MatCare, data = Leerkes)
+fit.yxm <- lm(Efficacy ~ MatCare + Esteem, data = Leerkes)
+fit.med <- with(Leerkes, mediation(MatCare, Esteem, Efficacy, 
+                                   bootstrap = TRUE, B = 500))
+
+## ------------------------------------------------------------------------
+round(fit.med[1, 1:3], 4)
+
+## ----cache=TRUE----------------------------------------------------------
+fitr.yx <- rlm(Efficacy ~ MatCare, data = Leerkes)
+fitr.mx <- rlm(Esteem ~ MatCare, data = Leerkes)
+fitr.yxm <- rlm(Efficacy ~ MatCare + Esteem, data = Leerkes)
+with(Leerkes, ZYmediate(MatCare, Efficacy, Esteem))
 

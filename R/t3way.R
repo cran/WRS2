@@ -17,6 +17,7 @@ t3way <- function(formula, data, tr = 0.2){
   alpha <- 0.05
   
     data=as.matrix(mf)
+    
     temp=selby2(data,lev.col,var.col)
     lev1=length(unique(temp$grpn[,1]))
     lev2=length(unique(temp$grpn[,2]))
@@ -34,6 +35,9 @@ t3way <- function(formula, data, tr = 0.2){
   tmeans<-0
   h<-0
   v<-0
+  
+  if(length(grp) != p) stop("Incomplete design! It needs to be full factorial!")
+  
   for (i in 1:p){
     tmeans[i]<-mean(data[[grp[i]]],tr)
     h[i]<-length(data[[grp[i]]])-2*floor(tr*length(data[[grp[i]]]))

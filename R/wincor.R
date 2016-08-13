@@ -1,4 +1,4 @@
-wincor<-function(x,y=NULL,tr=.2){
+wincor <- function(x, y = NULL, tr = 0.2){
 #   Compute the Winsorized correlation between x and y.
 #
 #   tr is the amount of Winsorization
@@ -6,6 +6,7 @@ wincor<-function(x,y=NULL,tr=.2){
 #
 #    Pairwise deletion of missing values is performed.
 #
+cl <- match.call()
 if(is.null(y[1])){
 y=x[,2]
 x=x[,1]
@@ -25,6 +26,11 @@ wcov<-var(xvec,yvec)
 if(sum(x==y)!=length(x)){
 test<-wcor*sqrt((length(x)-2)/(1.-wcor^2))
 sig<-2*(1-pt(abs(test),length(x)-2*g-2))
+} else {
+  test <- NA
+  sig <- NA
 }
-list(cor=wcor,cov=wcov,siglevel=sig,n=nval)
+result <- list(cor = wcor, cov = wcov, test = test, p.value = sig, n = nval, call = cl)
+class(result) <- "pbcor"
+result
 }

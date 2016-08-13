@@ -32,8 +32,9 @@ yuend <- function(x, y, tr = 0.2){
   up<-dif+crit*se
   test<-dif/se
   yuend<-2*(1-pt(abs(test),df))
+  epow <- yuenv2(x,y,tr=tr)$Effect.Size
   
-  result <- list(test = test, conf.int = c(low,up), se = se, p.value = yuend, df = df, diff = dif, call = cl)
+  result <- list(test = test, conf.int = c(low,up), se = se, p.value = yuend, df = df, diff = dif, effsize = epow, call = cl)
   class(result) <- "yuen"
   result
 }

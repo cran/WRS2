@@ -8,7 +8,6 @@ sppba <- function(formula, id, data, est = "mom", avg = TRUE, nboot = 500, MDIS 
   cl <- match.call()
   est <- match.arg(est, c("mom", "onestep", "median"), several.ok = FALSE)
   
- 
   mf1 <- match.call()
   m <- match(c("formula", "data", "id"), names(mf1), 0L)
   mf1 <- mf1[c(1L, m)]
@@ -167,7 +166,22 @@ sppba <- function(formula, id, data, est = "mom", avg = TRUE, nboot = 500, MDIS 
   bplus<-nboot+1
   sig.level<-1-sum(dv[bplus]>=dv[1:nboot])/nboot
   
-  result <- list(test = tvec, p.value = sig.level, call = cl)
+  ## reorganizing output
+  if (length(tvec) > 1) {
+    tvec1 <- data.frame(Estimate = tvec)
+    if (avg) {
+      tnames <- levels(mf[,fixvar])
+      rownames(tvec1) <- tnames
+    } else {
+      fixcomb <- apply(combn(levels(mf[,fixvar]), 2), 2, paste0, collapse = "-")
+      rnames <- levels(mf[,ranvar])
+      tnames <- as.vector(t(outer(rnames, fixcomb, paste)))
+      rownames(tvec1) <- tnames
+    }
+  } else {
+    tvec1 <- tvec
+  }
+  result <- list(test = tvec1, p.value = sig.level, call = cl)
   class(result) <- c("spp")
   result
 }

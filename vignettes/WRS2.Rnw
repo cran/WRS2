@@ -16,21 +16,19 @@
 \author{Patrick Mair\\ Harvard University \And 
         Rand Wilcox\\ University of Southern California
         }
-\title{Robust Statistical Methods: The \proglang{R} Package \pkg{WRS2}}
+\title{Robust Statistical Methods in \proglang{R} Using the \pkg{WRS2} Package}
 
 \Plainauthor{Patrick Mair, Rand Wilcox} %% comma-separated
-\Plaintitle{A Collection of Robust Statistical Methods: The R Package WRS2} %% without formatting
+\Plaintitle{Robust Statistical Methods in R Using the WRS2 Package} %% without formatting
 \Shorttitle{The \pkg{WRS2} Package} %% a short title (if necessary)
 
 %% an abstract and keywords
 \Abstract{
-In this manuscript we present various robust statistical methods and show how to apply them in \proglang{R} using the \pkg{WRS2} package. 
-We elaborate on robust location measures and present robust $t$-test versions for independent and dependent samples. We focus on robust one-way and higher order ANOVA strategies including mixed designs (``between-within subjects''). Finally, we elaborate on running interval 
-smoothers which we use in robust ANCOVA. 
+In this manuscript we present various robust statistical methods popular in the social sciences, and show how to apply them in \proglang{R} using the \pkg{WRS2} package available on CRAN. We elaborate on robust location measures, and present robust $t$-test and ANOVA versions for independent and dependent samples, including quantile ANOVA. Furthermore, we present on running interval smoothers as used in robust ANCOVA, strategies for comparing discrete distributions, robust correlation measures and tests, and robust mediator models. 
 }
 
-\Keywords{\pkg{WRS2}, robust location measures, robust ANOVA, robust ANCOVA}
-\Plainkeywords{WRS2, robust location measures, robust ANOVA, robust ANCOVA} 
+\Keywords{robust statistics, robust location measures, robust ANOVA, robust ANCOVA, robust mediation, robust correlation}
+\Plainkeywords{robust statistics, robust location measures, robust ANOVA, robust ANCOVA, robust mediation, robust correlation} 
 
 %% publication information
 %% NOTE: This needs to filled out ONLY IF THE PAPER WAS ACCEPTED.
@@ -49,7 +47,7 @@ smoothers which we use in robust ANCOVA.
   Department of Psychology\\
   Harvard University\\
   E-mail: \email{mair@fas.harvard.edu}\\
-  URL: \url{http://http://scholar.harvard.edu/mair}
+  URL: \url{http://scholar.harvard.edu/mair}
 }
 %% It is also possible to add a telephone and fax number
 %% before the e-mail in the following format:
@@ -63,6 +61,11 @@ smoothers which we use in robust ANCOVA.
 
 
 \begin{document}
+%' <<preliminaries, echo=FALSE, results='hide'>>=
+%' opts_chunk$set(highlight=FALSE, prompt=TRUE, background='#FFFFFF')
+%' options(replace.assign=TRUE, width=90, prompt="R> ")
+%' @
+
 
 <<echo=FALSE, message=FALSE, results='hide'>>=
 require(WRS2)
@@ -72,44 +75,59 @@ require(MASS)
 require(colorspace)
 require(reshape)
 require(ez)
+require(MBESS)
 @
 \section{Introduction}
-Data are rarely normal. Yet many classical statistical methods assume normally distributed data, especially when it comes to small samples. For large samples the central limit theorem tells us that we do not have to worry too much. Unfortunately, things are a little bit more complex than that when it comes to statistical testing, especially when we have to deal with prominent ``dangerous'' normality deviations such heavily skewed data, data with outliers, and heavy-tailed distribution. 
+Data are rarely normal. Yet many classical approaches in inferential statistics assume normally distributed data, especially when it comes to small samples. For large samples the central limit theorem basically tells us that we do not have to worry too much. Unfortunately, things are much more complex than that, especially in the case of prominent, ``dangerous'' normality deviations such as skewed distributions, data with outliers, or heavy-tailed distributions. 
 
-Before elaborating on consequences of these violations within the context of statistcal testing and estimation, let us look at the impact of normality deviations from a purely descriptive angle. It is common knowledge that the mean can be heavily affected by outliers or highly skewed distributions. Computing the mean on such data would not give us the 
-``typical'' participant; it is just not a good location measure to characterize the sample. In this case, once strategy is to use more robust measure such as the median or trimmed mean. Corresponding statistical tests involving such robust parameters are outside the classical statistical 
-testing framework, however. Another strategy to deal with such violations (especially right-skewed data) is to apply transformations such as the logarithm or more sophisticated Box-Cox transformations \citep{Box+Cox:1964}. For instance, in a simple $t$-test scenario where we want to compate two group means we can think of applying log-transformations within each group which could make the data ``more normal''. 
-The problem with this strategy is that a subsequent $t$-test compares the log-means between the groups (i.e., the geometric means) rather than the original means. This might not be in line anymore with the original research question and hypotheses. 
+Before elaborating on consequences of these violations within the context of statistical testing and estimation, let us look at the impact of normality deviations from a purely descriptive angle. It is trivial that the mean can be heavily affected by outliers or highly skewed 
+distributional shapes. Computing the mean on such data would not give us the ``typical'' participant; it is just not a good location measure to characterize the sample. In this case one strategy is to use more robust measures such as the median or the trimmed mean and perform tests based on the corresponding sampling distribution of such robust measures. 
 
-Apart from such descriptive considerations, violations from normality influence the results of statistical tests. The approximation of sampling distribution of the test statistic might not be proper, test results might be biased, confidence intervals not estimated in a satisfactory manner.
-In addition, the power of classical test statistics becomes low. In general, we have the following options when doing inference on small, ugly datasets and we are worried about the outcomes. We can stay within the parametric framework and establish the sampling distribution via permutation strategies. The \proglang{R} \citep{R:2015} package \pkg{coin} \citep{Hothorn:2008} gives a general implementation of basic permutation strategies. Another option is to perform a parametric or nonparametric bootstrap for which the \pkg{boot} package \citep{Canty+Ripley:2015} provides a flexible framework. Alternatively, we can switch into the nonparametric testing world. Nonparametric tests have less restrictive distributional assumptions than their parametric friends. Prominent examples for classical nonparametric tests 
-taught in most introductory statistics class are the Mann-Whitney $U$-test \citep{Mann+Whitney:1947}, the Wilcoxon signed-rank and rank-sum test \citep{Wilcoxon:1945}, and Kruskal-Wallis ANOVA \citep{Kruskal+Wallis:1952}. 
+Another strategy to deal with such violations (especially with skewed data) is to apply transformations such as the
+logarithm or more sophisticated Box-Cox transformations \citep{Box+Cox:1964}. For instance, in a simple $t$-test scenario where we want to compare two group means and the data are right-skewed, we could think of applying log-transformations within each group that would make the data ``more normal''. But distributions can remain sufficiently skewed so as to result in inaccurate confidence intervals and concerns about outliers remain \citet{Wilcox:2012}. Another problem with this strategy is that the respective $t$-test compares the log-means between the groups (i.e., the geometric means) rather than the original means. This might not be in line anymore with the original research question and hypotheses. 
 
-Robust methods for statistical estimation and testing provide another great option to deal with data that are not well-behaved. Historically, the first developments can be traced back to the 60's with publications by \citet{Tukey:1960}, \citet{Huber:1964}, and \citet{Hampel:1968}. Measures that characterize a distribution (such as location and scale) are said to be \emph{robust} if slight changes in a distribution have a relatively small effect on their value \citep[][p. 23]{Wilcox:2012}. Robust methods are still assuming a functional form of the probability distribution but the main goal is to produce outcomes that are less sensitive to small departures from the assumed functional form. These methods are important in situations where researchers have a considerably small sample, deviating from normality. In such situations it is not a good idea to apply classical statistical tests such as $t$-tests, ANOVA, ANCOVA, etc. since they may deliver biased results or their power may be low. 
+Apart from such descriptive considerations, departures from normality influence the main inferential outcomes. The approximation of sampling distribution of the test statistic can be highly inaccurate, estimates might be biased, and confidence intervals can have inaccurate probability coverage. In addition, the power of classical test statistics can be relatively low. 
 
-This article introduces the \pkg{WRS2} package that implements methods from the original \pkg{WRS} package (see \url{https://github.com/nicebread/WRS/tree/master/pkg}) in a more user-friendly manner. We focus on basic testing scenarios especially relevant for the social sciences and introduce these methods in a simple way. For further technical and computational details on the original \pkg{WRS} functions as well as additional tests the reader is referred to \citet{Wilcox:2012}. 
+In general, we have the following options when doing inference on small, ``ugly'' datasets and we are worried about basic violations. We can stay within the parametric framework and establish the sampling distribution under the null via permutation strategies. The \proglang{R} \citep{R:2015} package \pkg{coin} \citep{Hothorn:2008} gives a general implementation of basic permutation strategies. 
+However, the basic permutation framework does not provide a satisfactory techniques for comparing means \citep{Boik:1987} 
+or medians \citep{Romano:1990}. \citet{Chung+Romano:2013} summarize general theoretical concerns and limitations of permutation tests. However, they also indicate a variation of the permutation test that might have practical value. 
 
-Before we elaborate on the \pkg{WRS2} package, let us give an overview of some important robust methods are available in various \proglang{R}. 
-packages. In general, \proglang{R} is pretty well endowed with all sorts of robust regression functions and packages such as \code{rlm} in \pkg{MASS} \citep{Venables+Ripley:2002}, \code{lmrob} and \code{nlrob} in \pkg{robustbase} \citep{Rousseeuw:2015}. The latter function performs nonlinear robust regression. Robust mixed-effects models are implemented in \pkg{robustlmm} \citep{Koller:2015} and robust generalized additive models in \pkg{robustgam} \citep{Wong:2014}. Regarding multivariate methods, the \pkg{rrcov} package \citep{Filzmoser:2009} provides various implementations such as robust multivariate variance-covariance estimation and robust PCA. \pkg{FRB} \citep{Aelst:2013} includes bootstrap based approaches for multivariate regression, PCA and Hotelling tests, \pkg{RSKC} \citep{Kondo:2014} functions for robust $k$-means clustering, and \pkg{robustDA} \citep{Bouveyron:2015} performs robust discriminant analysis. Additional packages for robust statistics can be found on the CRAN Task View on robust statistics (URL: \url{https://cran.r-project.org/web/views/Robust.html}). 
+Another option is to switch into the nonparametric testing world \citep[see][for modern rank-based methods]{Brunner:2002}.  
+Prominent examples for classical nonparametric tests taught in most introductory statistics class are the Mann-Whitney $U$-test \citep{Mann+Whitney:1947}, the Wilcoxon signed-rank and rank-sum test \citep{Wilcoxon:1945}, and Kruskal-Wallis ANOVA \citep{Kruskal+Wallis:1952}.
+However, there are well-known concerns and limitations associated with these techniques \citep{Wilcox:2012}.
+For example, when distributions differ, the Mann-Whitney $U$-test uses an incorrect estimate of the standard error.
 
-\newpage
-\section{Robust Measures of Location}
+Robust methods for statistical estimation and testing provide another good option to deal with data that are not well-behaved. 
+Modern developments can be traced back to the 1960's with publications by \citet{Tukey:1960}, \citet{Huber:1964}, and \citet{Hampel:1968}. Measures that characterize a distribution (such as location and scale) are said to be \emph{robust}, if slight changes in a distribution have a relatively small effect on their value \citep[][p. 23]{Wilcox:2012}. The mathematical foundation of robust methods (dealing with
+quantitative, qualitative and infinitesimal robustness of parameters) makes no assumptions regarding the functional form of the probability distribution \citep[see, e.g.,][]{Staudte:1990}. The basic trick is to view parameters as functionals; expressions for the standard
+error follow from the influence function. 
+Robust inferential methods are available that perform well with relatively small sample sizes, even in situations where classic methods based on means and variances perform poorly with relatively large sample sizes. Modern robust methods have the potential of substantially increasing power even under slight departures from normality. And perhaps more importantly, they can provde a deeper, more accurate and more nuanced understanding of data compared to classic techniques based on means. 
+
+This article introduces the \pkg{WRS2} package that implements methods from the original \pkg{WRS} package \citep{Wilcox+Schoenbrodt:2016} in a more user-friendly manner. We focus on basic testing scenarios especially relevant for the social sciences and introduce these methods in an accessible way. For further technical and computational details on the original \pkg{WRS} functions as well as additional tests the reader is referred to \citet{Wilcox:2012}. 
+
+Before we elaborate on the \pkg{WRS2} package, we give an overview of some important robust methods that are available in various \proglang{R}
+packages. In general, \proglang{R} is pretty well endowed with all sorts of robust regression functions and packages such as \code{rlm} in \pkg{MASS} \citep{Venables+Ripley:2002}, and \code{lmrob} and \code{nlrob} in \pkg{robustbase} \citep{Rousseeuw:2015}. Robust mixed-effects models are implemented in \pkg{robustlmm} \citep{Koller:2015} and robust generalized additive models in \pkg{robustgam} \citep{Wong:2014}. Regarding multivariate methods, the \pkg{rrcov} package \citep{Filzmoser:2009} provides various implementations such as robust multivariate variance-covariance estimation and robust principal components analysis (PCA). \pkg{FRB} \citep{Aelst:2013} includes bootstrap based approaches for multivariate regression, PCA and Hotelling tests, \pkg{RSKC} \citep{Kondo:2014} functions for robust $k$-means clustering, and \pkg{robustDA} \citep{Bouveyron:2015} performs robust discriminant analysis. Additional packages for robust statistics can be found on the CRAN task view on robust statistics (\url{https://cran.r-project.org/web/views/Robust.html}). 
+
+The article is structured as follows. After a brief introduction to robust location measures, we focus on several robust $t$-test/ANOVA strategies including repeated measurement designs. We then elaborate on a robust nonparametric ANCOVA involving running interval smoothers. Approaches for comparing quantiles and discrete distributions across groups are given in Section~\ref{sec:other} before briefly elaborating on robust correlation coefficients and corresponding tests. Finally, in Section~\ref{sec:robmed}, we present a robust version of a mediator model. For each method presented in the article we show various applications using the respective functions in \pkg{WRS2}. The article is kept rather non-technical; for more technical details see \citet{Wilcox:2012}.
+
+% ------------------------------------------- Location --------------------------------------------
+\section{Robust measures of location}
 \label{sec:robloc}
-A robust alternative to the mean is the \emph{trimmed mean} which discards a certain percentage at both ends of the distribution. For instance, 
-a 20\% trimmed mean cuts-off 20\% at the low end and 20\% the high end. In \proglang{R}, a trimmed mean can be computed via the basic \code{mean} function by setting the \code{trim} argument accordingly. Note that if the trimming portion is set to $\gamma = 0.5$, the trimmed mean 
-$\bar x_t$ results in the median $\tilde x$.
+A robust alternative to the arithmetic mean $\bar x$ is the \emph{trimmed mean} which discards a certain percentage at both ends of the distribution. For instance, a 20\% trimmed mean cuts off 20\% at the low end and 20\% the high end. In \proglang{R}, a trimmed mean can be computed via the basic \code{mean} function by setting the \code{trim} argument accordingly. Note that if the trimming portion is set to $\gamma = 0.5$, the trimmed mean $\bar x_t$ results in the median $\tilde x$ (which by itself reflects another robust location measure).
 
-Another alternative is the \emph{Winsorized mean}. The process of giving less weight to observations in the tails of the distribution and higher weight to the ones in the center, is called \emph{Winsorizing}. Instead of computing the mean on the original distribution we compute the mean on the Winsorized distribution. Similar to the trimmed mean, the amount of Winsorizing has to choosen a priori. The \pkg{WRS2} function to compute Windsorized means is \code{winmean}. 
+A further robust location alternative to the mean is the \emph{Winsorized mean}. The process of giving less weight to observations in the tails of the distribution and higher weight to the ones in the center is called \emph{Winsorizing}. Instead of computing the mean on the original distribution we compute the mean on the Winsorized distribution. Similar to the trimmed mean, the amount of Winsorizing (i.e., the \emph{Winsorizing level}) has to be choosen \emph{a priori}. The \pkg{WRS2} function to compute Windsorized means is called \code{winmean}. 
 
-A general family of robust location measures are $M$\emph{-estimators} (the ``M'' stands for ``maximum likelihood-type''). The basic idea is to define a loss function to be minimized. For instance, if the loss function is $\sum_{i=1}^n (x_i - \mu)^2$, minimization results in the arithmetic mean $\hat{\mu} = \frac{1}{n}\sum_{i=1}^n x_i$. Instead of such a quadratic loss we can think of a more general, differentiable distance function $\xi(\cdot)$: 
+A general family of robust location measures are so called $M$\emph{-estimators} (the ``M'' stands for ``maximum likelihood-type'')
+which are based on a loss function to be minimized. In the simplest case we can think of a loss function of the form $\sum_{i=1}^n (x_i - \mu)^2$. Minimization results in a standard mean estimator $\hat{\mu} = \frac{1}{n}\sum_{i=1}^n x_i$. Instead of such a quadratic loss we can think of a more general, differentiable distance function $\xi(\cdot)$: 
 
 \begin{equation}
 \sum_{i=1}^n \xi(x_i - \mu_m) \rightarrow \textrm{min!}
 \end{equation}
 
 Let $\Psi = \xi'(\cdot)$ denote its derivative. The minimization problem reduces to $\sum_{i=1}^n \Psi(x_i - \mu_m) = 0$ where 
-$\mu_m$ denotes the $M$-estimator. Several distance functions have been proposed in the literature. As an example, Huber 
-\citep[see][]{Huber:1981} proposed the following function:
+$\mu_m$ denotes the $M$-estimator. 
+
+Several distance functions have been proposed in the literature. As an example, \citet{Huber:1981} proposed the following function:
 
 \begin{equation}
 \Psi(x) = 
@@ -119,36 +137,51 @@ $\mu_m$ denotes the $M$-estimator. Several distance functions have been proposed
   \end{cases}
 \end{equation}
 
-$K$ is the bending constant for which Huber proposed a value of $K = 1.28$. Increasing $K$ increases efficiency when 
-sampling from a normal distribution, but increases sensitivity to the tails of the distribution. 
-The estimation of $M$-estimators is performed iteratively and implemented in the \code{mest} function. More details and additional distance functions can be found in \citet{Wilcox:2012}.
+$K$ is the \emph{bending constant} for which Huber proposed a value of $K = 1.28$. Increasing $K$ increases sensitivity to the tails of the distribution. The estimation of $M$-estimators is performed iteratively \citep[see][for details]{Wilcox:2012} and implemented in the \code{mest} function. 
 
+What follows are a few examples of how to compute such simple robust location measures in \proglang{R}. The data vector we use 
+is taken from \citet{Dana:1990} and reflects the time (in sec.) persons could keep a portion of an apparatus in contact with a specified target. 
 
-% continue p. 52, simulate function (see p. 31) and compute various measures. 
-% Chapter 3
-% sample trimmed mean (3.3), quantiles (3.5), M-estimators (3.6), outlier detection (3.13)
+<<>>=
+timevec <- c(77, 87, 88, 114, 151, 210, 219, 246, 253, 262, 296, 299, 306, 
+             376, 428, 515, 666, 1310, 2611)
+@
 
-% describe MOM, onestep and MADN (further below)
+Let us start with a 10\% trimmed mean including standard error: 
+<<>>=
+mean(timevec, 0.1)
+trimse(timevec, 0.1)
+@
+Now the Winsorized mean (10\% Winsorizing level) and the median with standard errors:
+<<>>=
+winmean(timevec, 0.1)
+winse(timevec, 0.1)
+median(timevec)
+msmedse(timevec)
+@
+As a note,  \code{msmedse} works well when tied values never occur, but it can be highly inaccurate otherwise. Inferential methods based on a percentile bootstrap effectively deal with this issue. 
 
-\section{Robust $t$-Test and ANOVA Strategies}
-In this section these robust location measures are used in order to test for differences across groups. We focus on basic $t$-test strategies
-(independent and dependent groups), and various ANOVA approaches including mixed designs (i.e., between-within subjects designs). 
+Finally, the Huber $M$-estimator with bending constant kept at its default $K=1.28$. 
+<<>>=
+mest(timevec)
+mestse(timevec)
+@
 
-\subsection{Tests on Location Measures for Two Independent Groups}
-\citet{Yuen:1974} proposed a test statistic for a two-sample trimmed mean test which allows for unequal variances. The test statistic is given by 
-\begin{equation}
-\label{eq:yuen}
-T_y = \frac{\bar X_{t1} - \bar X_{t2}}{\sqrt{d_1 + d_2}},
-\end{equation}
-which, under the null ($H_0$: $\mu_{t1} = \mu_{t2}$), follows a $t$-distribution\footnote{It is not suggested to use this test statistic for a $\gamma = 0.5$ trimming level (which would result in median comparisons) since the standard errors become highly inaccurate.}. Details on computation of the standard error and the degrees of freedom can be found in \citet[p. 157--158]{Wilcox:2012}. If no trimming is involved, this method reduces to Welch's classical $t$-test with unequal variances \citep{Welch:1938}. Yuen's test in implemented in the \code{yuen} function. 
-There is also a bootstrap version of it (see \code{yuenbt}) which is suggested to use for one-sided testing when the group sample sizes are unequal. 
+\section{Robust $t$-test and ANOVA strategies}
+\label{sec:ranova}
+Now we use these robust location measures in order to test for differences across groups. In the following subsections we focus on basic $t$-test strategies (independent and dependent groups), and various ANOVA approaches including mixed designs (i.e., between-within subjects designs). 
 
-Let us look at an example. The dataset comprises various soccer team statistics in five different European 
+\subsection{Tests on location measures for two independent groups}
+\label{sec:ttest}
+\citet{Yuen:1974} proposed a test statistic for a two-sample trimmed mean test which allows for unequal variances. 
+Under the null ($H_0$: $\mu_{t1} = \mu_{t2}$), the test statistic follows a $t$-distribution\footnote{It is not suggested to use this test statistic for a $\gamma = 0.5$ trimming level (which would result in median comparisons) since the standard errors become highly inaccurate.}. Details methods based on the median can be found in \citet[p. 157--158]{Wilcox:2012}. If no trimming is involved, this method reduces to Welch's classical $t$-test with unequal variances \citep{Welch:1938}. Yuen's test is implemented in the \code{yuen} function. There is also a bootstrap version of it (see \code{yuenbt}) which is suggested to be used for one-sided testing when the group sample sizes are unequal. 
+
+The example dataset consists of various soccer team statistics in five different European 
 leagues, collected at the end of the 2008/2009 season. For the moment, let us just focus on the Spanish Primera Division (20 teams) and the German 
 Bundesliga (18 teams). We are interested in comparing the trimmed means of goals scored per game across these two Leagues. 
 
 The group-wise boxplots and beanplots in Figure~\ref{fig:soccerplot} visualize potential differences in the distributions. 
-Spain has a fairly right-skewed goal distribution involving three outliers (Barcelona, Real Madrid, Atletico Madrid). In the German league, things look more balanced and symmetric. Performing a $t$-test on the group means could be risky, since the Spanish mean could be affected by the outliers. A saver way is to perform a test on the trimmed means. We keep the default trimming level of $\gamma = 0.2$.
+Spain has a fairly right-skewed goal distribution involving three outliers (Barcelona, Real Madrid, Atletico Madrid). In the German league, things look more balanced and symmetric. Performing a classical $t$-test is probably not the best option since the Spanish mean could be affected by the outliers. A saver way is to perform a two-sample test on the trimmed means. We keep the default trimming level of $\gamma = 0.2$.
 
 
 <<soccer-plot, eval=FALSE, echo = FALSE>>=
@@ -156,7 +189,7 @@ SpainGer <- subset(eurosoccer, League == "Spain" | League == "Germany")
 SpainGer <- droplevels(SpainGer)
 op <- par(mfrow = c(1,2))
 boxplot(GoalsGame ~ League, data = SpainGer, main = "Boxplot Goals Scored per Game")
-points(1:2, tapply(SpainGer$GoalsGame, SpainGer$League, mean, trim = 0.2), pch = 19, col = "red")
+#points(1:2, tapply(SpainGer$GoalsGame, SpainGer$League, mean, trim = 0.2), pch = 19, col = "red")
 beanplot(GoalsGame ~ League, data = SpainGer, log = "", main = "Beanplot Goals Scored per Game", 
          col = "coral")
 par(op)
@@ -172,12 +205,34 @@ par(op)
 red dots correspond to the 20\% trimmed means. Right panel: beanplots for the same setting.}
 \end{figure}
  
-Running a two-sample trimmed mean test suggests that there are no significant differences in the trimmed means 
-across the two leagues:
-
 <<>>=
 yuen(GoalsGame ~ League, data = SpainGer)
 @
+
+The test result suggests that there are no significant differences in the trimmed means across the two leagues. 
+
+In terms of effect size, \citet{Algina:2005} presented a robust version of Cohen's $d$ \citep{Cohen:1988} based on 20\%
+trimmed means and Winsorized variances. 
+
+<<>>=
+akp.effect(GoalsGame ~ League, data = SpainGer)
+@
+
+The same rules of thumb as for Cohen's $d$ can be used; that is, $|d| = 0.2$, 0.5, and 0.8 correspond to small, medium, and large effects. 
+The call above assumes equal variances across both groups. If we can not assume this, \citet{Algina:2005} suggest to compute two effects sizes: one with the Winsorized variance of group 1 in the denominator, and another one with the Winsorized variance of group 2 in the denominator. 
+
+<<>>=
+akp.effect(GoalsGame ~ League, data = SpainGer, EQVAR = FALSE)
+@
+
+It can happen that the two effect sizes do not lead to the same conclusions about the strength of the effect (as in our example to a certain extent). \citet{Wilcox+Tian:2011} proposed an \emph{explanatory measure of effect size} $\xi$ which does not suffer from this shortcoming and is generalizable to multiple groups. 
+
+<<echo=2>>=
+set.seed(123)
+yuen.effect.ci(GoalsGame ~ League, data = SpainGer)
+@
+
+ Values of $\hat{\xi} = 0.10$, 0.30, and 0.50 correspond to small, medium, and large effect sizes. The function also gives a confidence interval for $\hat{\xi}$.
  
 If we want to run a test on median differences, or more general $M$-estimator differences, the \code{pb2gen} function can be used. 
 <<>>=
@@ -185,32 +240,32 @@ pb2gen(GoalsGame ~ League, data = SpainGer, est = "median")
 pb2gen(GoalsGame ~ League, data = SpainGer, est = "onestep")
 @
 
-The first test related to median differences, the second test to Huber's $\Psi$ estimator. The results in this 
+The first test is related to median differences, the second test to Huber's $\Psi$ estimator. The results in this 
 particular example are consistent for various robust location estimators. 
 
-% effect sizes 
-%  binomials (5.8), variances (5.5), dependent groups (5.9.6)
 
-\subsection{One-way Multiple Group Comparisons}
-Often it is said that $F$-tests are quite robust against violations. 
-This is not always the case. In fact, discussions and examples given in \citet{Games:1984}, \citet{Tan:1982}, \citet{Wilcox:1996} and \citet{Cressie+Whitford:1986} show that things can go wrong when applying ANOVA in situations where we have heavy-tailed distributions, unequal sample sizes, and when distributions differ in skewness. Transforming the data is not a very appealing alternative either since, as in a $t$-test setting, we end up comparing geometric means. 
 
-The first robust alternative present here is a one-way comparison of multiple trimmed group means, implemented in the 
+\subsection{One-way multiple group comparisons}
+Often it is said that $F$-tests are quite robust against normality violations. 
+This is not always the case. In fact, scenarios elaborated in \citet{Games:1984}, \citet{Tan:1982}, \citet{Wilcox:1996} and \citet{Cressie+Whitford:1986} show that things can go wrong when applying ANOVA in situations where we have heavy-tailed distributions, unequal sample sizes, and when distributions differ in skewness. Transforming the data is not a very appealing alternative either because under general conditions 
+this does not deal effectively with skewness issues or outliers.
+
+The first robust ANOVA alternative presented here is a one-way comparison of multiple trimmed group means, as implemented in the 
 \code{t1way} function. Let $J$ be the number of groups. The corresponding null hypothesis is:
 
 \[
 H_0: \mu_{t1} = \mu_{t2} = \cdots = \mu_{tJ}.
 \]
 
-The corresponding test statistic which approximates an $F$-distribution under the null, is quite complicated and can be found in 
-\citet[p. 293]{Wilcox:2012}. A bootstrap version is provided in \code{t1waybt}. If no trimming is involved we end up with Welch's ANOVA version allowing for unequal variances \citep{Welch:1951}.  
+The formula for the test statistic, which approximates an $F$-distribution under the null, can be found in 
+\citet[p. 293]{Wilcox:2012}. A bootstrap version of it is provided in \code{t1waybt}. If no trimming is involved we end up with Welch's ANOVA version allowing for unequal variances \citep{Welch:1951}.  A similar test statistic can be derived for comparing medians instead of trimmed means, implemented in the \code{med1way} function. When there are tied values,
+use instead the function \code{Qanova}.
+% which you describe later. But maybe saying something about this here
+% would be good.
 
-% Maybe a bit more description here, see Wilcox p. 319
-
-A similar test statistic can be derived for comparing medians instead of trimmed means, implemented in the 
-\code{med1way} function. Let us apply these two tests on the soccer dataset. This time we include all 
-five leagues. Figure~\ref{fig:soccerplot2} shows the corresponding boxplots and beanplots. We see that Germany and 
-Italy have a pretty symmetric distribution, England and The Nethderlands right-skewed distributions, and Spain has outliers. 
+Let us apply these two tests on the soccer data. This time we include all 
+five leagues in the dataset. Figure~\ref{fig:soccerplot2} shows the corresponding boxplots and beanplots. We see that Germany and 
+Italy have a pretty symmetric distribution, England and The Netherlands right-skewed distributions, and Spain has outliers. 
 
 <<soccer2-plot, eval=FALSE, echo=FALSE>>=
 op <- par(mfrow = c(2,1))
@@ -225,7 +280,7 @@ par(op)
 <<soccer2-plot>>
 @
 \end{center}
-\caption{\label{fig:soccerplot2} Left panel: Boxplots for scored goals per game (Spanish vs. German league). Right panel: Beanplots for the same setting.}
+\caption{\label{fig:soccerplot2} Top panel: Boxplots for scored goals per game across five European soccer leagues. Bottom panel: Beanplots for the same setting.}
 \end{figure}
  
 In \pkg{WRS2} these robust one-way ANOVA variants can be computed as follows:
@@ -235,8 +290,9 @@ t1way(GoalsGame ~ League, data = eurosoccer)
 med1way(GoalsGame ~ League, data = eurosoccer)
 @
 
-Again, none of the tests suggests a significant difference in robust location parameters across groups. 
-For illustration, let us just perform all pairwise comparisons on the same data setting. Post hoc tests on the trimmed means can be computed using the \code{lincon} function:
+None of the tests suggests a significant difference in robust goal location parameters across the leagues. 
+
+For illustration, we perform all pairwise comparisons on the same data setting. Post hoc tests on the trimmed means can be computed using the \code{lincon} function:
 
 <<>>=
 lincon(GoalsGame ~ League, data = eurosoccer)
@@ -244,17 +300,19 @@ lincon(GoalsGame ~ League, data = eurosoccer)
 
 Post hoc tests for the bootstrap version of the trimmed mean ANOVA (\code{t1waybt}) are provided in \code{mcppb20}. 
 
-\subsection{Comparisons Involving Higher-Order Designs}
+
+\subsection{Comparisons involving higher-order designs}
 Let us start with two-way factorial ANOVA design involving $J$ categories for the first factor, and $K$ categories 
-for the second factor. The test statistic for the one-way trimmed mean comparisons can be easily generalized to two-way 
-designs. The corresponding function is called \code{t2way}. Median comparisons can be performed via \code{med2way} whereas 
-for more general $M$-estimators, the function \code{pbad2way} does the job. Note that all \pkg{WRS2} robust ANOVA functions fit the full model 
+for the second factor. The test statistic for the one-way trimmed mean comparisons can be generalized to two-way 
+designs. The corresponding function is called \code{t2way}. Two-way median comparisons can be performed via \code{med2way} whereas 
+for more general $M$-estimators, the function \code{pbad2way} can be applied. Note that all \pkg{WRS2} robust ANOVA functions fit the full model 
 including all possible interactions only.
 
-As an example we use the infamous beer goggles dataset by \citet{Field:2012}. This dataset is about the effects of alcohol on mate selection in night-clubs. The hypothesis is that after alcohol had been consumed, subjective perceptions of physical attractiveness would become more inaccurate (\emph{beer goggles effect}). In this dataset we have the two factors gender (24 male and 24 femals students) and the amount of alcohol consumed (none, 2 pints, 4 pints). At the end of the evening the researcher took a photograph of the person the participant was chatting up. The attractiveness of the person on the photo was then evaluated by independent judges on a scale from 0-100 (response variable). Figure~\ref{fig:goggles} shows the interaction plots using the median as location measure. It looks like there is some interaction going on between gender and the amount of alcohol in terms of attractiveness rating. The following code chunk computes three robust two-way ANOVA 
-versions as well as a standard ANOVA for comparison.
+As an example we use the beer goggles dataset by \citet{Field:2012}. This dataset is about the effects of alcohol on mate selection in night clubs. The hypothesis is that after alcohol had been consumed, subjective perceptions of physical attractiveness would become more inaccurate (\emph{beer goggles effect}). In this dataset we have the two factors gender (24 male and 24 female students) and the amount of alcohol consumed 
+(none, 2 pints, 4 pints). At the end of the evening the researcher took a photograph of the person the participant was chatting up. The attractiveness of the person on the photo was then evaluated by independent judges on a scale from 0-100 (response variable). Figure~\ref{fig:goggles} shows the interaction plots using the median as location measure. It looks like there is some interaction going on between gender and the amount of alcohol in terms of attractiveness rating. The following code chunk computes three robust two-way ANOVA 
+versions as well as a standard ANOVA, for comparison.
 
-<<goggles-plot, eval=FALSE, echo=FALSE>>=
+<<goggles-plot, eval=FALSE, echo=FALSE, message=FALSE,results='hide', warning=FALSE>>=
 attach(goggles)
 op <- par(mfrow = c(1,2))
 interaction.plot(gender, alcohol, attractiveness, fun = median, ylab = "Attractiveness", xlab = "Gender", type = "b", pch = 20,
@@ -269,26 +327,25 @@ detach(goggles)
 
 \begin{figure}[t]
 \begin{center}  
-<<goggles-plot1, echo=FALSE, fig.height = 6, fig.width = 12, dev='postscript'>>=
+<<goggles-plot1, echo=FALSE, fig.height = 6, fig.width = 12, dev='postscript',message=FALSE,results='hide', warning=FALSE>>=
 <<goggles-plot>>
 @
 \end{center}
 \caption{\label{fig:goggles} Interaction plot involving the median attractiveness ratings in beer goggles dataset.}
 \end{figure}
 
-<<echo=3:6>>=
+<<echo=3:6, message=FALSE, results='hide'>>=
 set.seed(123)
-goggles$alcohol <- relevel(goggles$alcohol, ref = "None") #FIXME
+goggles$alcohol <- relevel(goggles$alcohol, ref = "None") 
 t2way(attractiveness ~ gender*alcohol, data = goggles)
 med2way(attractiveness ~ gender*alcohol, data = goggles)
 pbad2way(attractiveness ~ gender*alcohol, data = goggles, est = "onestep")
 summary(aov(attractiveness ~ gender*alcohol, data = goggles))
 @
 
-In each case we get a significant interaction. Going back to the interaction plots in Figure~\ref{fig:goggles} we see that the attractiveness 
-of the date drops significantly for the males if they had four pints. If we are interested in post hoc comparisons, \pkg{WRS2} provides functions 
-for the trimmed mean version (\code{mcp2atm}) and the $M$-estimator version (\code{mcp2a}). Here we give the results for the trimmed mean 
-version:
+For each type of ANOVA we get a significant interaction. Going back to the interaction plots in Figure~\ref{fig:goggles} we see that the attractiveness of the date drops significantly for the males if they had four pints. 
+
+If we are interested in post hoc comparisons, \pkg{WRS2} provides functions for the trimmed mean version (\code{mcp2atm}) and the $M$-estimator version (\code{mcp2a}). Here are the results for the trimmed mean version:
 
 <<>>=
 mcp2atm(attractiveness ~ gender*alcohol, data = goggles)
@@ -297,8 +354,8 @@ mcp2atm(attractiveness ~ gender*alcohol, data = goggles)
 The most interesting post hoc result is the \code{gender1:alcohol3} contrast which explains the striking 4 pint attractiveness 
 drop for the males. 
 
-Now we move on to higher-order designs. \pkg{WRS2} provides the function \code{t3way} for robust three-way ANOVA based on trimmed means. 
-The dataset we use is from \citet{Seligman:1990}. At a swimming team practice, 58 participants were asked to swim their best event as far as possible, but in each case the time that was reported was falsified to indicate poorer than expected performance (i.e., each swimmer was disappointed). 30 min later, they did the same performance. The authors predicted that on the second trial more pessimistic swimmers would do worse than on their first trial, whereas optimistic swimmers would do better. The response is $\text{ratio = Time1/Time2}$. A ratio larger than 1 means that a swimmer performed better in trial 2. Figure~\ref{fig:swim} shows two separate interaction plots for male and female swimmers, involving the 20\% trimmed means. 
+Having three-way designs, \pkg{WRS2} provides the function \code{t3way} for robust ANOVA based on trimmed means. 
+The dataset we use is from \citet{Seligman:1990}. At a swimming team practice, 58 participants were asked to swim their best event as far as possible, but in each case the time reported was falsified to indicate poorer than expected performance (i.e., each swimmer was disappointed). 30 minutes later the athletes did the same performance again. The authors predicted that on the second trial more pessimistic swimmers would do worse than on their first trial, whereas optimistic swimmers would do better. The response is $\text{ratio = Time1/Time2}$. A ratio larger than 1 means that a swimmer performed better in trial 2. Figure~\ref{fig:swim} shows two separate interaction plots for male and female swimmers, using the 20\% trimmed means. 
 
 
 <<swim-plot, echo=FALSE, eval=FALSE>>=
@@ -309,7 +366,7 @@ op <- par(mfrow = c(1,2))
 interaction.plot(optpes.male$Event, optpes.male$Optim, optpes.male$Ratio, fun = tmean20, 
                  xlab = "Event", ylab = "Ratio", main = "Interaction Men", 
                  type = "b", pch = 20, lty = 1, col = 1:2, legend = FALSE)
-legend("topleft", legend = c("Optimists", "Pessimists"), col = 1:2, lty = 1, cex = 0.8)
+legend("left", legend = c("Optimists", "Pessimists"), col = 1:2, lty = 1, cex = 0.8)
 interaction.plot(optpes.female$Event, optpes.female$Optim, optpes.female$Ratio, fun = tmean20,
                  xlab = "Event", ylab = "Ratio", main = "Interaction Women", 
                  type = "b", pch = 20, lty = 1, col = 1:2, legend = FALSE)
@@ -327,7 +384,7 @@ par(op)
 \end{figure}
 
 Now we compute a three-way robust ANOVA on the trimmed means. For comparison, we also fit a standard three-way ANOVA (since the 
-design is unbalanced we print out the Type II sum-of-squares). 
+design is unbalanced we print out the Type II Sum-of-Squares). 
 
 <<>>=
 t3way(Ratio ~ Optim*Sex*Event, data = swimming)
@@ -362,24 +419,16 @@ par(op)
 \end{figure}
 
 
-\subsection{Repeated Measurement Designs}
+\subsection{Repeated measurement designs}
 \label{sec:rmd}
-The simplest repeated measurement design is a paired samples $t$-test scenario. Yuen's trimmed mean $t$-test in Equation~(\ref{eq:yuen}) 
-can be generalized to
+The simplest repeated measurement design is a paired samples $t$-test scenario. Yuen's trimmed mean $t$-test \label{sec:ttest} can be generalized 
+to dependent data settings (i.e., within-subject designs). Details on the test statistic can be found in \citet[p. 195--197]{Wilcox:2012}. The corresponding \proglang{R} function is called \code{yuend} which also reports the explanatory measure of effect size. 
 
-\begin{equation}
-\label{eq:yuen2}
-T_y = \frac{\bar X_{t1} - \bar X_{t2}}{\sqrt{d_1 + d_2 - 2d_{12}}}.
-\end{equation}
-
-Expressions for the standard deviations can be found in \citet[p. 196]{Wilcox:2012}. The corresponding \proglang{R} function is called 
-\code{yuend}. The dataset we use for illustration is in the \pkg{MASS} package and presents data pairs involving weights of girls before and after treatment for anorexia. We use a subset of 17 girls subject to family treatment. 
-
-Figure~\ref{fig:ano} presents the individual trajectories. We see that for four girls the treatment did not seem to be effective, for the remaining ones we have an increase in weight. The paired samples test on the trimmed mean differences gives a significant treatment effect which tells us that, overall, the treatment was effective.
+The dataset we use for illustration is in the \pkg{MASS} package and presents data pairs involving weights of girls before and after treatment for anorexia. We use a subset of 17 girls subject to family treatment. Figure~\ref{fig:ano} presents the individual trajectories. We see that for four girls the treatment did not seem to be effective, for the remaining ones we have an increase in weight. The paired samples test on the trimmed mean differences gives a significant treatment effect which tells us that, overall, the treatment was effective (effect size can be labelled as ``large'').
 
 <<>>=
 anorexiaFT <- subset(anorexia, subset = Treat == "FT")
-yuend(anorexiaFT$Prewt, anorexiaFT$Postwt)
+with(anorexiaFT, yuend(Prewt, Postwt))
 @
 
 
@@ -399,9 +448,10 @@ axis(1, at = 1:2, labels = c("Prior", "Post"))
 \caption{\label{fig:ano} Individual weight trajectories of anorexic girls before and after treatment.}
 \end{figure}
 
-Let us extend this setting to more than two dependent categories. The \pkg{WRS2} package provides a robust implementation of a heteroscedastic repeated measurement ANOVA based on the trimmed means. The main function is \code{rmanova} with corresponding post hoc tests in \code{rmmcp}. The bootstrap version of \code{rmanova} is \code{rmanovab} with bootstrap post hocs in \code{pairdepb}. 
+Let us extend this setting to more than two dependent groups. The \pkg{WRS2} package provides a robust implementation of a heteroscedastic repeated measurement ANOVA based on the trimmed means. The main function is \code{rmanova} with corresponding post hoc tests in \code{rmmcp}. The bootstrap version of \code{rmanova} is \code{rmanovab} with bootstrap post hocs in \code{pairdepb}. 
+Each function for robust repeated measurement ANOVA takes three arguments; the data need to be in long format: a vector with the responses (argument: \code{y}), a factor for the groups (e.g., time points; argument: \code{groups}), and a factor for the blocks (typically a subject ID; argument: \code{blocks}). 
 
-Each function for robust repeated measurement ANOVA takes three arguments; the data need to be in long format: a vector with the responses (argument: \code{y}), a factor for the groups (e.g,. time points; argument: \code{groups}), and a factor for the blocks (typically a subject ID; argument: \code{blocks}). The data we use to illustrate the functions is a hypothetical wine tasting dataset. There are three types of wine (A, B and C). 22 people tasted each of the three wines (in a blind fold fashion), five times each. The response reflects the average ratings for each wine. Thus, each of the three wines gets one score from each rater. In total, we have 66 scores. The trajectories are given in 
+The data we use to illustrate these functions is a hypothetical wine tasting dataset. There are three types of wine (A, B and C). 22 people tasted each wine five times (in a blind fold fashion). The response reflects the average ratings for each wine. Thus, each of the three wines gets one score from each rater. In total, we therefore have 66 scores. The trajectories are given in 
 Figure~\ref{fig:wine}. 
 
 <<wine-plot, echo=FALSE, eval=FALSE>>=
@@ -434,7 +484,8 @@ detach(WineTasting)
 We see that we have a somewhat contradictory result: the global test tells us that there are no significant differences between the wines, whereas the post hoc tests suggest significant differences for the Wine C contrasts. Such results sometimes occur in small sample ANOVA applications when the global test statistic is close to the critical value.
 
 
-\subsection{Mixed Designs}
+\subsection{Mixed designs}
+\label{sec:mixed}
 This subsection deals with mixed ANOVA designs, that is, we have within-subjects effects (e.g., due to repeated measurements) and 
 between-subjects effects (group comparisons). For the parameteric case, the standard \code{aov} function in \proglang{R} is 
 able to handle such scenarios, even though in a very limited way. The \code{ezANOVA} function 
@@ -444,7 +495,7 @@ or \pkg{nlme} \citep{Pinheiro:2015} can be applied which provide a great deal of
 The main function in \pkg{WRS2} for computing a between-within subjects ANOVA on the trimmed means is \code{bwtrim}. For general 
 $M$-estimators, the package offers the bootstrap based functions \code{sppba}, \code{sppbb}, and \code{sppbi} for the between-subjects effect, the within-subjects effect, and the interaction effect, respectively. Each of these functions requires the full model specification through the \code{formula} interface as well as an \code{id} argument that accounts for the within-subject structure. 
 
-The example we use is from \citet[p. 411]{Wilcox:2012}. In a study on the effect of consuming alcohol, the number hangover symptoms were measured for two independent groups, with each subject consuming alcohol and being measured on three different occasions. One group consisted of sons of alcoholics and the other was a control group. A representation of the dataset is given in Figure~\ref{fig:hang}.
+The first example we use is from \citet[p. 411]{Wilcox:2012}. In a study on the effect of consuming alcohol, the number hangover symptoms were measured for two independent groups, with each subject consuming alcohol and being measured on three different occasions. One group consisted of sons of alcoholics and the other was a control group. A representation of the dataset is given in Figure~\ref{fig:hang}.
 
 <<hang-plot, eval=FALSE, echo=FALSE>>=
 ind <- rep(1:6, each = 20)
@@ -474,7 +525,7 @@ First, we fit the between-within subjects ANOVA on the 20\% trimmed means:
 bwtrim(symptoms ~ group*time, id = id, data = hangover)
 @
 
-We get significant group and time effects. Second, we fit a standard between-within subjects ANOVA through \code{bwtrim} by setting the trimming level to 0. For comparison we fit the same model through \code{ezANOVA} and see that both functions lead to the same results.
+We get significant group and time effects. Second, we fit a standard between-within subjects ANOVA through \code{bwtrim} by setting the trimming level to 0 and check whether we get the same results as with \code{ezANOVA}.
 
 <<warning=FALSE>>=
 bwtrim(symptoms ~ group*time, id = id, data = hangover, tr = 0)
@@ -484,7 +535,7 @@ fitF$ANOVA
 
 Finally, we base our comparisons on Huber's $M$-estimator for which we have to apply three separate functions, one for each effect. 
 
-<<echo=2:4>>=
+<<echo=2:4, eval=FALSE>>=
 set.seed(123)
 sppba(symptoms ~ group*time, id, data = hangover)
 sppbb(symptoms ~ group*time, id, data = hangover)
@@ -493,16 +544,105 @@ sppbi(symptoms ~ group*time, id, data = hangover)
 
 These tests give us a significant group effect whereas the time and interaction effects are not significant. 
 
+Due to the complexity of the hypotheses being testing using these percentile bootstrap functions, let us have a closer look using a slightly more complicated dataset. The study by \citet{McGrath:2016} looked at the effects of two forms of written corrective feedback on lexico-grammatical accuracy (\code{errorRatio}) in the academic writing of English as a foreign language university students. It had a 3 $\times$ 4 within-by-between design with three groups (two treatment and one control; \code{group}) measured over four occasions (pretest/treatment, treatment, post-test, delayed post-test; \code{essay}). 
 
-\section{Robust Nonparametric ANCOVA}
-\subsection{Running Interval Smoothers}
-Before we talk about robust ANCOVA, we need to do some elaborations on smoothers. In general, a smoother is a function that approximates the data points while leaving out noise in the data. Smoothing functions typically have a smoothing parameter by which the user can steer the 
+It helps to introduce the following notations: We have $j=1,\ldots,J$ between subjects groups (in our example $J=3$) and $k=1,\ldots,K$ within subjects groups (e.g., time points; in our example $K = 4$). Let $Y_{ijk}$ be the response of participant $i$ ($i=1,\ldots,N$), belonging to group $j$ on measurement occasion $k$. 
+
+Ignoring the group levels $j$ for the moment, $Y_{ijk}$ can be simplified to $Y_{ik}$. For two occasions $k$ and $k'$ we can compute the difference score $D_{ikk'} = Y_{ik} -  Y_{ik'}$. Let $\theta_{kk'}$ be some $M$-estimator associated with $D_{ikk'}$. In the special case of two measurement occasions (i.e., $K=2$), we can compute a single difference. In our example with $K=4$ occasions we can compute $\binom{4}{2} = 6$ such $M$-estimators. The null hypothesis is: 
+
+\[
+H_0: \theta_{1,2} = \theta_{1,3} = \theta_{1,4} = \theta_{2,3} = \theta_{2,4} = \theta_{3,4}
+\]
+
+Thus, it is tested whether the ``typical'' difference score (as measured by an $M$-estimator) between any two levels of measurement occasions is 0 (while ignoring the between-subjects groups). For the essays dataset we get:
+
+<<cache=TRUE, echo=2>>=
+set.seed(123)
+sppbb(errorRatio ~ group*essay, id, data = essays)
+@
+
+The $p$-value suggests that we can not reject the $H_0$ of equal difference scores. 
+
+In terms of comparisons related to the between-subjects we can think of two principles. The first one is to perform pairwise group comparisons within each $K = 4$ measurement occasion. In our case this leads to $4 \times \binom{3}{2}$ parameters (here, the first index relates to $j$ and the second index to $k$). We can establish the following $K$ null hypotheses:
+
+
+\begin{align*}
+H_0^{(1)}:\quad & \theta_{1,1} = \theta_{2,1} = \theta_{3,1}\\
+H_0^{(2)}:\quad& \theta_{1,2} = \theta_{2,2} = \theta_{3,2}\\
+H_0^{(3)}:\quad& \theta_{1,3} = \theta_{2,3} = \theta_{3,3}\\
+H_0^{(4)}:\quad& \theta_{1,4} = \theta_{2,4} = \theta_{3,4}. 
+\end{align*}
+
+We aggregate these hypotheses into a single $H_0$ which tests whether these $K$ nulls are simultaneously true. 
+
+\begin{align*}
+H_0:\quad & \theta_{1,1} - \theta_{2,1} = \theta_{1,1} - \theta_{3,1} = \theta_{2,1} - \theta_{3,1} = \\
+          & \theta_{1,2} - \theta_{2,2} = \theta_{1,2} - \theta_{3,2} = \theta_{2,2} - \theta_{3,2} = \\
+          & \theta_{1,3} - \theta_{2,3} = \theta_{1,3} - \theta_{3,3} = \theta_{2,3} - \theta_{3,3} = \\
+          & \theta_{1,4} - \theta_{2,4} = \theta_{1,4} - \theta_{3,4} = \theta_{2,4} - \theta_{3,4} = 0.
+\end{align*}
+
+In \pkg{WRS2} this hypothesis can be tested as follows:
+
+<<cache=TRUE, echo=2>>=
+set.seed(123)
+sppba(errorRatio ~ group*essay, id, data = essays, avg = FALSE)
+@
+
+Again, we can not reject $H_0$. As we see in this example, many tests have to be carried out. An alternative that seems more satisfactory in terms of type I errors is to use the average across measurement occasions, that is 
+
+\begin{equation}
+\bar{\theta}_{j\cdot} = \frac{1}{K}\sum_{k=1}^{K} \theta_{jk}.
+\end{equation}
+
+Correspondingly, in our example a null hypothesis can be formulated as 
+
+\[
+H_0: \bar{\theta}_{1\cdot} = \bar{\theta}_{2\cdot} = \bar{\theta}_{3\cdot}
+\]
+
+and computed via
+
+<<cache=TRUE, echo=2>>=
+set.seed(123)
+sppba(errorRatio ~ group*essay, id, data = essays)
+@
+
+Note that in the hangover example above we used the averaged strategy as well and since there were only two groups (\code{alcoholic} vs. \code{control}), only a single difference score was computed. 
+
+Finally, let us elaborate on the \code{sppbi} function which performs tests on the interactions. In the \code{sppbb} call 6 parameters were tested and we ignored the between-subjects group structure. Now we do not further ignore the group structure and compute $M$-estimators based on measurement occasion differences for each group separately. In the notation below the group index is on the right hand side of the pipe symbol, the differences in measurement occasions on the left hand side. The null hypothesis is a follows: 
+
+\begin{align*}
+H_0:\quad & \theta_{1,2|1} - \theta_{1,3|1} = \theta_{1,4|1} - \theta_{2,3|1} = \theta_{2,4|1} - \theta_{3,4|1} = \\
+          & \theta_{1,2|2} - \theta_{1,3|2} = \theta_{1,4|2} - \theta_{2,3|2} = \theta_{2,4|2} - \theta_{3,4|2} = \\
+          & \theta_{1,2|3} - \theta_{1,3|3} = \theta_{1,4|3} - \theta_{2,3|3} = \theta_{2,4|3} - \theta_{3,4|3} = 0.
+\end{align*}
+
+The \pkg{WRS2} function call to test this null hypothesis is
+
+<<cache=TRUE, echo=2>>=
+set.seed(123)
+sppbi(errorRatio ~ group*essay, id, data = essays)
+@
+
+Again, we can not reject $H_0$. 
+
+
+% ----------------------------------------- ANCOVA ---------------------------------------
+
+\section{Robust nonparametric ANCOVA}
+\subsection{Running interval smoothers}
+\label{sec:smoothers}
+Before considering robust ANCOVA, let us elaborate on smoothers. In general, a smoother is a function that approximates the
+true regression line via a technique that deals with curvature in a 
+reasonably flexible manner.  
+Smoothing functions typically have a smoothing parameter by means of which the user can steer the 
 degree of smoothing. If the parameter is too small, the smoothing function might overfit the data. If the parameter is too large, we might 
 disregard important patterns. The general strategy is to find the smallest parameter so that the plot looks reasonably smooth. 
 
 A popular regression smoother is LOWESS (locally weighted scatterplot smoothing) regression which belongs to the family of nonparametric 
-regression models and can be fitted using the \code{lowess} function. The smoothers presneted here involve robust
-location measures from Section \ref{sec:robloc} and are called \emph{running interval smoothers}. 
+regression models and can be fitted using the \code{lowess} function in \pkg{stats}. The smoothers presented here involve robust
+location measures from Section~\ref{sec:robloc} and are called \emph{running interval smoothers}. 
 
 Let us start with the trimmed mean. We have pairs of observations ($x_i$, $y_i$). The strategy behind an interval smoother is to compute the $\gamma$-trimmed mean using all of the $y_i$ values for which the corresponding $x_i$'s are close to a value of interest $x$ \citep[][p. 562]{Wilcox:2012}. Let MAD be the median absolute deviation, i.e., $\text{MAD} = \text{median}|x_i - \widetilde{x}|$. Let $\text{MADN} = \text{MAD}/z_{0.75}$, where $z_{0.75}$ represents the quantile of the standard normal distribution. The point $x$ is said to be close to $x_i$ if 
 
@@ -517,11 +657,14 @@ N(x_i) = \{j: |x_j-x_i| \leq f \times \text{MADN}\}
 \]
 
 such that $N(x_i)$ indexes all the $x_j$ values that are close to $x_i$. Let $\hat{\theta}_i$ be a robust location parameter of interest. A running interval smoother computes $n$ $\hat{\theta}_i$ parameters based on the corresponding $y$-value for which 
-$x_j$ is close to $x_i$, that is, the smoother defines an interval and runs across all the $x$-values. Within a regression context, these estimates represent the fitted values. Eventually, we can plot the $(x_i, \hat{\theta}_i)$ tuples into the $(x_i, y_i)$ scatterplot which 
+$x_j$ is close to $x_i$. That is, the smoother defines an interval and runs across all the $x$-values. Within a regression context, these estimates represent the fitted values. Eventually, we can plot the $(x_i, \hat{\theta}_i)$ tuples into the $(x_i, y_i)$ scatterplot which 
 gives us the nonparametric regression fit. The smoothness of this function depends on $f$. 
 
 The \pkg{WRS2} package provides smoothers for trimmed means (\code{runmean}), general $M$-estimators (\code{rungen}), and 
-bagging versions of general $M$-estimators (\code{runmbo}), recommended for small datasets. Let us look at a data example, involving various $f$ values and various robust location measures $\hat{\theta}_i$. We use a simple dataset from \cite{Wright+London:2009} where we are interested whether the length and heat of a chile are related. The length was measured in centimeters, the heat on a scale from 0 (``for sissys'') to 11 (``nuclear''). 
+bagging versions of general $M$-estimators (\code{runmbo}), recommended for small datasets. 
+
+Let us look at a data example, involving various $f$ values and various robust location measures $\hat{\theta}_i$. We use a simple dataset from \cite{Wright+London:2009} where we are interested whether the length and heat of a chile are related. The length was measured in centimeters, the heat on a scale from 0 (``for sissys'') to 11 (``nuclear''). The left panel in Figure~\ref{fig:smooth} displays smoothers involving different robust location measures. The right panel shows  a trimmed mean interval smoothing with varying smoothing parameter $f$. We see that, at least in this dataset, there are no striking differences between the smoothers with varying location measure. The choice of the smoothing parameter $f$ affects the function 
+heavily, however. 
 
 <<smooth-plot, eval=FALSE, echo=FALSE>>=
 colpal <- c(rainbow_hcl(5, c = 100))
@@ -564,10 +707,7 @@ detach(chile)
 varying smoothing parameter $f$.}
 \end{figure}
 
-The left panel in Figure~\ref{fig:smooth} displays smoothers involving different robust location measures. The right panel shows  
-a trimmed mean interval smoothing with varying smoothing parameter $f$. We see that, at least in this dataset, there are no striking 
-differences between the smoothers with varying location measure. The choice of the smoothing parameter $f$ affects the function 
-heavily, however. 
+
 
 \subsection{Robust ANCOVA}
 ANCOVA involves a factorial design and metric covariates that were not part of the experimental manipulation. Basic ANCOVA assumes 
@@ -576,8 +716,8 @@ slopes. In fact, it does not make any parametric assumption on the regressions a
 it very similar to what \emph{functional data analysis} \citep[FDA; see][]{Ramsay+Silverman:2005} is doing. The main difference is that FDA uses 
 smoothing splines whereas robust ANCOVA, as presented here, running interval smoothers.
 
-The function \code{ancova} performs robust ANCOVA. In its current implementation it is limited to one factor with two categories and one 
-covariate only. A bootstrap version of it is implemented as well (\code{ancboot}). Both functions perform the running interval smoothing on the trimmed means. Yuen tests for trimmed mean differences are performed at specified design points. It the design point argument (\code{pts}) is not specified, the routine picks five points automatically \citep[for details see][p. 611]{Wilcox:2012}. It is suggested that group sizes around the design point subject to Yuen's test should be at least 12. Regarding the multiple testing problem, the confidence intervals are adjusted to control the probability of at least one Type I error, the $p$-values are not.
+The function \code{ancova} fits a robust ANCOVA. In its current implementation it is limited to one factor with two categories and one 
+covariate only. A bootstrap version of it is implemented as well (\code{ancboot}). Both functions perform the running interval smoothing on the trimmed means. Yuen tests for trimmed mean differences are performed at specified design points. It the design point argument (\code{pts}) is not specified, the routine automatically computes five points \citep[for details see][p. 611]{Wilcox:2012}. It is suggested that group sizes around the design point subject to Yuen's test should be at least 12. Regarding the multiple testing problem, the confidence intervals are adjusted to control the probability of at least one Type I error, the $p$-values are not.
 
 The dataset we use to demonstrate robust ANCOVA is from \citet{Gelman+Hill:2007}. It is based on data involving an educational TV show for children called ``The Electric Company''. In each of four grades, the classes were randomized into treated groups and control groups. The kids in the treatment group were exposed to the TV show, those in the control group not. At the beginning and at the end of the school year, students in all the classes were given a reading test. The average test scores per class (pretest and posttest) were recorded. In this analysis we use the pretest score are covariate and are interested in possible differences between treatment and control group with respect to the postest scores. 
 We are interested in comparisons at six particular design points. We set the smoothing parameters to a considerably small value.
@@ -617,23 +757,167 @@ legend(30, 120, legend = c("treatment", "control"), lty = 1, col = 1:2)
 both subgroups are shown as well as the OLS fit (dashed lines). The vertical lines show the design points our comparisons are based on.}
 \end{figure}
 
+
+\section{Other approaches for group comparisons}
+\label{sec:other}
+\subsection{Comparing discrete distributions}
+Having two random variables $X$ and $Y$ with corresponding discrete distributions (sample space small), 
+it might be of interest to test whether the distributions differ at each realization $x$ and $y$ ($H_0$: $P(X=x) = P(Y=y)$). 
+The function \code{binband} provides such an implementation allowing for both the method proposed by \citet{Storer+Kim:1990} and 
+the one by \citet{Kulinskaya:2010}. 
+
+Let us look at a simple artificial example. Consider a study aimed at comparing two methods for reducing shoulder pain after surgery. 
+We provide the shoulder pain measures for each method as vector. The \code{binband} function compares the two distributions at each possible value in the joint sample space, here $(1, 2, \ldots, 5)$. 
+
+<<echo=2:4>>=
+set.seed(123)
+method1 <- c(2,4,4,2,2,2,4,3,2,4,2,3,2,4,3,2,2,3,5,5,2,2)
+method2 <- c(5,1,4,4,2,3,3,1,1,1,1,2,2,1,1,5,3,5)
+binband(method1, method2, KMS = TRUE)
+@
+
+Using the Kulinskaya-Morgenthaler-Staudte method (\code{KMS = TRUE}) we get the parameter table above and see that the distributions differ significantly at $x,y = 1$ only. Note that the function uses Hochberg's multiple comparison adjustment to determine critical $p$-values. 
+
+
+
+\subsection{Quantile comparisons}
+In Section~\ref{sec:ranova} we described approaches for comparing robust location measures across independent groups. One such measure was the median as implemented in \code{pd2gen} for the two-group case and \code{med1way} for one-way ANOVA. Here we generalize this testing approach to arbitrary quantiles. The corresponding functions are called \code{qcomhd} and \code{Qanova} for the two-group and the multiple group case, respectively. Both of them make use of the estimator proposed by \cite{Harrell+Davis:1982} in conjunction with bootstrapping. 
+
+To illustrate, we use once more the soccer dataset and start comparing the German Bundesliga with the Spanish Primera Division along various quantiles. 
+
+
+<<cache=TRUE, echo=2:4>>=
+set.seed(123)
+fitqt <- qcomhd(GoalsGame ~ League, data = SpainGer, 
+                q = c(0.1, 0.25, 0.5, 0.75, 0.95), nboot = 500)
+fitqt
+@
+
+We find no significant differences for any of the quantiles (again, the critical $p$-values take into account the multiple testing nature of the problem). Note that a dependent samples version of \code{qcomhd} is provided by the \code{Dqcomhd} function. 
+
+Now we extend the testing scenario above to multiple groups by considering all five leagues in the dataset and do a quartile comparison. 
+
+<<cache=TRUE, warning=FALSE, echo=2:4>>=
+set.seed(123)
+fitqa <- Qanova(GoalsGame ~ League, data = eurosoccer, 
+                q = c(0.25, 0.5, 0.75))
+fitqa
+@
+
+\code{Qanova} adjusts the $p$-values using Hochberg's method (none of them significant here). For each quantile it is tested whether the test statistics are the same across the contrasts, leading to a single $p$-value per quantile. The constrats itself are setup internally and the design matrix can be extracted through \code{fitqa$contrasts}. 
+
+%----------------------------------------- correlation ----------------------------------
+\section{Robust correlation measures}
+In this section we present two $M$-measures of correlation. The first one is the \emph{percentage bend correlation} $\rho_{pb}$, a robust 
+measure of the linear association between two random variables. When the underlying data are bivariate normal, $\rho_{pb}$ gives essentially the same values as Pearson's $\rho$. In general, $\rho_{pb}$ is more robust to slight changes in the data than $\rho$, similar to the robust location measures presented in Section~\ref{sec:robloc}. Its computation is shown in \citet[p. 447]{Wilcox:2012} and involves a bending constant $\beta$ 
+($0 \leq \beta \leq 0.5$). It is implemented in the function \code{pbcor} which also performs a test on the correlation coefficient ($H_0$: $\rho_{pb} = 0$). For illustration we use the chile dataset from Section~\ref{sec:smoothers}. 
+
+<<>>=
+with(chile, pbcor(length, heat))
+@
+
+\pkg{WRS2} also provides the function \code{pball} for performing tests on a correlation matrix including a test statistic $H$ which 
+tests the global hypothesis that all percentage bend correlations in the matrix are equal to 0. 
+
+A second robust correlation measure is the \emph{Winsorized correlation} $\rho_w$, which requires the specification of the amount of Winsorization. 
+The \code{wincor} function can be used in a similar fashion as \code{pbcor}; its extension to several random variables is called \code{winall} and illustrated here using the hangover data from Section~\ref{sec:mixed}. We are interested in the Winsorized correlations across the three time points for the participants in the alcoholic group:
+
+<<>>=
+hangctr <- subset(hangover, subset = group == "alcoholic")
+hangwide <- cast(hangctr, id ~ time, value = "symptoms")[,-1]
+winall(hangwide)
+@
+
+Other types of robust correlation measures are the well-known Kendall's $\tau$ and Spearman's $\rho$ as implemented in the basic \proglang{R}
+\code{cor} function.
+
+In order to test for equality of two correlation coefficient, \code{twopcor} can be used for Pearson correlations and \code{twocor} for percentage bend or Winsorized correlations. Both functions use a bootstrap internally. 
+
+As an example, using the hangover dataset we want to test whether the time 1/time 2 correlation $\rho_{pb1}$ of the control group is the same as the time1/time2 correlation $\rho_{pb2}$ of the alcoholic group. 
+
+<<cache=TRUE, echo=c(1:4, 6)>>=
+ct1 <- subset(hangover, subset = (group == "control" & time == 1))$symp
+ct2 <- subset(hangover, subset = (group == "control" & time == 2))$symp
+at1 <- subset(hangover, subset = (group == "alcoholic" & time == 1))$symp
+at2 <- subset(hangover, subset = (group == "alcoholic" & time == 2))$symp
+set.seed(123)
+twocor(ct1, ct2, at1, at2, corfun = "pbcor", beta = 0.15)
+@
+
+We can not reject $H_0$. 
+
+
+\section{Robust mediation analysis}
+\label{sec:robmed}
+As mentioned in the Introduction, \proglang{R} is well-equipped with robust regression models. Here we focus on one particular approach that is especially relevant in the social sciences area: mediator models. 
+
+A simple mediator model involving a response $Y$, a predictor $X$, and a mediator $M$ consists of the following set of regressions. 
+\begin{align*}
+Y_i &= \beta_{01} + \beta_{11}X_i + \varepsilon_{i1}, \\
+M_i &= \beta_{02} + \beta_{12}X_i + \varepsilon_{i2}, \\
+Y_i &= \beta_{03} + \beta_{13}X_i + \beta_{23}M_i + \varepsilon_{i3} .
+\end{align*}
+
+In relation to these equations, \citet{Baron+Kenny:1986} laid out the following requirements for a mediating relationship:
+\begin{itemize}
+\item Significant effect of $X$ on $Y$ ($\beta_{11}$, first equation). 
+\item Significant effect of $X$ on $M$ ($\beta_{12}$, second equation). 
+\item The effect of $X$ on $Y$ when including $M$ as well (third equation) should be reduced. If $\beta_{13}$ is not significant anymore, we have 
+\emph{full mediation}, if it is still significant we have \emph{partial mediation} and we proceed as follows.
+\end{itemize}
+
+The amount of mediation is reflected by the \emph{indirect effect} $\beta_{12}\beta_{23}$ (also called the \emph{mediating effect}). Having a partial mediation situation, the state-of-the-art approach to test for mediation ($H_0$: $\beta_{12}\beta_{23} = 0$) is to apply a bootstrap approach as proposed by \citet{Preacher+Hayes:2004}. 
+
+In terms of a robust mediator model version, instead of OLS a robust estimation routine needs be applied to estimate the regression equations above (e.g., an $M$-estimator as implemented in the \code{rlm} function can be used). For testing the mediating effect, \citet{Zu+Yuan:2010} proposed a corresponding robust approach which is implemented in \pkg{WRS2} via the \code{ZYmediate} function. 
+
+The example we show is from \citet{Howell:2012} based on data by \citet{Leerkes+Crockenberg:2002}. In this dataset ($n = 92$) the 
+relationship between how girls were raised by there own mother (\code{MatCare}) and their later feelings of maternal self-efficacy (\code{Efficacy}), that is, our belief in our ability to succeed in specific situations. The mediating variable is self-esteem (\code{Esteem}). All variables 
+are scored on a continuous scale from 1 to 4. 
+
+In the first part we fit a standard mediator model with bootstrap-based testing of the mediating effect. First, we fit the 
+three regressions as outlined above and check whether the predictor has a significant influence on the response and the mediator, respectively. 
+
+
+
+<<cache=TRUE, message=FALSE,results='hide', echo=2:6>>=
+set.seed(123)
+fit.yx <- lm(Efficacy ~ MatCare, data = Leerkes)
+fit.mx <- lm(Esteem ~ MatCare, data = Leerkes)
+fit.yxm <- lm(Efficacy ~ MatCare + Esteem, data = Leerkes)
+fit.med <- with(Leerkes, mediation(MatCare, Esteem, Efficacy, 
+                                   bootstrap = TRUE, B = 500))
+@
+
+The first two regression results (not shown here) suggest that maternal care has a significant influence on the response as well as the mediator. 
+By adding the mediator as predictor (third \code{lm} call), the influence of maternal care on efficacy gets lower. The Preacher-Hayes bootstrap test (we use the \code{mediate} function from \pkg{MBESS} \citep{Kelley:2016} to perform the bootstrap mediation test) suggests that there is a significant mediator effect:
+
+<<>>=
+round(fit.med[1, 1:3], 4)
+@
+
+
+Now we fit the same sequence of models in a robust way. First we estimate three robust regressions using \proglang{R}'s basic \code{rlm} implementation from \pkg{MASS} which uses an $M$-estimator. Then we perform a robust test on the mediating effect using \code{ZYmediate} from \pkg{WRS2}.
+
+<<cache=TRUE>>=
+fitr.yx <- rlm(Efficacy ~ MatCare, data = Leerkes)
+fitr.mx <- rlm(Esteem ~ MatCare, data = Leerkes)
+fitr.yxm <- rlm(Efficacy ~ MatCare + Esteem, data = Leerkes)
+with(Leerkes, ZYmediate(MatCare, Efficacy, Esteem))
+@
+
+For the robust regression setting we get similar results as with OLS. The bootstrap based robust mediation test suggests again a significant mediator effect. 
+
+Note that robust moderator models can be fitted in a similar fashion as ordinary moderator models. Moderator models are often computed on the 
+base of centered versions of predictor and moderator variable, including a corresponding interaction term \citep[see, e.g.,][]{Howell:2012}. 
+In \proglang{R}, a classical moderator model can be fitted using \code{lm}. A robust version of it can be achieved by 
+replacing the \code{lm} call by an \code{rlm} call. 
+
+
 \section{Discussion}
-Future updates will include the following robust methods: mediator and moderator models, MANOVA, and intraclass correlation. In addition, 
-functions for computing effect sizes will be available. 
+This article introduced the \pkg{WRS2} package for computing basic robust statistical methods in a user-friendly manner. Such robust models and tests are attractive when certain assumptions as required by classical statistical methods, are not fulfilled. 
+The most important functions (with respect to social science applications) from the \pkg{WRS} package have been implemented in \pkg{WRS2}. 
+The remaining ones are described in \citet{Wilcox:2012}. As mentioned in the Introduction, \proglang{R} is already pretty well equipped with robust multivariate implementations. However, future \pkg{WRS2} updates will include robust generalizations of Hotelling's $T$ as well as robust MANOVA. 
 
-
-%\section{Tests for Independence}
-% 9.3
-
-%\section{Robust Regression}
-% Chapter 10-11
-% mediator, moderator (11.7), ancova (11.11), longitudinal 11.12 
-
-%\section{Robust Multivariate Methods}
-% chapter 6
 
 \bibliography{WRS2}
 \end{document}
-
-
- 

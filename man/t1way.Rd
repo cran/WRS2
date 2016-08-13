@@ -9,7 +9,7 @@
 The \code{t1way} function computes a one-way ANOVA for the medians. Homoscedasticity assumption not required. It uses a generalization of Welch's method. Corresponding post hoc tests can be performed using \code{lincon}.
 }
 \usage{
-t1way(formula, data, tr = 0.2)
+t1way(formula, data, tr = 0.2, nboot = 100)
 lincon(formula, data, tr = 0.2)
 }
 \arguments{
@@ -22,6 +22,10 @@ an optional data frame for the input data.
   \item{tr}{
 trim level for the mean.
 }
+  \item{nboot}{
+number of bootstrap samples.
+}
+
 }
 \details{
 In the post hoc computations, confidence intervals are adjusted to control FWE, but p-values are not adjusted to control FWE. 
@@ -33,6 +37,7 @@ In the post hoc computations, confidence intervals are adjusted to control FWE, 
 \item{df1}{degrees of freedom}
 \item{df2}{degrees of freedom}
 \item{p.value}{p-value}
+\item{effsize}{explanatory measure of effect size}
 \item{call}{function call}
 
 \code{lincon} returns an object of class \code{"mcp1"} containing:

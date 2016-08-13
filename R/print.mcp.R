@@ -11,6 +11,7 @@ function(x,...)
   df <- rbind(facA, facB, facAB)
   rownames(df) <- colnames(x$contrasts)
   colnames(df)[4] <- "p-value"
+  colnames(df)[1] <- "psihat"
   print(as.data.frame(round(df, 5)))
   
   if(exists("x$alpha.crit")) cat("\nThe critical alpha level is ", x$alpha.crit, ".", sep = "")

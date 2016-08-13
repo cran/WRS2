@@ -4,6 +4,7 @@
 \alias{winse}
 \alias{msmedse}
 \alias{mest}
+\alias{mestse}
 
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Robust location measures and their standard errors (se).
@@ -11,7 +12,7 @@
 \description{
 The following functions for estimating robust location measures and their standard errors are provided: \code{winmean} 
 for the Winsorized mean, \code{winse} for its se, \code{trimse} for the trimmend mean se, \code{msmedse} for the median se, 
-\code{mest} for the M-estimator.
+\code{mest} for the M-estimator with se in \code{mestse}. 
 }
 \usage{
 winmean(x, tr = 0.2, na.rm = FALSE)
@@ -19,6 +20,7 @@ winse(x, tr = 0.2)
 trimse(x, tr = 0.2, na.rm = FALSE)
 msmedse(x, sewarn = TRUE)
 mest(x, bend = 1.28, na.rm = FALSE)
+mestse(x, bend = 1.28)
 }
 \arguments{
   \item{x}{
@@ -64,6 +66,7 @@ winse(self, 0.1)    ## se Winsorized mean
 median(self)        ## median
 msmedse(self)       ## se median
 mest(self)          ## Huber M-estimator
+mestse(self) 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

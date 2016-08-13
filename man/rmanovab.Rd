@@ -49,10 +49,10 @@ Wilcox, R. (2012). Introduction to Robust Estimation and Hypothesis Testing (3rd
 }
 \examples{
 head(WineTasting)
-rmanovab(WineTasting$Taste, WineTasting$Wine, WineTasting$Taster)
+rmanovab(WineTasting$Taste, WineTasting$Wine, WineTasting$Taster, nboot = 300)
 
 ## post hoc
-pairdepb(WineTasting$Taste, WineTasting$Wine, WineTasting$Taster)
+pairdepb(WineTasting$Taste, WineTasting$Wine, WineTasting$Taster, nboot = 300)
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

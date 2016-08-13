@@ -8,4 +8,7 @@ function(x,...)
   cat("\nTrimmed mean difference: ", round(x$diff, 5), "\n")
   cat("95 percent confidence interval:\n")
   cat(round(x$conf.int[1], 4), "   ", round(x$conf.int[2], 4), "\n\n")
+  if (!is.null(x$effsize)) {
+    cat("Explanatory measure of effect size:", round(x$effsize, 2), "\n\n")
+  }
 }

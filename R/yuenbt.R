@@ -1,7 +1,5 @@
-yuenbt <- function(formula, data, tr = 0.2, nboot = 599){
-#
+yuenbt <- function(formula, data, tr = 0.2, nboot = 599, side = TRUE){
 
-  side <- TRUE
   if (missing(data)) {
     mf <- model.frame(formula)
   } else {
@@ -21,15 +19,12 @@ yuenbt <- function(formula, data, tr = 0.2, nboot = 599){
   side<-as.logical(side)
   p.value<-NA
   yuenbt<-vector(mode="numeric",length=2)
-  #if(SEED)set.seed(2) # set seed of random number generator so that
-  #             results can be duplicated.
+  
   x<-x[!is.na(x)]  # Remove missing values in x
   y<-y[!is.na(y)]  # Remove missing values in y
   xcen<-x-mean(x,tr)
   ycen<-y-mean(y,tr)
-  if(!side){
-    if(pr)warning("p-value computed only when side = TRUE")
-  }
+  
   test<-(mean(x,tr)-mean(y,tr))/sqrt(trimse(x,tr=tr)^2+trimse(y,tr=tr)^2)
   datax<-matrix(sample(xcen,size=length(x)*nboot,replace=TRUE),nrow=nboot)
   datay<-matrix(sample(ycen,size=length(y)*nboot,replace=TRUE),nrow=nboot)

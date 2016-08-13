@@ -83,7 +83,16 @@ sppbb <- function(formula, id, data, est = "mom", nboot = 500){
   }
   # Now call function rmdzero to do the analysis
   temp<-rmdzero(x,est=est,nboot=nboot)
-  result <- list(test = temp$center, p.value = temp$p.value, call = cl)
+  
+  ## reorganizing output
+  if (length(temp$center) > 1) {
+    tvec1 <- data.frame(Estimate = temp$center)
+    tnames <- apply(combn(levels(mf[,ranvar]), 2), 2, paste0, collapse = "-")
+    rownames(tvec1) <- tnames
+  } else {
+    tvec1 <- temp$center
+  }
+  result <- list(test = tvec1, p.value = temp$p.value, call = cl)
   class(result) <- c("spp")
   result
 }

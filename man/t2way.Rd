@@ -10,11 +10,11 @@
 \title{A two-way ANOVA for trimmed means, M-estimators, and medians.
 }
 \description{
-The \code{t2way} function computes a two-way ANOVA for trimmed means with interactions effects. Corresponding post hoc tests are \code{mcp2atm}. \code{pbad2way} performs a two-way ANOVA using M-estimators for location with \code{mcp2a} for post hoc tests.
+The \code{t2way} function computes a two-way ANOVA for trimmed means with interactions effects. Corresponding post hoc tests are in \code{mcp2atm}. \code{pbad2way} performs a two-way ANOVA using M-estimators for location with \code{mcp2a} for post hoc tests.
 }
 \usage{
 t2way(formula, data, tr = 0.2)
-pbad2way(formula, data, est = "mom", nboot = 599)
+pbad2way(formula, data, est = "mom", nboot = 599, pro.dis = FALSE)
 mcp2atm(formula, data, tr = 0.2)
 mcp2a(formula, data, est = "mom", nboot = 599)
 }
@@ -35,9 +35,13 @@ Estimate to be used for the group comparisons: either \code{"onestep"} for one-s
  \item{nboot}{
 number of bootstrap samples. 
 }
+\item{pro.dis}{
+If \code{FALSE}, Mahalanobis distances are used; if \code{TRUE} projection distances are computed.
+}
 }
 \details{
-\code{pbad2way} returns p-values only. 
+The \code{pbad2way} function returns p-values only. If it happens that the variance-covariance matrix in the Mahalanobis distance computation 
+is singular, it is suggested to use the projection distances by setting \code{pro.dis = TRUE}.  
 }
 \value{
 The functions \code{t2way} and \code{pbad2way} return an object of class \code{t2way} containing:

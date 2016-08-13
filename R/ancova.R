@@ -106,7 +106,10 @@ ancova <- function(formula, data, tr = 0.2, fr1 = 1, fr2 = 1, pts = NA){
       mat[i,7]<-cilow
       mat[i,8]<-cihi
       mat[i,9]<-test$p.value
-    }}
+    }
+  }
+  
+ 
   
   if(!is.na(pts[1])){
     if(length(pts)>=29)stop("At most 28 points can be compared")
@@ -129,8 +132,8 @@ ancova <- function(formula, data, tr = 0.2, fr1 = 1, fr2 = 1, pts = NA){
       mat[i,1]<-pts[i]
       mat[i,2]<-length(g1)
       mat[i,3]<-length(g2)
-      if(length(g1)<=5)print(paste("Warning, there are",length(g1)," points corresponding to the design point X=",pts[i]))
-      if(length(g2)<=5)print(paste("Warning, there are",length(g2)," points corresponding to the design point X=",pts[i]))
+      if(length(g1)<=5) warning("Warning, there are only ",length(g1)," points corresponding to the design point X=",pts[i])
+      if(length(g2)<=5) warning("Warning, there are only ",length(g2)," points corresponding to the design point X=",pts[i])
       mat[i,4]<-test$dif
       mat[i,5]<-test$teststat
       mat[i,6]<-test$se
@@ -144,6 +147,9 @@ ancova <- function(formula, data, tr = 0.2, fr1 = 1, fr2 = 1, pts = NA){
       mat[i,10]<-critv
     }}
   
+  ## in case there are duplicated knots
+  ind <- !duplicated(mat[,1])
+  mat <- mat[ind,]
   
   mat <- as.data.frame(mat)
   if(change) grnames <- grnames[2:1]
