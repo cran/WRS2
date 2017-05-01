@@ -1,6 +1,13 @@
 \name{NEWS}
 \title{News for Package \pkg{WRS2}}
 \encoding{UTF-8}
+
+\section{Changes in Version 0.9-2}{
+  \itemize{
+    \item Warnings in vignette removed.
+    \item Bug in \code{med2way} fixed.
+    } 
+}
 \section{Changes in Version 0.9-1}{
   \itemize{
     \item Vignette updated.

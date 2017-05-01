@@ -184,14 +184,14 @@ The group-wise boxplots and beanplots in Figure~\ref{fig:soccerplot} visualize p
 Spain has a fairly right-skewed goal distribution involving three outliers (Barcelona, Real Madrid, Atletico Madrid). In the German league, things look more balanced and symmetric. Performing a classical $t$-test is probably not the best option since the Spanish mean could be affected by the outliers. A saver way is to perform a two-sample test on the trimmed means. We keep the default trimming level of $\gamma = 0.2$.
 
 
-<<soccer-plot, eval=FALSE, echo = FALSE>>=
+<<soccer-plot, eval=FALSE>>=
 SpainGer <- subset(eurosoccer, League == "Spain" | League == "Germany")
 SpainGer <- droplevels(SpainGer)
 op <- par(mfrow = c(1,2))
-boxplot(GoalsGame ~ League, data = SpainGer, main = "Boxplot Goals Scored per Game")
-#points(1:2, tapply(SpainGer$GoalsGame, SpainGer$League, mean, trim = 0.2), pch = 19, col = "red")
-beanplot(GoalsGame ~ League, data = SpainGer, log = "", main = "Beanplot Goals Scored per Game", 
-         col = "coral")
+boxplot(GoalsGame ~ League, data = SpainGer, 
+        main = "Boxplot Goals Scored per Game")
+beanplot(GoalsGame ~ League, data = SpainGer, log = "", 
+         main = "Beanplot Goals Scored per Game", col = "coral")
 par(op)
 @
 
@@ -529,6 +529,7 @@ We get significant group and time effects. Second, we fit a standard between-wit
 
 <<warning=FALSE>>=
 bwtrim(symptoms ~ group*time, id = id, data = hangover, tr = 0)
+hangover$id <- as.factor(hangover$id)
 fitF <- ezANOVA(hangover, symptoms, between = group, within = time, wid = id)
 fitF$ANOVA
 @
@@ -722,7 +723,7 @@ covariate only. A bootstrap version of it is implemented as well (\code{ancboot}
 The dataset we use to demonstrate robust ANCOVA is from \citet{Gelman+Hill:2007}. It is based on data involving an educational TV show for children called ``The Electric Company''. In each of four grades, the classes were randomized into treated groups and control groups. The kids in the treatment group were exposed to the TV show, those in the control group not. At the beginning and at the end of the school year, students in all the classes were given a reading test. The average test scores per class (pretest and posttest) were recorded. In this analysis we use the pretest score are covariate and are interested in possible differences between treatment and control group with respect to the postest scores. 
 We are interested in comparisons at six particular design points. We set the smoothing parameters to a considerably small value.
 
-<<echo=2:5>>=
+<<>>=
 comppts <- c(18, 70, 80, 90, 100, 110)
 fitanc <- ancova(Posttest ~ Pretest + Group, fr1 = 0.3, fr2 = 0.3, 
                  data = electric, pts = comppts)
@@ -879,7 +880,7 @@ three regressions as outlined above and check whether the predictor has a signif
 
 
 
-<<cache=TRUE, message=FALSE,results='hide', echo=2:6>>=
+<<cache=TRUE, message=FALSE, results='hide', warning=FALSE>>=
 set.seed(123)
 fit.yx <- lm(Efficacy ~ MatCare, data = Leerkes)
 fit.mx <- lm(Esteem ~ MatCare, data = Leerkes)

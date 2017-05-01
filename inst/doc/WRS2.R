@@ -26,24 +26,24 @@ msmedse(timevec)
 mest(timevec)
 mestse(timevec)
 
-## ----soccer-plot, eval=FALSE, echo = FALSE-------------------------------
+## ----soccer-plot, eval=FALSE---------------------------------------------
 #  SpainGer <- subset(eurosoccer, League == "Spain" | League == "Germany")
 #  SpainGer <- droplevels(SpainGer)
 #  op <- par(mfrow = c(1,2))
-#  boxplot(GoalsGame ~ League, data = SpainGer, main = "Boxplot Goals Scored per Game")
-#  #points(1:2, tapply(SpainGer$GoalsGame, SpainGer$League, mean, trim = 0.2), pch = 19, col = "red")
-#  beanplot(GoalsGame ~ League, data = SpainGer, log = "", main = "Beanplot Goals Scored per Game",
-#           col = "coral")
+#  boxplot(GoalsGame ~ League, data = SpainGer,
+#          main = "Boxplot Goals Scored per Game")
+#  beanplot(GoalsGame ~ League, data = SpainGer, log = "",
+#           main = "Beanplot Goals Scored per Game", col = "coral")
 #  par(op)
 
 ## ----soccer-plot1, echo=FALSE, fig.height = 6, fig.width = 12, dev='postscript'----
 SpainGer <- subset(eurosoccer, League == "Spain" | League == "Germany")
 SpainGer <- droplevels(SpainGer)
 op <- par(mfrow = c(1,2))
-boxplot(GoalsGame ~ League, data = SpainGer, main = "Boxplot Goals Scored per Game")
-#points(1:2, tapply(SpainGer$GoalsGame, SpainGer$League, mean, trim = 0.2), pch = 19, col = "red")
-beanplot(GoalsGame ~ League, data = SpainGer, log = "", main = "Beanplot Goals Scored per Game", 
-         col = "coral")
+boxplot(GoalsGame ~ League, data = SpainGer, 
+        main = "Boxplot Goals Scored per Game")
+beanplot(GoalsGame ~ League, data = SpainGer, log = "", 
+         main = "Beanplot Goals Scored per Game", col = "coral")
 par(op)
 
 ## ------------------------------------------------------------------------
@@ -245,6 +245,7 @@ bwtrim(symptoms ~ group*time, id = id, data = hangover)
 
 ## ----warning=FALSE-------------------------------------------------------
 bwtrim(symptoms ~ group*time, id = id, data = hangover, tr = 0)
+hangover$id <- as.factor(hangover$id)
 fitF <- ezANOVA(hangover, symptoms, between = group, within = time, wid = id)
 fitF$ANOVA
 
@@ -332,7 +333,7 @@ par(op)
 palette(pal)
 detach(chile)
 
-## ----echo=2:5------------------------------------------------------------
+## ------------------------------------------------------------------------
 comppts <- c(18, 70, 80, 90, 100, 110)
 fitanc <- ancova(Posttest ~ Pretest + Group, fr1 = 0.3, fr2 = 0.3, 
                  data = electric, pts = comppts)
@@ -400,7 +401,7 @@ at2 <- subset(hangover, subset = (group == "alcoholic" & time == 2))$symp
 set.seed(123)
 twocor(ct1, ct2, at1, at2, corfun = "pbcor", beta = 0.15)
 
-## ----cache=TRUE, message=FALSE,results='hide', echo=2:6------------------
+## ----cache=TRUE, message=FALSE, results='hide', warning=FALSE------------
 set.seed(123)
 fit.yx <- lm(Efficacy ~ MatCare, data = Leerkes)
 fit.mx <- lm(Esteem ~ MatCare, data = Leerkes)

@@ -16,7 +16,14 @@ med2way <- function(formula, data){
   grp <- c(1:p)
   alpha <- .05
   
-  x <- tapply(mf[,1], list(mf[,2], mf[,3]), function(xx) list(xx))
+  #x <- tapply(mf[,1], list(mf[,2], mf[,3]), function(xx) list(xx))
+  x <- as.matrix(mf)
+  lev.col <- 2:3
+  var.col <- 1
+  temp <- selby2(x,lev.col,var.col)
+  x <- temp$x
+  x <- lapply(x, as.numeric)
+  
   if(p!=length(x)){
     print("Warning: The number of groups in your data is not equal to JK")
   }

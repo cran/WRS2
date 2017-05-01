@@ -8,7 +8,7 @@
 \title{Robust correlation coefficients.
 }
 \description{
-The \code{pcbor} function computes the percentage bend correlation coefficient, \code{wincor} the Winsorized correlation, 
+The \code{pbcor} function computes the percentage bend correlation coefficient, \code{wincor} the Winsorized correlation, 
 \code{pball} the percentage bend correlation matrix, \code{winall} the Winsorized correlation matrix. 
 }
 \usage{

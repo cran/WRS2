@@ -22,7 +22,7 @@ Qanova <- function(formula, data, q = 0.5, nboot = 600){
   
   chkcar=NA
   for(j in 1:length(x))chkcar[j]=length(unique(x[[j]]))
-  if(min(chkcar<20)) warning("Cardinality of sample space is less than 20 for one more groups. Type I error might not be controlled!")
+  #if(min(chkcar<20)) warning("Cardinality of sample space is less than 20 for one more groups. Type I error might not be controlled!")
 
   nc <- length(pbadepth1(x, est = hd, q = q[1], allp = TRUE, SEED = FALSE, op = op, nboot = nboot, MC = MC, na.rm = TRUE)$psihat)
   psimat <- matrix(NA, length(q), nc)

@@ -1,7 +1,7 @@
-35933904aefbb240e02a38117b6116b5 *DESCRIPTION
+c8c80d0ee17d2d57d7686fab7cb1bd7d *DESCRIPTION
 3fe109656a813d7db7af33e8ca1488c3 *NAMESPACE
 6977abeb64b61dd0376d7844b4e51a68 *R/Dqcomhd.R
-7a55e0ec786140295159cbf384056399 *R/Qanova.R
+5f0b1b99b84418ce9c9ea9a1bafb7754 *R/Qanova.R
 07f55b9c40c64890df6b5735acb948ad *R/ZYmediate.R
 64fc5ed2fe64afdd8bf73ed5d452f15c *R/akp.effect.R
 7fb3e67c33b10d152f0b21ac34595c45 *R/ancboot.R
@@ -45,7 +45,7 @@ afe65d5a8b484824c5cf39353112fec4 *R/mcp2atm.R
 a89b3ffa8a33df126e90e2f9d49036a1 *R/mcppb20.R
 06447da5635bb9fe1e6e81262cc413d1 *R/med1way.R
 d02a950089d6f726d58e9d1453d12223 *R/med1way.crit.R
-ae62e52cf78aad1c873f00fefd42e2f1 *R/med2way.R
+5355d419ebb44bcb41c90267a976048e *R/med2way.R
 9380828c5a74851621e72f637ef7d9ec *R/medpb2.R
 e6213203a1a60b3cd739ad3a1ce2eadc *R/mest.R
 6ff8bd4babfcc3b412adca0a4f9e5cfc *R/mestse.R
@@ -151,7 +151,7 @@ a6c7c460db0015d84dfa9158ad577b9e *R/yuen.R
 ca576a68d650c42d55f587f4f13e2477 *R/yuen1.R
 15b923bde8ddc7518de001c1de4f3513 *R/yuenbt.R
 a7499863904f19e99805bc534b8c2f47 *R/yuend.R
-de77ec7e0cbf3d1cd2782a31789f485f *build/vignette.rds
+124174b25150bf45f1a63cdee6cfcc23 *build/vignette.rds
 1b20c44fce93f8ef5be35e9edd0625ca *data/Leerkes.rda
 b41a164d9f55ead84f9fb0ee10a2e7bf *data/Pygmalion.rda
 9bf49bb81d8fea01ca8c5b0c63fe3a87 *data/WineTasting.rda
@@ -169,11 +169,11 @@ be8b753065aaff87842176e98474b90c *data/hangover.rda
 3371e8dc043c11a8331feee73d347989 *data/swimming.rda
 0719354b1d140023ed162daf4f9888bd *data/viagra.rda
 3140ef57753b0dd0c5abdc0b9ad5b3b6 *inst/CITATION
-24b48bf7e4a8c31eeb3a8988eb02b8bf *inst/NEWS.Rd
+87312123094b20d2bed9c57a964df62f *inst/NEWS.Rd
 4e4e59bb75337807d8e098cd31a99b07 *inst/NEWSRd2txt.R
-b5de178b0b033eb71f674730962690b8 *inst/doc/WRS2.R
-4aa33f4802f972ea5cd711745a85f358 *inst/doc/WRS2.Rnw
-e924377760791281a7522b9833f029a8 *inst/doc/WRS2.pdf
+a9b1486ad84f70d9da7304e15a60e303 *inst/doc/WRS2.R
+e06de0d23e4110bdadc0abf530ebd7c2 *inst/doc/WRS2.Rnw
+d3caed2b72dc275ccc9f332c5160a0f6 *inst/doc/WRS2.pdf
 dba6bc47d46bc9de1755149a13010c60 *man/Leerkes.Rd
 c067cb107ec77ba0042b223f269b8129 *man/Pygmalion.Rd
 9b34745832ee770af81257c227475a07 *man/WRS2-package.Rd
@@ -193,7 +193,7 @@ bbe3a4bb20e7488b63661fe886fd7218 *man/invisibility.Rd
 85348ecf8b90081f821baad78373cab1 *man/med1way.Rd
 9bb45f98dbee6cfd2680e1565f3b58b8 *man/med2way.Rd
 66f4b11ea1bf00202ef1dcfba88a9bbe *man/movie.Rd
-4fd42d6bf9f4802353f69e1336cf4983 *man/pbcor.Rd
+bcbf35d802b466a518133b183363b1fe *man/pbcor.Rd
 96b0ed7c71d04dc308cbc310d0b91a4f *man/picture.Rd
 37a1e8521572f4e3ea2e870bb37f56e1 *man/qanova.Rd
 9d44fb98d6553229d2e53792bddca96a *man/rmanova.Rd
@@ -210,5 +210,5 @@ ad213cb591b0c0493aa7a3d981d162df *man/t3way.Rd
 f38a7a8ab3fd38641e9defc78b679c0b *man/viagra.Rd
 60fc681e9a642d22226bc8220b0581c7 *man/yuen.Rd
 22999461a354301fc48851c1ed4fba46 *man/yuend.Rd
-4aa33f4802f972ea5cd711745a85f358 *vignettes/WRS2.Rnw
+e06de0d23e4110bdadc0abf530ebd7c2 *vignettes/WRS2.Rnw
 66c39b5de34dc893d2c1d6f957e7fb17 *vignettes/WRS2.bib
