@@ -11,7 +11,7 @@ Test the hypothesis of equal trimmed means using a percentile t bootstrap method
 }
 \usage{
 t1waybt(formula, data, tr = 0.2, nboot = 599)
-mcppb20(formula, data, tr = 0.2, nboot = 599, crit = NA)
+mcppb20(formula, data, tr = 0.2, nboot = 599)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -27,9 +27,7 @@ trim level for the mean.
   \item{nboot}{
 number of bootstrap samples. 
 }
-  \item{crit}{
-critical significance value.
-}
+
 }
 
 \value{

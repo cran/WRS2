@@ -5,7 +5,7 @@
 \description{
 In a study on the effect of consuming alcohol, hangover symptoms were measured for two independent groups, with each subject consuming alcohol and being measured on three different occasions. One group consisted of sons of alcoholics and the other was a control group.
 }
-\usage{chile}
+\usage{hangover}
 \format{ 
   A data frame with 4 variables and 120 observations:
   \describe{

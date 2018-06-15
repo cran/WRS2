@@ -134,7 +134,8 @@ pbad2way<-function(formula, data, est = "mom", nboot = 599, pro.dis = FALSE){
   if(pro.dis)dv=pdis(bconAB,MM=MM)
   sig.levelAB<-1-sum(dv[bplus]>=dv[1:nboot])/nboot
   
-  result <- list(Qa = NA, A.p.value=sig.levelA, Qb=NA, B.p.value=sig.levelB, Qab=NA, AB.p.value=sig.levelAB, call = cl, varnames = colnames(mf))
+  result <- list(Qa = NA, A.p.value=sig.levelA, Qb=NA, B.p.value=sig.levelB, Qab=NA, AB.p.value=sig.levelAB, 
+                 call = cl, varnames = colnames(mf), dim = c(J,K))
   class(result) <- c("t2way")
   result
 }

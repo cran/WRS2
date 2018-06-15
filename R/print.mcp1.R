@@ -12,7 +12,7 @@ function(x,...)
   
   if (ncol(df) > 6) {
     if (colnames(df)[7] == "crit") {
-      sig <- ifelse(x$comp[,6] > x$comp[,7], TRUE, FALSE)
+      sig <- ifelse(abs(x$comp[,6]) > x$comp[,7], TRUE, FALSE)
       df <- round(df, 5)
       df <- data.frame(df, sig)
       colnames(df)[6] <- "test"

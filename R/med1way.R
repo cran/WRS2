@@ -10,7 +10,7 @@ function(formula, data, iter = 1000) {
   
   alpha <- 0.05
   crit <- NA
-  SEED <- FALSE
+  SEED <- TRUE
   x <- split(model.extract(mf, "response"), mf[,2])   
   
   grp <- 1:length(x)      

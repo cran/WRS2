@@ -6,10 +6,10 @@
 \title{A heteroscedastic one-way ANOVA for trimmed means.
 }
 \description{
-The \code{t1way} function computes a one-way ANOVA for the medians. Homoscedasticity assumption not required. It uses a generalization of Welch's method. Corresponding post hoc tests can be performed using \code{lincon}.
+The \code{t1way} function computes a one-way ANOVA on trimmed means. Homoscedasticity assumption not required. It uses a generalization of Welch's method. Corresponding post hoc tests can be performed using \code{lincon}.
 }
 \usage{
-t1way(formula, data, tr = 0.2, nboot = 100)
+t1way(formula, data, tr = 0.2)
 lincon(formula, data, tr = 0.2)
 }
 \arguments{
@@ -22,11 +22,8 @@ an optional data frame for the input data.
   \item{tr}{
 trim level for the mean.
 }
-  \item{nboot}{
-number of bootstrap samples.
 }
 
-}
 \details{
 In the post hoc computations, confidence intervals are adjusted to control FWE, but p-values are not adjusted to control FWE. 
 }

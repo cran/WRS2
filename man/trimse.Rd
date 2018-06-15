@@ -5,6 +5,9 @@
 \alias{msmedse}
 \alias{mest}
 \alias{mestse}
+\alias{winvar}
+\alias{onestep}
+\alias{mom}
 
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Robust location measures and their standard errors (se).
@@ -12,15 +15,19 @@
 \description{
 The following functions for estimating robust location measures and their standard errors are provided: \code{winmean} 
 for the Winsorized mean, \code{winse} for its se, \code{trimse} for the trimmend mean se, \code{msmedse} for the median se, 
-\code{mest} for the M-estimator with se in \code{mestse}. 
+\code{mest} for the M-estimator with se in \code{mestse}. The functions \code{onestep} and \code{mom} compute the one-step and 
+modified one-step (MOM) M-estimator. The Winsorized variance is implemented in \code{winvar}. 
 }
 \usage{
 winmean(x, tr = 0.2, na.rm = FALSE)
+winvar(x, tr = 0.2, na.rm = FALSE, STAND = NULL)
 winse(x, tr = 0.2)
 trimse(x, tr = 0.2, na.rm = FALSE)
 msmedse(x, sewarn = TRUE)
 mest(x, bend = 1.28, na.rm = FALSE)
 mestse(x, bend = 1.28)
+onestep(x, bend = 1.28, na.rm = FALSE, MED = TRUE)
+mom(x, bend = 2.24, na.rm = TRUE)
 }
 \arguments{
   \item{x}{
@@ -37,6 +44,12 @@ a logical value indicating whether warnings for ties should be printed.
 }
 \item{bend}{
 bending constant for M-estimator.
+}
+\item{MED}{
+if \code{TRUE}, median is used as initial estimate.
+}
+\item{STAND}{
+no functionality, kept for WRS compatibility purposes.
 }
 }
 
@@ -63,10 +76,13 @@ mean(self, 0.1)     ## .10 trimmed mean
 trimse(self, 0.1)   ## se trimmed mean
 winmean(self, 0.1)  ## Winsorized mean (.10 Winsorizing amount)
 winse(self, 0.1)    ## se Winsorized mean
+winvar(self, 0.1)   ## Winsorized variance
 median(self)        ## median
 msmedse(self)       ## se median
 mest(self)          ## Huber M-estimator
-mestse(self) 
+mestse(self)        
+onestep(self)       ## one-step M-estimator
+mom(self)           ## modified one-step M-estimator
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

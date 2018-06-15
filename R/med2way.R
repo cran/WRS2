@@ -83,7 +83,8 @@ med2way <- function(formula, data){
   dfinter<-(J-1)*(K-1)
   sig.AB<-1-pchisq(Vab,dfinter)
   #list(test.A=Va,p.val.A=sig.A,test.B=Vb,p.val.B=sig.B,test.AB=Vab,p.val.AB=sig.AB)
-  result <- list(Qa=Va, A.p.value=sig.A, Qb=Vb, B.p.value=sig.B, Qab=Vab, AB.p.value=sig.AB, call = cl, varnames = colnames(mf))
+  result <- list(Qa=Va, A.p.value=sig.A, Qb=Vb, B.p.value=sig.B, Qab=Vab, AB.p.value=sig.AB, call = cl, 
+                 varnames = colnames(mf), dim = c(J,K))
   class(result) <- c("t2way")
   result
 }

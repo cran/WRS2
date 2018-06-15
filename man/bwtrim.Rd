@@ -8,8 +8,7 @@
 \title{A robust two-way mixed ANOVA using trimmed means.
 }
 \description{
-The \code{bwtrim} function computes a two-way between-within subjects ANOVA on the trimmed means. It allows for one between subjects variable and one within subjects variable. The functions \code{sppba}, \code{sppbb}, and \code{sppbi} compute the main fixed effect, the main 
-within-subjects effect, and the interaction effect only, respectively, using bootstrap. For these 3 functions the user can choose 
+The \code{bwtrim} function computes a two-way between-within subjects ANOVA on the trimmed means. It is designed for one between-subjects variable and one within-subjects variable. The functions \code{sppba}, \code{sppbb}, and \code{sppbi} compute the main fixed effect, the main within-subjects effect, and the interaction effect only, respectively, using bootstrap. For these 3 functions the user can choose 
 an M-estimator for group comparisons. 
 }
 \usage{
@@ -48,21 +47,22 @@ if \code{TRUE} the depths of the points in the bootstrap cloud are based on Maha
 }
 
 \details{
-The \code{tsplit} function is doing exactly the same as \code{bwtrim}. It is kept in the package in order to be consistent with 
-older versions of the Wilcox (2012) book. 
-
-For \code{sppba},  \code{sppbb}, and \code{sppbi} the analysis is done based on all pairs of difference scores. The null hypothesis is that all such differences have a typical value of zero. In the formula interface it is required to provide full model. 
+The \code{tsplit} function is doing exactly the same thing as \code{bwtrim}. It is kept in the package in order to be consistent with older versions of the Wilcox (2012) book. 
+For \code{sppba}, \code{sppbb}, and \code{sppbi} the analysis is carried out on the basis of all pairs of difference scores. The null hypothesis is that all such differences have a robust location value of zero. In the formula interface it is required to specify full model. 
 }
 
 \value{
-\code{bwtrim} returns an object of class \code{"t2way"} containing:
+\code{bwtrim} returns an object of class \code{"bwtrim"} containing:
 
 \item{Qa}{first main effect}
 \item{A.p.value}{p-value first main effect}
+\item{A.df}{df F-distribution first main effect}
 \item{Qb}{second main effect}
 \item{B.p.value}{p-value second main effect}
+\item{B.df}{df F-distribution second main effect}
 \item{Qab}{interaction effect}
 \item{AB.p.value}{p-value interaction effect}
+\item{AB.df}{df F-distribution interaction}
 \item{call}{function call}
 \item{varnames}{variable names}
 
@@ -72,7 +72,7 @@ For \code{sppba},  \code{sppbb}, and \code{sppbi} the analysis is done based on 
 \item{p.value}{p-value}
 }
 \references{
-Wilcox, R. (2012). Introduction to Robust Estimation and Hypothesis Testing (3rd ed.). Elsevier.
+Wilcox, R. (2017). Introduction to Robust Estimation and Hypothesis Testing (4th ed.). Elsevier.
 }
 \seealso{
 \code{\link{t2way}} 

@@ -5,7 +5,7 @@
 \title{ A heteroscedastic one-way repeated measures bootstrap ANOVA for trimmed means.
 }
 \description{
-The \code{rmanova} function computes a bootstrap version of the one-way repeated measures ANOVA for the trimmed means. Homoscedasticity assumption not required. Corresponding post hoc tests can be performed using \code{pairdepb}.   
+The \code{rmanovab} function computes a bootstrap version of the one-way repeated measures ANOVA for the trimmed means. Homoscedasticity assumption not required. Corresponding post hoc tests can be performed using \code{pairdepb}.   
 }
 \usage{
 rmanovab(y, groups, blocks, tr = 0.2, nboot = 599)
@@ -48,10 +48,11 @@ Wilcox, R. (2012). Introduction to Robust Estimation and Hypothesis Testing (3rd
 \code{\link{rmanova}}
 }
 \examples{
-head(WineTasting)
+set.seed(123)
 rmanovab(WineTasting$Taste, WineTasting$Wine, WineTasting$Taster, nboot = 300)
 
 ## post hoc
+set.seed(123)
 pairdepb(WineTasting$Taste, WineTasting$Wine, WineTasting$Taster, nboot = 300)
 
 }

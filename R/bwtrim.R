@@ -70,8 +70,10 @@ bwtrim <- function(formula, id, data, tr = 0.2){
   cmat<-kron(cj,ck)  # Contrast matrix for factor A by B
   Qab<-johansp(cmat,tmeans,v,h,J,K)
   
-  result <- list(Qa=Qa$teststat, A.p.value=Qa$siglevel, Qb=Qb$teststat, B.p.value=Qb$siglevel, Qab=Qab$teststat, AB.p.value=Qab$siglevel, call = cl, varnames = c(depvar, fixvar, ranvar))
-  class(result) <- c("t2way")
+  result <- list(Qa=Qa$teststat, A.p.value=as.numeric(Qa$siglevel), A.df = Qa$df, Qb=Qb$teststat, B.p.value=as.numeric(Qb$siglevel), B.df = Qb$df, 
+                 Qab=Qab$teststat, AB.p.value=as.numeric(Qab$siglevel), AB.df = Qab$df,
+                 call = cl, varnames = c(depvar, fixvar, ranvar))
+  class(result) <- c("bwtrim")
   result
 }
 

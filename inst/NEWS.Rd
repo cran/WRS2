@@ -2,6 +2,41 @@
 \title{News for Package \pkg{WRS2}}
 \encoding{UTF-8}
 
+
+\section{Changes in Version 0.10-0}{
+  \itemize{
+    \item Vignette added.
+    } 
+}
+
+
+\section{Changes in Version 0.9-7}{
+  \itemize{
+    \item \code{onesampb} added.
+    \item \code{bwtrim} now reports dfs. 
+    \item \code{winvar}, \code{onestep}, \code{mom} exported.
+    \item diet dataset added. 
+    } 
+}
+
+\section{Changes in Version 0.9-5}{
+  \itemize{
+    \item \code{med2way} now reports df.
+    } 
+}
+
+\section{Changes in Version 0.9-4}{
+  \itemize{
+    \item Label bugfix in \code{lincon}.
+    } 
+}
+
+\section{Changes in Version 0.9-3}{
+  \itemize{
+    \item Reports error in \code{t1way} if Winsorized variance becomes 0. 
+    } 
+}
+
 \section{Changes in Version 0.9-2}{
   \itemize{
     \item Warnings in vignette removed.

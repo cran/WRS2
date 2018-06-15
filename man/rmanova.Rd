@@ -45,7 +45,7 @@ trim level for the mean.
 Wilcox, R. (2012). Introduction to Robust Estimation and Hypothesis Testing (3rd ed.). Elsevier.
 }
 \seealso{
-\code{\link{med1way}}, \code{\link{t1way}}
+\code{\link{rmanovab}}, \code{\link{med1way}}, \code{\link{t1way}}
 }
 \examples{
 head(WineTasting)

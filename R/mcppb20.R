@@ -1,4 +1,4 @@
-mcppb20 <- function(formula, data, tr = 0.2, nboot = 599, crit = NA){
+mcppb20 <- function(formula, data, tr = 0.2, nboot = 599){
   #
  
   if (missing(data)) {
@@ -14,6 +14,7 @@ mcppb20 <- function(formula, data, tr = 0.2, nboot = 599, crit = NA){
   grp=NA
   WIN=FALSE
   win=.1
+  crit = NA
   
   con<-as.matrix(con)
   if(is.matrix(x)){

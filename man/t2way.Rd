@@ -40,8 +40,8 @@ If \code{FALSE}, Mahalanobis distances are used; if \code{TRUE} projection dista
 }
 }
 \details{
-The \code{pbad2way} function returns p-values only. If it happens that the variance-covariance matrix in the Mahalanobis distance computation 
-is singular, it is suggested to use the projection distances by setting \code{pro.dis = TRUE}.  
+\code{t2way} does not report any degrees of freedom since an adjusted critical value is used. 
+\code{pbad2way} returns p-values only; if it happens that the variance-covariance matrix in the Mahalanobis distance computation is singular, it is suggested to use the projection distances by setting \code{pro.dis = TRUE}.  
 }
 \value{
 The functions \code{t2way} and \code{pbad2way} return an object of class \code{t2way} containing:
@@ -54,6 +54,7 @@ The functions \code{t2way} and \code{pbad2way} return an object of class \code{t
 \item{AB.p.value}{p-value interaction effect}
 \item{call}{function call}
 \item{varnames}{variable names}
+\item{dim}{design dimensions}
 
 The functions \code{mcp2atm} and \code{mcp2a} return an object of class \code{mcp} containing:
 
@@ -64,7 +65,7 @@ The functions \code{mcp2atm} and \code{mcp2a} return an object of class \code{mc
 Wilcox, R. (2012). Introduction to Robust Estimation and Hypothesis Testing (3rd ed.). Elsevier.
 }
 \seealso{
-\code{\link{t1way}}, \code{\link{med1way}} 
+\code{\link{t1way}}, \code{\link{med1way}}, \code{\link{t2way}} 
 }
 \examples{
 ## 2-way ANOVA on trimmed means

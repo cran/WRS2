@@ -22,6 +22,7 @@ lincon <- function(formula, data, tr = 0.2){
   if(alpha!= .05 && alpha!=.01)flag<-F
   if(is.matrix(x))x<-listm(x)
   if(!is.list(x))stop("Data must be stored in a matrix or in list mode.")
+  
   con<-as.matrix(con)
   J<-length(x)
   sam=NA
@@ -33,8 +34,7 @@ lincon <- function(formula, data, tr = 0.2){
     val<-x[[j]]
     x[[j]]<-val[xx]  # Remove missing values
     sam[j]=length(x[[j]])
-    h[j]<-length(x[[j]])-2*floor(tr*length(x[[j]]))
-    # h is the number of observations in the jth group after trimming.
+    h[j]<-length(x[[j]])-2*floor(tr*length(x[[j]])) # h is the number of observations in the jth group after trimming.
     w[j]<-((length(x[[j]])-1)*winvar(x[[j]],tr))/(h[j]*(h[j]-1))
     xbar[j]<-mean(x[[j]],tr)
   }
@@ -42,8 +42,7 @@ lincon <- function(formula, data, tr = 0.2){
     CC<-(J^2-J)/2
     if(CC>28)print("For faster execution time but less power, use kbcon")
     psihat<-matrix(0,CC,6)
-    dimnames(psihat)<-list(NULL,c("Group","Group","psihat","ci.lower","ci.upper",
-                                  "p.value"))
+    dimnames(psihat)<-list(NULL,c("Group","Group","psihat","ci.lower","ci.upper","p.value"))
     test<-matrix(NA,CC,6)
     dimnames(test)<-list(NULL,c("Group","Group","test","crit","se","df"))
     jcom<-0
@@ -105,7 +104,8 @@ lincon <- function(formula, data, tr = 0.2){
       psihat[d,5]<-2*(1-pt(abs(test[d,2]),df))
     }
   }
-  fnames <- as.character(unique(mf[,2]))
+  #fnames <- as.character(unique(mf[,2]))
+  fnames <- names(x)
   result <- list(comp = psihat, fnames = fnames, call = cl)
   class(result) <- "mcp1"
   result
