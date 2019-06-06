@@ -22,8 +22,7 @@ Weight loss is studied for three different types of diets.
 Original data taken from \url{https://www.sheffield.ac.uk/polopoly_fs/1.570199!/file/stcp-Rdataset-Diet.csv}, slightly modified.
 }
 \references{
-Couturier, D. L., Nicholls, R., and Fernandes, M. (2018). ANOVA with R: analysis of the diet dataset. Retrieved from 
-\url{https://bioinformatics-core-shared-training.github.io/linear-models-r/ANOVA.html#section_1:_importation_and_descriptive_analysis}
+Couturier, D. L., Nicholls, R., and Fernandes, M. (2018). ANOVA with R: analysis of the diet dataset. Retrieved online. 
 }
 
 \examples{

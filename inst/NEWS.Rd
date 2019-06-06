@@ -3,6 +3,15 @@
 \encoding{UTF-8}
 
 
+\section{Changes in Version 1.0-0}{
+  \itemize{
+    \item Vignette updated.
+    \item Effect size added to yuen(). 
+    \item Hochberg p-value correction added to lincon(). 
+    \item Alpha level argument added in onesampb().
+    } 
+}
+
 \section{Changes in Version 0.10-0}{
   \itemize{
     \item Vignette added.

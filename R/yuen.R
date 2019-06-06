@@ -42,7 +42,9 @@ yuen <- function(formula, data, tr = 0.2){
   test<-abs(dif/sqrt(q1+q2))
   yuen<-2*(1-pt(test,df))
   
-  result <- list(test = test, conf.int = c(low, up), p.value = yuen, df = df, diff = dif, call = cl)
+  es=abs(yuenv2(x,y,tr=tr)$Effect.Size)
+  
+  result <- list(test = test, conf.int = c(low, up), p.value = yuen, df = df, diff = dif, effsize = es, call = cl)
   class(result) <- "yuen"
   result
 }

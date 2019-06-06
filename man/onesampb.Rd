@@ -6,7 +6,7 @@
 Tests whether a robust location measure (median, Huber Psi) differs from a null value and reports a 95\% confidence interval based on percentile bootstrap. 
 }
 \usage{
-onesampb(x, est = "onestep", nboot = 2000, nv = 0)
+onesampb(x, est = "onestep", nboot = 2000, nv = 0, alpha = 0.05)
 }
 \arguments{
   \item{x}{
@@ -20,6 +20,9 @@ number of bootstrap samples.
 }
  \item{nv}{
 value under H0. 
+ }
+  \item{alpha}{
+alpha level. 
  }
 }
 \value{

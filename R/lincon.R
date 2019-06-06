@@ -104,6 +104,9 @@ lincon <- function(formula, data, tr = 0.2){
       psihat[d,5]<-2*(1-pt(abs(test[d,2]),df))
     }
   }
+  
+  psihat[, 6] <- p.adjust(psihat[,6], method = 'hochberg')
+  
   #fnames <- as.character(unique(mf[,2]))
   fnames <- names(x)
   result <- list(comp = psihat, fnames = fnames, call = cl)

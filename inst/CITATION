@@ -3,15 +3,20 @@ year <- sub("-.*", "", meta$Date)
 vers <- meta$Version
 note <- sprintf("R package version %s", meta$Version)
 
-# Package Citation
-citEntry(header = paste0("\n", paste0(rep("#", getOption("width")), collapse=""), "\nThe current Package Version:\n"),
-         entry  = "MANUAL",
-         title  = "{WRS2: Wilcox robust estimation and testing}",
-         author = c(person("Patrick", "Mair"), person("Rand", "Wilcox")),
-         year   = year,
-         note   = vers,
-         textVersion = paste0("Mair, P., & Wilcox, R (",
-                              year,
-                              "). WRS2: Wilcox robust estimation and testing. ")
-)
+PM  <- person("Patrick", "Mair")
+RW  <- person("Rand", "Wilcox")
 
+citEntry(
+  header  = paste0("\n", paste0(rep("#", getOption("width")-1L), collapse=""), "\nThe main WRS2 article:\n"),
+  entry   = "ARTICLE",
+  title   = "{Robust Statistical Methods in R Using the WRS2 Package}",
+  author  = c(PM, RW),
+  year    = 2019,
+  journal = "{Behavior Research Methods}",
+  note  = "{Forthcoming}",
+  textVersion = paste0(
+    "Mair, P., & Wilcox, R. R. (2019). ",
+    "Robust Statistical Methods in R Using the WRS2 Package",
+    "Behavior Research Methods, Forthcoming"
+  )
+)

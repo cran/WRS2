@@ -26,27 +26,15 @@
 
 %% an abstract and keywords
 \Abstract{
-This vignette introduces the \proglang \proglang{R} package \pkg{WRS2} that implements various robust statistical methods. 
-It starts with introducing robust location, dispersion, and correlation measures. 
-The location and dispersion measures are then used in robust variants of independent and dependent samples $t$-tests and ANOVA, 
-including between-within subject designs and quantile ANOVA. Further, robust ANCOVA as well as robust mediation models are introduced. 
+This vignette is a (slightly) modified version of \citet{Mair+Wilcox:2019}, published in Behavior Research Methods. 
+
+It introduces the R package WRS2 that implements various robust statistical methods. It elaborates on the basics of robust statistics by introducing robust location, dispersion, and correlation measures. The location and dispersion measures are then used in robust variants of independent and dependent samples $t$-tests and ANOVA, including between-within subject designs and quantile ANOVA. Further, robust ANCOVA as well as robust mediation models are introduced. The paper targets applied researchers; it is therefore kept rather non-technical and written in a tutorial style. Special emphasis is placed on applications in the social and behavioral sciences and illustrations of how to perform corresponding robust analyses in R. The R code for reproducing the results in the paper is given in the supplementary materials.
 }
 
 \Keywords{robust statistics, robust location measures, robust ANOVA, robust ANCOVA, robust mediation, robust correlation}
 \Plainkeywords{robust statistics, robust location measures, robust ANOVA, robust ANCOVA, robust mediation, robust correlation} 
 
-%% publication information
-%% NOTE: This needs to filled out ONLY IF THE PAPER WAS ACCEPTED.
-%% If it was not (yet) accepted, leave them commented.
-%% \Volume{13}
-%% \Issue{9}
-%% \Month{September}
-%% \Year{2004}
-%% \Submitdate{2004-09-29}
-%% \Acceptdate{2004-09-29}
 
-%% The address of (at least) one author should be given
-%% in the following format:
 \Address{
   Patrick Mair\\
   Department of Psychology\\
@@ -80,54 +68,38 @@ render_sweave()
 
 \section{Introduction}
 Classic inferential methods based on means (e.g., the ANOVA $F$-test) assume normality and homoscedasticity (equal variances).
-A fundamental issue is whether violating these two assumptions is a serious practical concern. Based on numerous articles summarized
-in \citet{Wilcox:2012}, the answer is an unequivocal ``yes''.
-Under general conditions they can have relatively poor power,
-they can yield inaccurate confidence intervals, and they can poorly
-characterize the extent groups differ.
-Even a small departure from normality can be a serious concern.
-Despite the central limit theorem, certain
-serious concerns persist even when
-dealing with large sample sizes.
-Least squares regression inherits all of these concerns and new
+A fundamental issue is whether violating these two assumptions is a serious practical concern. Based on numerous articles summarized 
+in \citet{Wilcox:2012}, the answer is an unequivocal ``yes''. Under general conditions they can have relatively poor power,
+they can yield inaccurate confidence intervals, and they can poorly characterize the extent groups differ. 
+Even a small departure from normality can be a serious concern. Despite the central limit theorem, certain 
+serious concerns persist even when dealing with large sample sizes. Least squares regression inherits all of these concerns and new
 concerns are introduced.
 
+A strategy for salvaging classic methods is to test assumptions. For example, test the hypothesis that groups have equal variances and
+if it fails to reject, assume homoscedasticity. However, published papers summarized in \citet{Wilcox:2012} indicate that this
+strategy is unsatisfactory. Roughly, such tests do not have enough power to detect situations where violating assumptions is a serious
+practical concern. A simple transformation of the data is another strategy that is unsatisfactory under general conditions. 
 
-A strategy for salvaging classic methods is to test assumptions.
-For example, test the hypothesis that groups have equal varainces and
-if it fails to reject, assume homoscedasticity. However,
-published papers summarized in \citet{Wilcox:2012} indicate that this
-strategy is unsatisfactory. Roughly, such tests do not have enough
-power to detect situations where violating assumptions is a serious
-practical concern. A simple transformation of the data is another
-strategy that is unsatisfactory under general conditions.
+The family of robust statistical methods offers an attractive framework for dealing with these issues. In some situations robust methods make little practical difference, but they can substantially alter our understanding of data. The only known method for determining whether this is the case is to simply use a robust method and compare to the results based on a classic technique. 
 
-The family of robust statistical methods offers an attractive framework for dealing with these issues. In some situations robust methods make
-little practical difference, but they can substantially alter our
-understanding of data. The only known method for determining whether this is the case is to simply use a robust method and compare to the results
-based on a classic technique.
+The \proglang{R} \citep{R:2015} package ecosystem gives the user many possibilities to apply robust methods. A general overview of corresponding implementations is given on the CRAN task view on robust statistics\footnote{URL: \url{http://cran.r-project.org/web/views/Robust.html}}. Here we focus on the \pkg{WRS2} package, available on CRAN, that implements methods from the original \pkg{WRS} package \citep{Wilcox+Schoenbrodt:2016}. \pkg{WRS2} is less comprehensive than \pkg{WRS} but implements the most important functionalities in a user-friendly manner (it uses data frames as basic input structures instead of lists, formula objects for model specification, basic S3 print/summary/plot methods, etc). Here we elaborate on basic data analysis strategies implemented in \pkg{WRS2} and especially relevant for the social and behavioral sciences. The article starts with simple robust measures of location, dispersion and correlation, followed by robust group comparison strategies such as $t$-tests, ANOVA, between-within subject designs, and quantile comparisons. Subsequently, we present robust ANCOVA and robust mediation strategies.
 
-The R \citep{R:2015} package ecosystem gives the user many possibilities to apply robust methods. A general overview of corresponding implementations is given on the CRAN task view on robust statistics\footnote{URL: \url{http://cran.r-project.org/web/views/Robust.html}}. Here we focus
-on the WRS2 package that implements methods from the original {WRS} package \citep{Wilcox+Schoenbrodt:2016} in a user-friendly manner. It is available on CRAN. We elaborate on basic testing scenarios especially relevant for the social and behavioral sciences and introduce these methods in an accessible way. The article starts with simple robust measures of location, dispersion and correlation, followed by robust group comparison strategies such as $t$-tests, ANOVA, between-within subject designs, and quantile comparisons. Subsequently, we present robust ANCOVA and robust mediation strategies.
-
-Note that in the text we only give a minimum of technical details, necessary to have a basic understanding of the respective method. An excellent introduction to robust methods within a psychology context is given in \citet{Field+Wilcox:2017}, more comprehensive treatments are given in \citet{Wilcox:2012}.
+Note that in the text we only give a minimum of technical details, necessary to have a basic understanding of the respective method. An excellent introduction to robust methods within a psychology context is given in \citet{Field+Wilcox:2017}, more comprehensive treatments are given in \citet{Wilcox:2012}. 
 
 
 %------------------------------------------- Location --------------------------------------------
 \section{Robust Measures of Location, Scale, and Dependence}
 \subsection{Robust Location Measures}
-A robust alternative to the arithmetic mean $\bar x$ is the
-class of \emph{trimmed means}, which contains the sample median as a special case. A trimmed mean discards a certain percentage at both ends of the distribution. For instance, a 10\% trimmed mean cuts off 10\% at the lower end and 10\% the higher end of the distribution. Let $x_1, \ldots x_{10}$ be $n = 10$ sample values, sorted in ascending order. The 10\% trimmed sample mean is
+A robust alternative to the arithmetic mean $\bar x$ is the class of \emph{trimmed means}, which contains the sample median as a special case. A trimmed mean discards a certain percentage at both ends of the distribution. For instance, a 10\% trimmed mean cuts off 10\% at the lower end and 10\% the higher end of the distribution. Let $x_1, \ldots x_{10}$ be $n = 10$ sample values, sorted in ascending order. The 10\% trimmed sample mean is
 \begin{equation}
 \label{eq:tmean}
 \bar x_t = (x_2 + x_3 + \cdots + x_8 + x_9)/8.
 \end{equation}
 That is, it excludes the lowest and the largest value and computes the arithmetic mean on the remaining values. The sample size $h$ after trimming is called effective sample size (here, $h = 8$). Note that if the trimming portion is set to $\gamma = 0.5$, the trimmed mean $\bar x_t$ results in the median $\tilde x$. An appeal of a 20\% trimmed mean is that it achieves
-nearly the same amount of power as the mean when sampling from
-a normal distribution. And when there are outliers, a 20\% trimmed mean
-can have a subtantially smaller standard error.
+nearly the same amount of power as the mean when sampling from a normal distribution. And when there are outliers, a 20\% trimmed mean can have a subtantially smaller standard error.
 
-In  \proglang{R}, a trimmed mean can be computed via the basic \code{mean} function by setting the \code{trim} argument accordingly. Let us illustrate its computation using a simple data vector taken from a self-awareness and self-evaluation study by \citet{Dana:1990}. The variable reflects the time (in sec.) persons could keep a portion of an apparatus in contact with a specified target. The 10\% trimmed mean including the standard error (see Appendix) is the following:
+In \proglang{R}, a trimmed mean can be computed via the basic \code{mean} function by setting the \code{trim} argument accordingly. Let us illustrate its computation using a simple data vector taken from a self-awareness and self-evaluation study by \citet{Dana:1990}. The variable reflects the time (in sec.) persons could keep a portion of an apparatus in contact with a specified target. Note that this variable is skewed, which is the standard for duration data. The 10\% trimmed mean including the standard error (see Appendix for details) can be computed as follows. For comparison we also report the standard arithmetic mean and its standard error.
+
 
 <<tmean>>=
 library("WRS2")
@@ -135,25 +107,21 @@ timevec <- c(77, 87, 88, 114, 151, 210, 219, 246, 253, 262, 296, 299,
              306, 376, 428, 515, 666, 1310, 2611)
 mean(timevec, 0.1)
 trimse(timevec, 0.1)
+mean(timevec)
+sd(timevec)/sqrt(length(timevec))
 @
 
 \noindent The median including standard error from WRS2 is:
 
- 
 <<median>>=
 median(timevec)
 msmedse(timevec)
 @
- 
 
-\noindent Note that in the case of ties, extant methods for estimating the standard error of the sample median can be highly inaccurate.
-This includes the method used by \code{msmedse}. Inferential methods based on a percentile bootstrap effectively deal with this issue.
+\noindent Note that in the case of ties, extant methods for estimating the standard error of the sample median can be highly inaccurate. This includes the method used by \code{msmedse}. Inferential methods based on a percentile bootstrap effectively deal with this issue, as implemented in the \code{onesampb} function. 
 
-Another robust location alternative to the mean is the \emph{Winsorized mean}. A 10\% Winsorized mean, for example, is computed as follows.
-Rather than discarding the lowest 10\% of the values, as done by the
-10\% trimmed mean, they are set equal to the
-smallest value not trimmed. In a similar manner, the largest 10\% are set
-equal to the largest value not trimmed.
+Another robust location alternative to the mean is the \emph{Winsorized mean}. A 10\% Winsorized mean, for example, is computed as follows. Rather than discarding the lowest 10\% of the values, as done by the 10\% trimmed mean, they are set equal to the
+smallest value not trimmed. In a similar manner, the largest 10\% are set equal to the largest value not trimmed.
 This process is called \emph{Winsorizing}, which in effect transforms the tails of the distribution. Instead of Eq.~(\ref{eq:tmean}), the 10\% Winsorized sample mean uses
 \begin{equation}
 \label{eq:winmean}
@@ -162,13 +130,11 @@ This process is called \emph{Winsorizing}, which in effect transforms the tails 
 Thus, it replaces the lowest and the largest values by its neighbors and computes the arithmetic mean on this new sequence
 of values. Similar to the trimmed mean, the amount of Winsorizing (i.e., the \emph{Winsorizing level} $\gamma$) has to be chosen \emph{a priori}. The \pkg{WRS2} function to compute Winsorized mean is called \code{winmean}, whereas \code{winvar} calculates the Winsorized variance.
 
- 
 <<winmean>>=
 winmean(timevec, 0.1)
 winse(timevec, 0.1)
 winvar(timevec, 0.1)
 @
- 
 
 \noindent A general family of robust location measures are so called $M$\emph{-estimators} (the ``M'' stands for ``maximum likelihood-type'') which are based on a loss function to be minimized. In the simplest case we can consider a loss function of the form $\sum_{i=1}^n (x_i - \mu)^2$. Minimization results in a standard mean estimator $\hat{\mu} = \frac{1}{n}\sum_{i=1}^n x_i$. Instead of quadratic loss we can think of a more general, differentiable distance function $\xi(\cdot)$:
 \begin{equation}
@@ -186,12 +152,10 @@ $\mu_m$ denotes the $M$-estimator. Several distance functions have been proposed
 \end{equation}
 $K$ is the \emph{bending constant} for which Huber suggested a value of $K = 1.28$. Increasing $K$ decreases sensitivity to the tails of the distribution. The estimation of $M$-estimators is performed iteratively \citep[see][for details]{Wilcox:2012} and implemented in the \code{mest} function.
 
- 
 <<mest>>=
 mest(timevec)
 mestse(timevec)
 @
- 
 
 Other $M$-estimators are the one-step estimator and the modified one-step estimator (MOM), as implemented in the functions \code{onestep} and \code{mom}.
 In effect, they empirically determine which values are outliers and
@@ -201,28 +165,41 @@ Further details on these measures including expressions for standard errors can 
 
 
 \subsection{Robust Correlation Coefficients}
-Pearson's correlation is not robust. Outliers can mask a strong
-association among the bulk of the data and even a slight
-departure from normality can render it meaningless \citep{Wilcox:2012}.
-Here we present two $M$-measures of correlation, meaning
-that they guard against the deleterious impact of outliers
-among the marginal distributions. The first is the \emph{percentage bend correlation} $\rho_{pb}$, a robust measure of the linear association between two random variables. When the underlying data are bivariate normal, $\rho_{pb}$ gives essentially the same values as Pearson's $\rho$. In general, $\rho_{pb}$ is more robust to slight changes in the data than $\rho$.
-The computation, involving a bending constant $\beta$ ($0 \leq \beta \leq 0.5$), is given in \citet[p. 491]{Wilcox:2012}. WRS2 provides the \code{pbcor} function to calculate the percentage bend correlation coefficient and to perform a one-sample test ($H_0$: $\rho_{pb} = 0$). For simultaneous inference on a correlation matrix, \code{pball} can be used. It also includes a statistic $H$ which tests the global hypothesis that all percentage bend correlations in the matrix are equal to 0 in the population.
+Pearson's correlation is not robust. Outliers can mask a strong association among the bulk of the data and even a slight
+departure from normality can render it meaningless \citep{Wilcox:2012}. Here we present two $M$-measures of correlation, meaning
+that they guard against the deleterious impact of outliers among the marginal distributions. The first is the \emph{percentage bend correlation} $\rho_{pb}$, a robust measure of the linear association between two random variables. When the underlying data are bivariate normal, $\rho_{pb}$ gives essentially the same values as Pearson's $\rho$. In general, $\rho_{pb}$ is more robust to slight changes in the data than $\rho$. The computation, involving a bending constant $\beta$ ($0 \leq \beta \leq 0.5$), is given in \citet[p. 491]{Wilcox:2012}. WRS2 provides the \code{pbcor} function to calculate the percentage bend correlation coefficient and to perform a one-sample test ($H_0$: $\rho_{pb} = 0$). For simultaneous inference on a correlation matrix, \code{pball} can be used. It also includes a statistic $H$ which tests the global hypothesis that all percentage bend correlations in the matrix are equal to 0 in the population.
 
-A second robust correlation measure is the \emph{Winsorized correlation} $\rho_w$, which requires the specification of the amount of Winsorization. The computation is simple: it uses Person's correlation formula applied on the Winsorized data. The \code{wincor} function can be used in a similar fashion as \code{pbcor}; its extension to several random variables is called \code{winall} and illustrated here using the hangover data from \citet{Wilcox:2012}. In a study on the effect of consuming alcohol, the number hangover symptoms were measured for two independent groups, with each subject consuming alcohol and being measured on three different occasions. One group consisted of sons of alcoholics and the other one was a control group. Here we are interested in the Winsorized correlations across the three time points for the participants in the alcoholic group:
+A second robust correlation measure is the \emph{Winsorized correlation} $\rho_w$, which requires the specification of the amount of Winsorization. The computation is simple: it uses Person's correlation formula applied on the Winsorized data. The \code{wincor} function can be used in a similar fashion as \code{pbcor}; its extension to several random variables is called \code{winall} and illustrated here using the hangover data from \citet[p. 452]{Wilcox:2012}. In a study on the effect of consuming alcohol, the number hangover symptoms were measured for two independent groups, with each subject consuming alcohol and being measured on three different occasions. One group consisted of sons of alcoholics and the other one was a control group. Here we are interested in the Winsorized correlations across the three time points for the participants in the alcoholic group. The corresponding data subset needs to be organized in wide format with the test occasions in separate columns.
 
- 
+
 <<wincor>>=
 library("reshape")
 hangctr <- subset(hangover, subset = group == "alcoholic")
 hangwide <- cast(hangctr, id ~ time, value = "symptoms")[,-1]
+colnames(hangwide) <- paste("Time", 1:3)
 winall(hangwide)
 @
- 
 
-\noindent In order to test for equality of two correlation coefficients, \code{twopcor} can be used for Pearson correlations and \code{twocor} for percentage bend or Winsorized correlations. As an example, using the hangover dataset we want to test whether the time 1/time 2 correlation $\rho_{pb1}$ of the control group is the same as the time1/time2 correlation $\rho_{pb2}$ of the alcoholic group.
 
- 
+
+\noindent Figure \ref{fig:gscatter} shows the scatterplot matrix with the Pearson correlations in the upper triangle panels. These correlations clearly differ from the robust correlations reported above.
+
+<<cor-plot, eval=FALSE, echo = FALSE, message=FALSE, warning=FALSE>>=
+library("GGally")
+ggpairs(hangwide)
+@
+\begin{figure}
+\begin{center}
+<<cor-plot1, echo=FALSE, out.width='0.7\\textwidth'>>=
+<<cor-plot>>
+@
+\end{center}
+\caption{\label{fig:gscatter} Scatterplot matrix for hangover data. The upper triangle panels report the Pearson correlations.}
+\end{figure}
+
+In order to test for equality of two correlation coefficients, \code{twopcor} can be used for Pearson correlations and \code{twocor} for percentage bend or Winsorized correlations. As an example, using the hangover dataset we want to test whether the time 1/time 2 correlation $\rho_{pb1}$ of the control group is the same as the time1/time2 correlation $\rho_{pb2}$ of the alcoholic group.
+
+
 <<twocor, cache=TRUE>>=
 ct1 <- subset(hangover, subset = (group == "control" & time == 1))$symp
 ct2 <- subset(hangover, subset = (group == "control" & time == 2))$symp
@@ -231,16 +208,13 @@ at2 <- subset(hangover, subset = (group == "alcoholic" & time == 2))$symp
 set.seed(123)
 twocor(ct1, ct2, at1, at2, corfun = "pbcor", beta = 0.15)
 @
- 
-
-\noindent Note that the confidence interval (CI) for the correlation differences is bootstrapped. Other types of robust correlation measures are the well-known Kendall's $\tau$ and Spearman's $\rho$ as implemented in the base  \proglang{R} \code{cor} function.
 
 
+\noindent Note that the confidence interval (CI) for the correlation differences is bootstrapped. Other types of robust correlation measures are the well-known Kendall's $\tau$ and Spearman's $\rho$ as implemented in the base \proglang{R} \code{cor} function.
 
 
 
-% ------------------------ 2-sample ---------------------
-\bigskip
+%--------------------- 2-sample indepedent ---------------------
 \section{Robust Two-Sample Testing Strategies}
 \label{sec:ranova}
 
@@ -251,43 +225,35 @@ twocor(ct1, ct2, at1, at2, corfun = "pbcor", beta = 0.15)
 \label{eq:yuen}
 T_y = \frac{\bar X_{t1} - \bar X_{t2}}{\sqrt{d_1+d_2}},
 \end{equation}
-where $d_j$ is an estimate of the squared standard error for $\bar X_{tj}$,
-which is based in part on the Winsorized data.
-Under the null ($H_0$: $\mu_{t1} = \mu_{t2}$), the test statistic follows,
-approximately, a $t$-distribution\footnote{It is not suggested to use this test statistic for a $\gamma = 0.5$ trimming level (which would result in median comparisons) since the standard errors become highly inaccurate.} with $\nu_y$ degrees of freedom (df). Formal expressions for the standard error in Eq.~(\ref{eq:yuen}) and the df can be found in the Appendix. Note that if no trimming is involved, this method reduces to Welch's classical $t$-test with unequal variances \citep{Welch:1938}, as implemented in \code{t.test}.
+where $d_j$ is an estimate of the squared standard error for $\bar X_{tj}$, which is based in part on the Winsorized data.
+Under the null ($H_0$: $\mu_{t1} = \mu_{t2}$), the test statistic follows, approximately, a $t$-distribution\footnote{It is not suggested to use this test statistic for a $\gamma = 0.5$ trimming level (which would result in median comparisons) since the standard errors become highly inaccurate.} with $\nu_y$ degrees of freedom (df). Formal expressions for the standard error in Eq.~(\ref{eq:yuen}) and the df can be found in the Appendix. Note that if no trimming is involved, this method reduces to Welch's classical $t$-test with unequal variances \citep{Welch:1938}, as implemented in \code{t.test}.
 
-Yuen's test is implemented in the \code{yuen} function. There is also a bootstrap version (see \code{yuenbt}) which is suggested to be used when the amount of trimming is close to zero.
-The example dataset, included in the WRS2 package, consists of various soccer team statistics in five different European leagues, collected at the end of the 2008/2009 season. Here we focus on the Spanish Primera Division (20 teams) and the German Bundesliga (18 teams). We are interested in comparing the trimmed means of goals scored per game across these two leagues. The group-wise boxplots and beanplots in Figure~\ref{fig:soccerplot} visualize potential differences in the distributions.
-Spain has a considerably right-skewed goal distribution involving three outliers (Barcelona, Real Madrid, Atletico Madrid). In the German league, the distribution looks fairly symmetric.
+Yuen's test is implemented in the \code{yuen} function. There is also a bootstrap version (see \code{yuenbt}) which is suggested to be used when the amount of trimming is close to zero. The example dataset, included in the \pkg{WRS2} package, consists of various soccer team statistics in five different European leagues, collected at the end of the 2008/2009 season. Here we focus on the Spanish Primera Divisi\'{o}n (20 teams) and the German Bundesliga (18 teams). The data are organized in an object called \code{SpainGer} in which the goals scored per game are in the (metric) variable called \code{GoalsGame}, and the variable \code{League} is a factor (nominal) indicating whether the team was from the Spanish Primera Divisi\'{o}n or the German Bundesliga.
 
+We are interested in comparing the trimmed means of goals scored per game across these two leagues. The group-wise boxplots with superimposed 1D scatterplots (points jittered) in Figure~\ref{fig:soccerplot} visualize potential differences in the distributions. Spain has a considerably right-skewed goal distribution involving three outliers (Barcelona, Real Madrid, Atletico Madrid). In the German league, the distribution looks fairly symmetric.
 
-<<soccer-plot, eval=FALSE, echo = FALSE, purl=FALSE>>=
-library("beanplot")
+<<soccer-plot, eval=FALSE, echo = FALSE, message=FALSE>>=
+library("ggplot2")
 SpainGer <- subset(eurosoccer, League == "Spain" | League == "Germany")
 SpainGer <- droplevels(SpainGer)
-op <- par(mfrow = c(1,2))
-boxplot(GoalsGame ~ League, data = SpainGer, main = "Boxplot Goals Scored per Game")
-beanplot(GoalsGame ~ League, data = SpainGer, log = "", main = "Beanplot Goals Scored per Game",
-         col = "coral")
-par(op)
+ggplot(SpainGer, aes(x = League, y = GoalsGame)) + 
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(position = position_jitter(0.1))
 @
 \begin{figure}
 \begin{center}
-<<soccer-plot1, echo=FALSE, fig.height = 6, fig.width = 12, dev='postscript'>>=
+<<soccer-plot1, echo=FALSE, out.width='0.7\\textwidth'>>=
 <<soccer-plot>>
 @
 \end{center}
-\caption{\label{fig:soccerplot} Left panel: boxplots for scored goals per game (Spanish vs. German league). The
-red dots correspond to the 20\% trimmed means. Right panel: beanplots for the same setting.}
+\caption{\label{fig:soccerplot} Boxplots for scored goals per game (Spanish vs. German league) with superimposed 1D jittered scatterplot.}
 \end{figure}
 
 Yuen's test based on the trimmed means with default trimming level of $\gamma = 0.2$ can be computed as follows
 
- 
 <<yuen>>=
 yuen(GoalsGame ~ League, data = SpainGer)
 @
- 
 
 \noindent The result suggests that there are no significant differences in the trimmed means across the two leagues.
 
@@ -299,13 +265,11 @@ In terms of effect size, \citet{Algina:2005} propose a robust version of Cohen's
 The formal expression for $S^{\ast}_w$ as well as a modification for unequal variances can be found in the Appendix.
 In WRS2 this effect size (equal variances assumed) can be computed as follows:
 
- 
 <<yuenakp>>=
 akp.effect(GoalsGame ~ League, data = SpainGer)
 @
- 
 
-The same rules of thumb as for Cohen's $d$ can be used; that is, $|\delta_t| = 0.2$, 0.5, and 0.8 correspond to small, medium, and large effects.
+The same rules of thumb as for Cohen's $d$ can be used; that is, $|\delta_t| = 0.2$, 0.5, and 0.8 correspond to small, medium, and large effects. However, we would like to point out that these rules should not be used blindly. As \citet[p. 79]{Cohen:1988} puts it, if one finds that, ``what is here defined as large is too small (or too large) to meet what his area of behavioral science would consider appropriate standards is urged to make more suitable operational definitions''. 
 
 \citet{Wilcox+Tian:2011} proposed an \emph{explanatory measure of effect size} $\xi$ which does not require equal variances and can be generalized to multiple group settings. A simple way to introduce this measure is to use the concept of
 explanatory power from regression with response $Y$ and fitted values $\hat Y$:
@@ -313,60 +277,50 @@ explanatory power from regression with response $Y$ and fitted values $\hat Y$:
 \label{eq:xi}
 \xi^2 = \frac{\sigma^2(\hat Y)}{\sigma^2(Y)},
 \end{equation}
-where $\sigma^2(Y)$ is some measure of variation associated with $Y$.
-When $\sigma^2(Y)$ is taken to be the usual variance, $\xi^2=\rho^2$, where
-$\rho$ is Pearson's correlation.
+where $\sigma^2(Y)$ is some measure of variation associated with $Y$. When $\sigma^2(Y)$ is taken to be the usual variance, $\xi^2=\rho^2$, where $\rho$ is Pearson's correlation.
 
 In a $t$-test setting with equal samples sizes, $\sigma^2(Y)$ can be simply estimated by the sample variance based on the $2n$ pooled observations, whereas $\sigma^2(\hat Y)$ is estimated with
 \begin{equation}
 \label{eq:sigmahat}
  (\bar X_1 - \bar X)^2 + (\bar X_2 - \bar X)^2,
 \end{equation}
-where $\bar X$ is the grand mean\footnote{For unequal sample sizes a slighly more involved estimator is used.}.
-The explanatory measure of effect size is simply $\xi = \sqrt{\xi^2}$. To make this effect size measure ``robust'', all that needs to be done is to replace the grand mean $\bar X$ and group means $\bar X_1$ and $\bar X_2$ in Eq.~(\ref{eq:sigmahat}) with a robust location measure (e.g., trimmed mean, Winsorized mean, median) in order to estimate $\sigma^2(\hat Y)$. The variance $\sigma^2(Y)$ needs to be replaced by the a corresponding robust variance estimator (e.g., Winsorized variance).
+where $\bar X$ is the grand mean\footnote{For unequal sample sizes a modified estimator is used that accounts for unbalancedness in the data.}. The explanatory measure of effect size is simply $\xi = \sqrt{\xi^2}$. To make this effect size measure ``robust'', all that needs to be done is to replace the grand mean $\bar X$ and group means $\bar X_1$ and $\bar X_2$ in Eq.~(\ref{eq:sigmahat}) with a robust location measure (e.g., trimmed mean, Winsorized mean, median) in order to estimate $\sigma^2(\hat Y)$. The variance $\sigma^2(Y)$ needs to be replaced by the corresponding robust variance estimator (e.g., Winsorized variance).
 
-In WRS2, the explanatory measure of effect size can be computed as follows:
+In \pkg{WRS2}, the explanatory measure of effect size can be computed as follows:
 
- 
 <<yueneffect>>=
 set.seed(123)
 yuen.effect.ci(GoalsGame ~ League, data = SpainGer)
 @
- 
 
-\noindent Values of $\hat{\xi} = 0.10$, 0.30, and 0.50 correspond to small, medium, and large effect sizes. The function also gives a confidence interval (CI) for $\hat{\xi}$ based on a percentile bootstrap.
-Heteroscedasticity is allowed.
+\noindent Values of $\hat{\xi} = 0.10$, 0.30, and 0.50 correspond to small, medium, and large effect sizes. The function also gives a confidence interval (CI) for $\hat{\xi}$ based on a percentile bootstrap. Varying dispersions in the response variable across the factor levels (\emph{heteroscedasticity}) are allowed.
 
 If we want to run a two-sample test on median differences or general $M$-estimator differences, the \code{pb2gen} function can be used.
 
- 
 <<pb2gen>>=
 set.seed(123)
 pb2gen(GoalsGame ~ League, data = SpainGer, est = "median")
 pb2gen(GoalsGame ~ League, data = SpainGer, est = "onestep")
 @
- 
 
-These tests simply use the differences in medians (i.e., $\tilde X_1 - \tilde X_2$) and differences in Huber's $\Psi$ estimator from Eq.~(\ref{eq:psi}) (i.e., $\Psi(X_1) - \Psi(X_2)$), respectively, as test statistics. CIs and $p$-values are determined through bootstrap. Currently, when
-using the median and there are tied values, this is the only known method
+These tests simply use the differences in medians (i.e., $\tilde X_1 - \tilde X_2$) and differences in Huber's $\Psi$ estimator from Eq.~(\ref{eq:psi}) (i.e., $\Psi(X_1) - \Psi(X_2)$), respectively, as test statistics. CIs and $p$-values are determined through bootstrap. Currently, when using the median and there are tied values, this is the only known method
 that performs well in simulations \citep{Wilcox:2012}.
 
-Another function implemented in WRS2 is \code{qcomhd} for general quantile comparison across two groups \citep{Wilcox+Erceg+Clark:2014} using the quantile estimator proposed by \citet{Harrell+Davis:1982}. The null hypothesis is simply $H_0$: $\theta_{q1} = \theta_{q2}$, where  $\theta_{q1}$ and $\theta_{q2}$ are the $q$-th quantiles in group 1 and 2, respectively. Confidence intervals for $\hat{\theta}_{q1} - \hat{\theta}_{q2}$ and $p$-values are determined via a percentile bootstrap. This test provides a
-more detailed understanding of where and how distributions differ. Let us apply this approach on the same data as above. We keep the default setting which tests for differences in the 0.1, 0.25, 0.5, 0.75, and 0.95 quantiles.
+Another function implemented in \pkg{WRS2} is \code{qcomhd} for general quantile comparison across two groups \citep{Wilcox+Erceg+Clark:2014} using the quantile estimator proposed by \citet{Harrell+Davis:1982}. The null hypothesis is simply $H_0$: $\theta_{q1} = \theta_{q2}$, where  $\theta_{q1}$ and $\theta_{q2}$ are the $q$-th quantiles in group 1 and 2, respectively. Confidence intervals for $\hat{\theta}_{q1} - \hat{\theta}_{q2}$ and $p$-values are determined via a percentile bootstrap. This test provides a more detailed understanding of where and how distributions differ. Let us apply this approach on the same data as above. We keep the default setting which tests for differences in the 0.1, 0.25, 0.5, 0.75, and 0.95 quantiles. Note that the sample size is slightly small to apply this test\footnote{It is suggested to have at least 20 observations in each group.}.
 
- 
-<<cache=TRUE>>=
+<<qcomhd, cache=TRUE>>=
 set.seed(123)
-fitqt <- qcomhd(GoalsGame ~ League, data = SpainGer,
+fitqt <- qcomhd(GoalsGame ~ League, data = SpainGer, 
   q = c(0.1, 0.25, 0.5, 0.75, 0.95), nboot = 500)
 fitqt
 @
- 
 
-\noindent The $p$-values are adjusted using Hochberg's method (see \code{p.crit} for the critical values the $p$-values in the last column should be compared to). Note that ties in the data are not problematic for this particular test.
+\noindent The $p$-values are adjusted using Hochberg's method\footnote{A brief explanation of Hochberg's method can be found in the Appendix.} (see \code{p.crit} for the critical values the $p$-values in the last column should be compared to). Note that ties in the data are not problematic for this particular test. Plots that illustrate the results of quantile difference tests are implemented in the \pkg{rogme} package \citep{Rousselet:2017}.
 
 
-% -------------------------------- dependent 2-sample --------------
+
+
+% --------------------- 2 dependent groups
 \subsection{Robust Tests for Two Dependent Groups}
 Yuen's trimmed mean $t$-test in Eq.~(\ref{eq:yuen}) can be generalized to paired sample settings as follows:
 \begin{equation}
@@ -376,22 +330,21 @@ T_y = \frac{\bar X_{t1} - \bar X_{t2}}{\sqrt{d_1+d_2+d_{12}}}
 Under the null ($H_0$: $\mu_{t1} = \mu_{t2}$), $T_y$ is $t$-distributed with $df = h-1$, where $h$ is the effective sample size.
 Details on the computation of this statistic can be found in the Appendix.
 
-The corresponding  \proglang{R} function is called \code{yuend} which also reports the explanatory measure of effect size.
-The dataset we use for illustration is in the {MASS} package \citep{Venables+Ripley:2002} and presents data pairs involving weights of girls before and after treatment for anorexia. We use a subset of 17 girls subject to family treatment (\code{FT}). Figure~\ref{fig:ano} presents the individual trajectories. We keep the default trimming level (20\%) and get the following test results.
+The corresponding \proglang{R} function is called \code{yuend} which also reports the explanatory measure of effect size.
+The dataset we use for illustration is in the \pkg{MASS} package \citep{Venables+Ripley:2002} and presents data pairs involving weights of girls before and after treatment for anorexia. We use a subset of 17 girls from the family treatment (\code{FT}) condition. Figure~\ref{fig:ano} presents the individual trajectories. We keep the default trimming level (20\%) and get the following test results.
 
 
-<<ano-plot, echo=FALSE, eval=FALSE, purl=FALSE>>=
+<<ano-plot, echo=FALSE, eval=FALSE, message=FALSE>>=
 library("MASS")
-library("colorspace")
 anorexiaFT <- subset(anorexia, subset = Treat == "FT")
-colpal <- c(rainbow_hcl(17))
-matplot(t(anorexiaFT[,2:3]), type = "b", cex = 0.8, main = "Weight Trajectories",
-        xaxt = "n", ylab = "Weight (lbs.)", lty = 1, col = colpal, pch = 20)
-axis(1, at = 1:2, labels = c("Prior", "Post"))
+anorexiaLong <- reshape(anorexiaFT, varying = list(2:3), direction = "long", v.names = "weight")
+anorexiaLong$time <- factor(anorexiaLong$time, labels = c("prior", "post"))
+gp <- ggplot(anorexiaLong, aes(x = time, y = weight, colour = as.factor(id), group = id))
+gp + geom_point(size = 1) + geom_line() + theme(legend.position="none") 
 @
 \begin{figure}[t]
 \begin{center}  %,
-<<ano-plot1, echo=FALSE, fig.height = 5, fig.width = 8, dev='postscript'>>=
+<<ano-plot1, echo=FALSE, out.width='0.6\\textwidth'>>=
 <<ano-plot>>
 @
 \end{center}
@@ -399,24 +352,20 @@ axis(1, at = 1:2, labels = c("Prior", "Post"))
 \end{figure}
 
 
- 
-<<yuend>>=
+<<yuend, message=FALSE>>=
 library("MASS")
 anorexiaFT <- subset(anorexia, subset = Treat == "FT")
 with(anorexiaFT, yuend(Prewt, Postwt))
 @
- 
 
 \noindent The output suggests that overall the treatment was successful. The explanatory measure of effect size, constructed according to the same principles as outlined above, suggests a large effect.
 
 Quantile comparisons for paired samples ($H_0$: $\theta_{q1} = \theta_{q2}$) can be computed using \code{Dqcomhd} \citep{Wilcox+Erceg:2012}. As the independent sample version in \code{qcomhd}, it uses the quantile estimator proposed by \citet{Harrell+Davis:1982}, and bootstrapping to determine the CI for $\hat{\theta}_{q1} - \hat{\theta}_{q2}$ and the $p$-values (corrected for multiple testing).
 
- 
 <<dqcomhd, cache=TRUE>>=
 set.seed(123)
 with(anorexiaFT, Dqcomhd(Prewt, Postwt, q = c(0.25, 0.5, 0.75)))
 @
- 
 
 \noindent We obtain significant weight decrease effects for the second and the third weight quartiles, but not for the first quartile.
 
@@ -427,55 +376,50 @@ Having two discrete variables $X$ and $Y$ (small sample space), sometimes it is 
 
 Let us look at a simple artificial example involving responses on a five-point rating scale item across two groups of participants with group sizes $n_1$ and $n_2$. The \code{binband} function compares the two distributions at each possible value (here $1, 2, \ldots, 5$) in the joint sample space.
 
- 
 <<binband>>=
 g1 <- c(2, 4, 4, 2, 2, 2, 4, 3, 2, 4, 2, 3, 2, 4, 3, 2, 2, 3, 5, 5, 2, 2)
 g2 <- c(5, 1, 4, 4, 2, 3, 3, 1, 1, 1, 1, 2, 2, 1, 1, 5, 3, 5)
 binband(g1, g2, KMS = TRUE)
 @
- 
 
 \noindent The CIs are determined using the Kulinskaya-Morgenthaler-Staudte method (\code{KMS = TRUE}). The function uses Hochberg's multiple comparison adjustment to determine critical $p$-values with the goal of controlling the probability of one or more Type I errors. The results suggest that the distributions differ significantly at $(x,y) = 1$ only ($p \leq p_{crit}$).
 
 
 
-% ------------------------ 1-way ANOVA ------------------
+
+% 
+% % ------------------------ 1-way ANOVA ------------------
 \section{One-Way Robust Testing Strategies}
 Often it is said that $F$-tests are quite robust against normality violations. As \citet[p. 37]{Field+Wilcox:2017} recommend, such statements should be banned because based on many papers published during the past fifty years, it is well established that this statement is not correct (especially when dealing with heavy-tailed distributions, unequal sample sizes, and distributions differing in skewness). In this section we present various robust one-way ANOVA strategies, followed by higher order models in the next section.
+
 
 \subsection{One-Way Trimmed Means Comparisons}
 The first robust ANOVA alternative presented here is a one-way comparison of $J$ trimmed group means ($H_0: \mu_{t1} = \mu_{t2} = \cdots = \mu_{tJ}$), allowing for heteroscedasticity. Technical details on this $F$-distributed Welch-type test statistic \citep{Welch:1951} can be found in the Appendix.
 
-In WRS2 this approach is implemented via the \code{t1way} function, here applied to the weight differences in the anorexia data from above (post-treatment weight minus pre-treatment weight). There are two different types of treatment in the data (family treatment \code{FT} and cognitive behavioral treatment \code{CBT}) as well as one control group. Figure~\ref{fig:soccerplot2} shows the corresponding boxplots and beanplots.
+In \pkg{WRS2} this approach is implemented via the \code{t1way} function, here applied to the weight differences in the anorexia data from above (post-treatment weight minus pre-treatment weight, resulting in metric variable \code{Wdiff}). There are two different types of treatment in the data (family treatment \code{FT} and cognitive behavioral treatment \code{CBT}) as well as one control group, specified in the factor \code{Treat}. Figure~\ref{fig:soccerplot2} shows the corresponding boxplots with superimposed 1D scatterplots.
 
 
-
-<<soccer2-plot, eval=FALSE, echo=FALSE, purl=FALSE>>=
+<<ano2-plot, eval=FALSE, echo=FALSE, purl=FALSE>>=
 anorexia$Wdiff <- anorexia$Postwt - anorexia$Prewt
-op <- par(mfrow = c(2,1))
-boxplot(Wdiff ~ Treat, data = anorexia, main = "Boxplot Anorexia Data")
-beanplot(Wdiff ~ Treat, data = anorexia, log = "", main = "Beanplot Anorexia Data",
-         col = "coral")
-par(op)
+ggplot(anorexia, aes(x = Treat, y = Wdiff)) + xlab("group") + ylab("weight difference") + 
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(position = position_jitter(0.1))
 @
 \begin{figure}[t]
 \begin{center}
-<<soccer2-plot1, echo=FALSE, fig.height = 10, fig.width = 12, dev='postscript'>>=
-<<soccer2-plot>>
+<<ano2-plot1, echo=FALSE, out.width='0.7\\textwidth'>>=
+<<ano2-plot>>
 @
 \end{center}
-\caption{\label{fig:soccerplot2} Top panel: Boxplots for scored goals per game across five European soccer leagues. Bottom panel: Beanplots for the same setting.}
+\caption{\label{fig:soccerplot2} Boxplots with superimposed jittered 1D scatterplots for weight differences across control and two treatment conditions.}
 \end{figure}
 
 The robust one-way ANOVA based on trimmed means (20\% trimming level) can be computed as follows:
 
- 
 <<t1way>>=
 anorexia$Wdiff <- anorexia$Postwt - anorexia$Prewt
-set.seed(123)
 t1way(Wdiff ~ Treat, data = anorexia)
 @
- 
 
 \noindent There is a significant overall effect in weight differences across the treatments. The explanatory measure of effect size $\xi$ follows the same logic as outlined in Eq.~(\ref{eq:xi}). The difference compared to the two-sample version is that Eq.~(\ref{eq:sigmahat}) generalizes to
 \begin{equation}
@@ -491,120 +435,110 @@ Post hoc tests on trimmed means use the linear contrast expression
 \end{equation}
 In WRS2 the constants are specified in a way such that all pairwise post hoc tests are carried out. For instance, for comparing the first two trimmed means $c_1 = 1$ and $c_2 = -1$, whereas the remaining $c$'s are 0.
 
- 
 <<lincon>>=
 lincon(Wdiff ~ Treat, data = anorexia)
 @
- 
 
-\noindent The function reports the $\hat{\Psi}$ value according to Eq.~(\ref{eq:lincon}) denoting pairwise trimmed mean differences. The 95\% CIs and the $p$-values are adjusted for multiple testing in the sense that the simultaneous probability coverage of the CIs is $1-\alpha$ and the family-wise error rate is $\alpha$. Details on this procedure can be found in \citet{Wilcox:1986}.
+\noindent The function reports the $\hat{\Psi}$ value according to Eq.~(\ref{eq:lincon}) denoting pairwise trimmed mean differences. The 95\% CIs and the $p$-values are adjusted for multiple testing in the sense that the simultaneous probability coverage of the CIs is $1-\alpha$ and the family-wise error rate is $\alpha$. Details on this procedure can be found in \citet{Wilcox:1986}. A bootstrap version of \code{t1way} is implemented in \code{t1waybt} with corresponding bootstrap post hocs in \code{mcppb20}. 
 
-A bootstrap version of \code{t1way} is implemented in \code{t1waybt} with corresponding bootstrap post hocs in \code{mcppb20}.
+Note that in order to perform linear contrasts, there is no need to first obtain a significant omnibus ANOVA. In many experimental situations, researchers have specific predictions about certain contrasts which can be directly tested (i.e., without computing an omnibus test first).
+
 
 
 
 \subsection{One-Way Quantile Comparisons}
-In this section we focus on testing $H_0: \theta_1 = \cdots \theta_J$ where the $\theta$'s represent a particular quantile in group $j$. Let us start with testing for equality of medians across $J$ groups. The test statistic $F_M$, given in the Appendix, follows the same concept as the one for trimmed means above; the only difference is that it uses an alternative estimate for the standard error. Using our anorexia dataset, it can be computed as follows:
+In this section we focus on testing $H_0: \theta_1 = \ldots = \theta_J$, where the $\theta$'s represent a particular quantile in group $j$. Let us start with testing for equality of medians across $J$ groups. The test statistic $F_M$, given in the Appendix, follows the same concept as the one for trimmed means above; the only difference is that it uses an alternative estimate for the standard error. Using our anorexia dataset, it can be computed as follows:
 
- 
 <<med1way>>=
 set.seed(123)
 med1way(Wdiff ~ Treat, data = anorexia)
 @
- 
 
-A few remarks regarding this test statistic. First, it has been found that by evaluating the test statistic using the df as quoted in the Appendix (i.e., $\nu_1 = J-1$ and $\nu_2 = \infty$) can result in the actual level being less than the nominal level, (i.e., around 0.02-0.025 when testing at the 0.05 level and $n$ is small). A better strategy, as provided by this implementation, is to simulate the critical value and computing the $p$-value accordingly. In order to make the result reproducible, above we set a seed.
+A few remarks regarding this test statistic. First, it has been found that by evaluating the test statistic using the df as quoted in the Appendix (i.e., $\nu_1 = J-1$ and $\nu_2 = \infty$) can result in the actual level being less than the nominal level, (i.e., around 0.02-0.025 when testing at the 0.05 level and $n$ is small). A better strategy, as provided by this implementation, is to simulate the critical value and computing the $p$-value accordingly. In order to make the result reproducible, above we set a seed. 
 
 Second, if there are too many ties in the data, the standard error becomes inaccurate. In such situations, the \code{Qanova} function provides a good alternative, which allows for general quantile testing across $J$ groups, not only the median. Similar to \code{qcomhd}, the quantile ANOVA implemented in \code{Qanova} uses the Harrel-Davis estimator for the quantiles. It tests the global hypothesis:
 \[
-H_0: \quad \theta_{q1}-\theta_{q2} = \theta_{q2}-\theta_{q3} = \cdots = \theta_{q(J-1)}-\theta_{qJ}.
+H_0: \quad \theta_{q1}-\theta_{q2} = \theta_{q2}-\theta_{q3} = \ldots = \theta_{q(J-1)}-\theta_{qJ}.
 \]
-The $p$-value is determined using a bootstrap \cite[see][p. 378--379 for details]{Wilcox:2012}. In case multiple quantiles are tested at the same time, the $p$-values are corrected using Hochberg's method.
+The $p$-value is determined using a bootstrap \citep[see][p. 378--379 for details]{Wilcox:2012}. In case multiple quantiles are tested at the same time, the $p$-values are corrected using Hochberg's method.
 
- 
-<<cache=TRUE, warning=FALSE>>=
+
+<<qanova, cache=TRUE, warning=FALSE>>=
 set.seed(123)
 fitqa <- Qanova(Wdiff ~ Treat, data = anorexia,
    q = c(0.25, 0.5, 0.75))
 fitqa
 @
- 
 
 \noindent It reports the unadjusted and adjusted $p$-values, to be compared to the $\alpha$-level. We find significant overall differences at each of the quartiles.
 
 
-
-
-
-%% ---------------------- 2-way and 3-way --------------------------
+ 
+% ---------------------- 2-way and 3-way --------------------------
 \section{Robust Two-Way and Three-Way Comparisons}
-This section elaborates on higher order ANOVA designs including post hoc tests. Note that all \pkg{WRS2} robust ANOVA functions allow the user to fit the full model (i.e., including all possible interactions) only. For more parsimonious models and specific post hoc contrasts, it is suggested to use the corresponding {WRS} functions from \citet{Wilcox+Schoenbrodt:2016}.
+This section elaborates on higher order ANOVA designs including post hoc tests. Note that all \pkg{WRS2} robust ANOVA functions allow the user to fit the full model (i.e., including all possible interactions) only. For more parsimonious models and specific post hoc contrasts, it is suggested to use the corresponding \pkg{WRS} functions from \citet{Wilcox+Schoenbrodt:2016}.
+
 
 \subsection{Robust Two-Way ANOVA Strategies}
-Let us start with a two-way factorial ANOVA design involving $J$ categories for the first factor, and $K$ categories for the second factor. The test statistic for the one-way trimmed mean comparisons, as implemented in \code{t1way}, can be generalized to two-way designs; details are given in the Appendix. The hypothesis to be tested are the usual two-way ANOVA hypotheses using the trimmed means. Let $\mu_t$ be the grand trimmed mean (population), $\mu_{tjk}$ the mean in factor level combination $jk$, $\mu_{tj\cdot}$ the trimmed factor level means of the first factor, and $\mu_{t\cdot k}$ the trimmed factor level means for the second factor. Let $\alpha_j = \mu_{tj\cdot} - \mu_t$, $\beta_k = \mu_{t\cdot k} - \mu_t$, and
-$(\alpha\beta)_{jk} = \mu_{tjk} - \mu_{tj\cdot} - \mu_{t\cdot k} + \mu_t$.  Using this notation, the null hypotheses are:
+Let us start with a two-way factorial ANOVA design involving $J$ categories for the first factor, and $K$ categories for the second factor. The test statistic for the one-way trimmed mean comparisons, as implemented in \code{t1way}, can be generalized to two-way designs; details are given in the Appendix. The hypothesis to be tested are the usual two-way ANOVA hypotheses using the trimmed means. Let $\mu_t$ be the grand trimmed mean (population), $\mu_{tjk}$ the mean in factor level combination $jk$, $\mu_{tj\cdot}$ the trimmed factor level means of the first factor, and $\mu_{t\cdot k}$ the trimmed factor level means for the second factor. Let $\alpha_j = \mu_{tj\cdot} - \mu_t$, $\beta_k = \mu_{t\cdot k} - \mu_t$, and $(\alpha\beta)_{jk} = \mu_{tjk} - \mu_{tj\cdot} - \mu_{t\cdot k} + \mu_t$.  Using this notation, the null hypotheses are:
 \begin{itemize}
 \item First factor: $H_0: \sum_{j=1}^J \alpha_j^2 = 0$.
 \item Second factor: $H_0: \sum_{k=1}^K \beta_k^2 = 0$.
 \item Interaction: $H_0: \sum_{j=1}^J \sum_{k=1}^K (\alpha\beta)_{jk}^2 = 0$.
 \end{itemize}
 
-Such a robust two-way ANOVA can be carried out using the function \code{t2way}. To illustrate, we use the beer goggles dataset by \citet{Field:2012} who studied the effects of alcohol on mate selection in night clubs. The hypothesis is that after alcohol had been consumed, subjective perceptions of physical attractiveness would become more inaccurate (\emph{beer goggles effect}). In this study we have the factors gender (24 male and 24 female students) and the amount of alcohol consumed (none, 2 pints, 4 pints). At the end of the evening the researcher took a photograph of the person the participant was chatting up. The attractiveness of the person on the photo was then evaluated by independent judges on a scale from 0-100 (response variable).
+Such a robust two-way ANOVA can be carried out using the function \code{t2way}. To illustrate, we use the beer goggles dataset by \citet{Field:2012} who studied the effects of alcohol on mate selection in night clubs. The hypothesis is that after alcohol had been consumed, subjective perceptions of physical attractiveness would become more inaccurate (\emph{beer goggles effect}). In this study we have the factors gender (24 male and 24 female students) and the amount of alcohol consumed (none, 2 pints, 4 pints). At the end of the evening the researcher took a photograph of the person the participant was chatting up. The attractiveness of the person on the photo was then evaluated by independent judges on a scale from 0-100 (response variable). 
 
 Figure~\ref{fig:goggles} shows the interaction plots using the trimmed mean (20\% trimming level) as location measure. The two-way ANOVA on the trimmed means can be fitted as follows.
 
 
 <<goggles-plot, eval=FALSE, echo=FALSE, message=FALSE,results='hide', warning=FALSE, purl=FALSE>>=
-tmean02 <- function(x) mean(x, tr = 0.2)
-attach(goggles)
-op <- par(mfrow = c(1,2))
-interaction.plot(gender, alcohol, attractiveness, fun = tmean02, ylab = "Attractiveness", xlab = "Gender", type = "b", pch = 20,
-                 lty = 1, col = c("black", "cadetblue", "coral"), main = "Interaction Plot Alcohol|Gender", legend = FALSE)
-legend("right", legend = c("None", "2 Pints","4 Pints"), col = c("black", "cadetblue", "coral"), lty = 1, cex = 0.8)
-interaction.plot(alcohol, gender, attractiveness, fun = tmean02, ylab = "Attractiveness", xlab = "Gender", type = "b", pch = 20,
-                 lty = 1, col = c("coral", "black"), main = "Interaction Plot Gender|Alcohol", legend = FALSE)
-legend("bottomleft", legend = c("female", "male"), col = c("coral", "black"), lty = 1, cex = 0.8)
-par(op)
-detach(goggles)
+goggle.agg <- with(goggles, aggregate(attractiveness, list(gender = gender, alcohol = alcohol), mean, trim = 0.20))
+goggle.agg$tse <- as.vector(with(goggles, by(attractiveness, list(gender = gender, alcohol = alcohol), trimse, tr = 0.20)))
+gp <- ggplot(goggle.agg, aes(x = gender, y = x, colour = alcohol, group = alcohol)) + ylab("attractiveness")
+gp + geom_line() + geom_point(aes(shape = alcohol), size = 3) + 
+   geom_errorbar(aes(ymax = x + tse, ymin = x - tse), width = 0.1) 
+gp <- ggplot(goggle.agg, aes(x = alcohol, y = x, colour = gender, group = gender)) + ylab("attractiveness")
+gp + geom_line() + geom_point(aes(shape = gender), size = 3) + 
+   geom_errorbar(aes(ymax = x + tse, ymin = x - tse), width = 0.1) 
 @
-\begin{figure}[t]
+\begin{figure}[t!]
 \begin{center}
-<<goggles-plot1, echo=FALSE, fig.height = 6, fig.width = 12, dev='postscript',message=FALSE,results='hide', warning=FALSE>>=
+<<goggles-plot1, echo=FALSE, fig.height = 5, fig.width = 10>>=
 <<goggles-plot>>
 @
 \end{center}
-\caption{\label{fig:goggles} Trimmed means interaction plot for beer goggles dataset.}
+\caption{\label{fig:goggles} Trimmed means interaction plots for beer goggles dataset.}
 \end{figure}
 
- 
 <<t2way>>=
 goggles$alcohol <- relevel(goggles$alcohol, ref = "None")
 t2way(attractiveness ~ gender*alcohol, data = goggles)
 @
- 
 
-\noindent Not surprisingly, based on what we see in Figure~\ref{fig:goggles}, the interaction between gender and alcohol is significant.
+\noindent Not surprisingly, based on what we see in Figure~\ref{fig:goggles}, the interaction between gender and alcohol is significant. 
 
 Post hoc tests can be applied using the \code{mcp2atm} function, which, internally calls the \code{lincon} function described above.
 
-<<>>=
+<<results='hide'>>=
 postgoggle <- mcp2atm(attractiveness ~ gender*alcohol, data = goggles)
 postgoggle$contrasts
 @
- 
+\vspace{-0.5cm}
+<<echo=FALSE, size='scriptsize'>>=
+postgoggle$contrasts
+@
 
 \noindent The second line prints the contrast matrix which illustrates what effects are actually being tested. The results are the following:
- 
 <<>>=
 postgoggle
 @
- 
+
 
 \noindent Let us focus on the interaction first by starting at the bottom. The last effect tells us that the difference attractiveness ratings for 4 pints vs. 2 pints differs significantly in men and women. Similary, the second to last effect tells us that this significant gender difference also applies to 4 pints vs. none. However, males and females do not behave differently if we look at 2 pints vs. none (no significant effect; see third line from the bottom). Note that the 95\% CIs and the $p$-values are adjusted for multiple testing.
 
 Other options for robust two-way ANOVAs are median comparisons using \code{med2way}, and general $M$-estimator comparisons using \code{pbad2way}. For both functions post hoc comparisons can be computed using \code{mcp2a} (the estimator argument needs to be specified correspondingly) which uses precentile bootstrap for CIs and $p$-values. Using the beer goggles dataset, the function calls for median and modified one-step estimators (MOM) are the following.
 
- 
 <<eval=FALSE>>=
 set.seed(123)
 med2way(attractiveness ~ gender*alcohol, data = goggles)
@@ -612,7 +546,6 @@ mcp2a(attractiveness ~ gender*alcohol, data = goggles, est = "median")
 pbad2way(attractiveness ~ gender*alcohol, data = goggles, est = "mom")
 mcp2a(attractiveness ~ gender*alcohol, data = goggles, est = "mom")
 @
- 
 
 \noindent We omit showing the output here; the results are consistent with the trimmed mean comparisons above. Formal details on the median test are given in the Appendix; elaborations on $M$-estimator comparisons are given in \citet[p. 385--388]{Wilcox:2012}.
 
@@ -625,50 +558,50 @@ The dataset we use to illustrate this approach is from \citet{Seligman:1990}. At
 
 
 <<swim-plot, echo=FALSE, eval=FALSE, purl=FALSE>>=
-tmean20 <- function(x) mean(x, trim = 0.20)
 optpes.male <- subset(swimming, Sex == "Male")
 optpes.female <- subset(swimming, Sex == "Female")
-op <- par(mfrow = c(1,2))
-interaction.plot(optpes.male$Event, optpes.male$Optim, optpes.male$Ratio, fun = tmean20,
-                 xlab = "Event", ylab = "Ratio", main = "Interaction Men",
-                 type = "b", pch = 20, lty = 1, col = 1:2, legend = FALSE)
-legend("left", legend = c("Optimists", "Pessimists"), col = 1:2, lty = 1, cex = 0.8)
-interaction.plot(optpes.female$Event, optpes.female$Optim, optpes.female$Ratio, fun = tmean20,
-                 xlab = "Event", ylab = "Ratio", main = "Interaction Women",
-                 type = "b", pch = 20, lty = 1, col = 1:2, legend = FALSE)
-legend("topleft", legend = c("Optimists", "Pessimists"), col = 1:2, lty = 1, cex = 0.8)
-par(op)
+agg.male <- with(optpes.male, aggregate(Ratio, list(Optim = Optim, Event = Event), mean, trim = 0.20))
+agg.male$tse <- as.vector(with(optpes.male, by(Ratio, list(Optim = Optim, Event = Event), trimse, tr = 0.20, simplify = TRUE)))
+gp <- ggplot(agg.male, aes(x = Event, y = x, colour = Optim, group = Optim)) + ylab("Ratio")
+gp + geom_line() + geom_point(aes(shape = Optim), size = 3) + 
+   geom_errorbar(aes(ymax = x + tse, ymin = x - tse), width = 0.1) + ggtitle("Interaction Plot Men")
+
+agg.female <- with(optpes.female, aggregate(Ratio, list(Optim = Optim, Event = Event), mean, trim = 0.20))
+agg.female$tse <- as.vector(with(optpes.female, by(Ratio, list(Optim = Optim, Event = Event), trimse, tr = 0.20, simplify = TRUE)))
+gp <- ggplot(agg.female, aes(x = Event, y = x, colour = Optim, group = Optim)) + ylab("Ratio")
+gp + geom_line() + geom_point(aes(shape = Optim), size = 3) + 
+   geom_errorbar(aes(ymax = x + tse, ymin = x - tse), width = 0.1) + ggtitle("Interaction Plot Women")
 @
 
 
-
-\begin{figure}[t]
+\begin{figure}[t!]
 \begin{center}
-<<swim-plot1, echo=FALSE, fig.height = 6, fig.width = 12, dev='postscript'>>=
+<<swim-plot1, echo=FALSE, fig.height = 6, fig.width = 12>>=
 <<swim-plot>>
 @
 \end{center}
-\caption{\label{fig:swim} Interaction plot involving the trimmed means of the time ratio response for males and females separately.}
+\caption{\label{fig:swim} Interaction plot for the trimmed means of the time ratio response for males and females separately.}
 \end{figure}
 
 A three-way robust ANOVA on the trimmed means using \code{t3way} can be computed as follows:
 
- 
 <<t3way>>=
 t3way(Ratio ~ Optim*Sex*Event, data = swimming)
 @
- 
 
 The crucial effect for interpretation is the significant \code{Optim:Sex} two-way interaction. We could produce corresponding two-way interaction plots and see that, independently from the swimming style, for the females it does not matter whether someone is an optimist or a pessimist, the time ratio does not change drastically. For the males, there is a substantial difference in the time ratio for optimists and pessimists.
 
 
+
+
+% --------------------- repeated/mixed ANOVA --------------
 \section{Repeated Measurement and Mixed ANOVA Designs}
 \subsection{Paired Samples/Repeated Measurement Designs}
-In this section we consider paired samples/repeated measurement designs for more than two dependent groups/time points. The \pkg{WRS2} package provides a robust implementation of a heteroscedastic repeated measurement ANOVA based on the trimmed means. The formulas for the test statistic and the df computations are given in the Appendix.
+In this section we consider paired samples/repeated measurement designs for more than two dependent groups/time points. The {WRS2} package provides an implementation of a robust heteroscedastic repeated measurement ANOVA based on the trimmed means. The formulas for the test statistic and the df computations are given in the Appendix.
 
-In WRS2, the function to compute a robust repeated measurements ANOVA is \code{rmanova} with corresponding post hoc tests in \code{rmmcp}. The data need to be in long format and balanced across the groups. Each of these functions takes three arguments: a vector with the responses (argument: \code{y}), a factor for the groups (e.g., time points; argument: \code{groups}), and a factor for the blocks (typically a subject ID; argument: \code{blocks}).
+In \pkg{WRS2}, the function to compute a robust repeated measurements ANOVA is \code{rmanova} with corresponding post hoc tests in \code{rmmcp}. The data need to be in long format and balanced across the groups. Each of these functions takes three arguments: a vector with the responses (argument: \code{y}), a factor for the groups (e.g., time points; argument: \code{groups}), and a factor for the blocks (typically a subject ID; argument: \code{blocks}).
 
-The example we use is from \citet[p. 452]{Wilcox:2012}. In a study on the effect of consuming alcohol, hangover symptoms were measured for two independent groups, with each subject consuming alcohol and being measured on three different occasions. One group consisted of sons of alcoholics and the other was a control group. A representation of the dataset is given in Figure~\ref{fig:hang}.
+Once more we use the hangover dataset from above, where hangover symptoms were measured for two independent groups, with each subject consuming alcohol and being measured on three different occasions. One group consisted of sons of alcoholics and the other was a control group. A representation of the dataset is given in Figure~\ref{fig:hang}.
 
 <<hang-plot, eval=FALSE, echo=FALSE, purl=FALSE>>=
 ind <- rep(1:6, each = 20)
@@ -683,9 +616,9 @@ lines(1:3, gtmeans[c(1, 3, 5)], col = 1, type = "b", pch = 19)
 lines(1:3, gtmeans[c(2, 4, 6)], col = 2, type = "b", pch = 19)
 @
 
-\begin{figure}[t]
+\begin{figure}[t!]
 \begin{center}
-<<hang-plot1, echo=FALSE, fig.height = 5, fig.width = 8, dev='postscript'>>=
+<<hang-plot1, echo=FALSE, fig.height = 5, fig.width = 8>>=
 <<hang-plot>>
 @
 \end{center}
@@ -693,40 +626,31 @@ lines(1:3, gtmeans[c(2, 4, 6)], col = 2, type = "b", pch = 19)
 \end{figure}
 
 
-
 Here we focus on a single between subjects factor only: control group. In the next section we consider the full dataset with the corresponding between-within subjects design. After subsetting the data accordingly, a robust repeated measurement ANOVA using the \code{rmanova} function can be fitted as follows:
 
- 
 <<rmanova>>=
 hangoverC <- subset(hangover, subset = group == "control")
 with(hangoverC, rmanova(y = symptoms, groups = time, block = id))
 @
- 
 
-\noindent Even though non-significant, for illustration purposes we show how to perform corresponding post hoc tests:
+\noindent Post hoc tests (linear contrasts) can be performed as follows:
 
- 
 <<rmanovaph>>=
 with(hangoverC, rmmcp(y = symptoms, groups = time, block = id))
 @
- 
 
-\noindent The \code{rmmcp} function uses Hochberg's approach to control for the FWE. The bootstrap version of \code{rmanova} is \code{rmanovab} with bootstrap post hocs in \code{pairdepb}.
-
-
+\noindent The \code{rmmcp} function uses Hochberg's approach to control for the family-wise error (FWE). The bootstrap version of \code{rmanova} is \code{rmanovab} with bootstrap post hocs in \code{pairdepb}.
 
 
 \subsection{Mixed Designs}
 \label{sec:mixed}
-Let us extend the ANOVA setting above towards mixed designs. That is, we have within-subjects effects (e.g., due to repeated measurements) and between-subjects effects (group comparisons). The main function in \pkg{WRS2} for computing a between-within subjects ANOVA on the trimmed means is \code{bwtrim}. For general $M$-estimators, the package offers the bootstrap based functions \code{sppba}, \code{sppbb}, and \code{sppbi} for the between-subjects effect, the within-subjects effect, and the interaction effect, respectively. Each of these functions requires the full model specification through the \code{formula} interface as well as an \code{id} argument that accounts for the within-subject structure.
+Let us extend the ANOVA setting above towards mixed designs. That is, we have within-subjects effects (e.g., due to repeated measurements) and between-subjects effects (group comparisons). The main function in {WRS2} for computing a between-within subjects ANOVA on the trimmed means is \code{bwtrim}. For general $M$-estimators, the package offers the bootstrap based functions \code{sppba}, \code{sppbb}, and \code{sppbi} for the between-subjects effect, the within-subjects effect, and the interaction effect, respectively. Each of these functions requires the full model specification through the \code{formula} interface as well as an \code{id} argument that accounts for the within-subject structure.
 
 We use the hangover data from above and fit a between-within subjects ANOVA on the 20\% trimmed means:
 
- 
 <<hangbw>>=
 bwtrim(symptoms ~ group*time, id = id, data = hangover)
 @
- 
 
 \noindent We get a non-significant interaction; both main effects are significant.
 
@@ -742,12 +666,11 @@ H_0: \theta_{1,2} = \theta_{1,3} = \theta_{1,4} = \theta_{2,3} = \theta_{2,4} = 
 \]
 Thus, it is tested whether the ``typical'' difference score (as measured by an $M$-estimator) between any two levels of measurement occasions is 0 (while ignoring the between-subjects groups). For the essays dataset we get:
 
- 
-<<cache=TRUE>>=
+<<sppbb, cache=TRUE>>=
 set.seed(123)
 sppbb(errorRatio ~ group*essay, id, data = essays)
 @
- 
+
 \noindent The $p$-value suggests that we cannot reject the $H_0$ of equal difference scores.
 
 In terms of comparisons related to the between-subjects we can think of two principles. The first one is to perform pairwise group comparisons within each  measurement occasion ($K = 4$). In our case this leads to $4 \times \binom{3}{2}$ parameters (here, the first index relates to $j$ and the second index to $k$). We can establish the following $K$ null hypotheses:
@@ -766,12 +689,10 @@ H_0:\quad & \theta_{1,1} - \theta_{2,1} = \theta_{1,1} - \theta_{3,1} = \theta_{
 \end{align*}
 In \pkg{WRS2} this hypothesis can be tested as follows:
 
- 
-<<cache=TRUE>>=
+<<sppba, cache=TRUE>>=
 set.seed(123)
 sppba(errorRatio ~ group*essay, id, data = essays, avg = FALSE)
 @
- 
 
 \noindent Again, we cannot reject $H_0$.
 
@@ -785,12 +706,10 @@ H_0: \bar{\theta}_{1\cdot} = \bar{\theta}_{2\cdot} = \bar{\theta}_{3\cdot}
 \]
 and computed as follows by using the default \code{avg = TRUE}:
 
- 
-<<cache=TRUE>>=
+<<sppba2, cache=TRUE>>=
 set.seed(123)
 sppba(errorRatio ~ group*essay, id, data = essays)
 @
- 
 
 Finally, let us elaborate on the \code{sppbi} function which performs tests on the interactions. In the \code{sppbb} call six parameters were tested and we ignored the between-subjects group structure. Now we do not further ignore the group structure and compute $M$-estimators based on measurement occasion differences for each group separately. In the notation below, the group index is on the right hand side of the pipe symbol, the differences in measurement occasions on the left hand side. The null hypothesis is a follows:
 \begin{align*}
@@ -798,26 +717,23 @@ H_0:\quad & \theta_{1,2|1} - \theta_{1,3|1} = \theta_{1,4|1} - \theta_{2,3|1} = 
           & \theta_{1,2|2} - \theta_{1,3|2} = \theta_{1,4|2} - \theta_{2,3|2} = \theta_{2,4|2} - \theta_{3,4|2} = \\
           & \theta_{1,2|3} - \theta_{1,3|3} = \theta_{1,4|3} - \theta_{2,3|3} = \theta_{2,4|3} - \theta_{3,4|3} = 0.
 \end{align*}
-\noindent The \pkg{WRS2} function call to test this hypothesis is:
+\noindent The {WRS2} function call to test this hypothesis is:
 
- 
-<<cache=TRUE>>=
+<<sppbi, cache=TRUE>>=
 set.seed(123)
 sppbi(errorRatio ~ group*essay, id, data = essays)
 @
- 
 
 \noindent Again, we cannot reject $H_0$.
 
 
+
+ 
 % ----------------------------------------- ANCOVA ---------------------------------------
-%
 \section{Robust nonparametric ANCOVA}
 \subsection{Running interval smoothers}
 \label{sec:smoothers}
-In this section we introduce a robust ANCOVA version which uses smoothing internally. When dealing with regression, there are situations the
-usual linear model appears to suffice. But it is well established that
-parametric regression models can be highly unsatisfactory.
+In this section we introduce a robust ANCOVA version which uses smoothing internally. When dealing with regression, there are situations the usual linear model appears to suffice. But it is well established that parametric regression models can be highly unsatisfactory.
 In general, a smoother is a function that approximates the true regression line via a technique that deals with curvature in a reasonably flexible manner. Smoothing functions typically have a \emph{smoothing parameter} by means of which the user can steer the degree of smoothing. If the parameter is too small, the smoothing function might overfit the data. If the parameter is too large, we might disregard important patterns. The general strategy is to find the smallest parameter so that the plot looks reasonably smooth.
 
 A popular regression smoother is LOWESS (locally weighted scatterplot smoothing) regression which belongs to the family of nonparametric regression models and can be fitted using the \code{lowess} function. The smoothers presented here involve robust location measures from above and are called \emph{running interval smoothers} which work as follows.
@@ -838,11 +754,12 @@ The \pkg{WRS2} package provides smoothers for trimmed means (\code{runmean}), ge
 Let us look at a data example taken from \citet{Wright+London:2009} where we have measurements for the length of a chile and its heat (scored on a scale from 0-11). We study various $f$ values and various robust location measures $\hat{\theta}_i$.  The left panel in Figure~\ref{fig:smooth} displays smoothers involving different robust location measures. The right panel shows  a trimmed mean interval smoothing with varying smoothing parameter $f$. We see that, at least in this dataset, there are no striking differences between various smoothers (see functions \code{runmean}, \code{rungen}, and \code{runmbo}) among the various location measures.
 However, the choice of the smoothing parameter $f$ affects the function heavily.
 
-<<smooth-plot, eval=FALSE, echo=FALSE, purl=FALSE>>=
+<<smooth-plot, eval=FALSE, echo=FALSE, message=FALSE>>=
+library(colorspace)
 colpal <- c(rainbow_hcl(5, c = 100))
 pal <- palette(colpal)
 attach(chile)
-op <- par(mfrow = c(1,2))
+op <- par(mfrow = c(2,1))
 plot(length, heat, pch = 20, col = "gray", main = "Chile Smoothing I", xlab = "Length", ylab = "Heat")
 fitmean <- runmean(length, heat)
 fitmest <- rungen(length, heat)
@@ -869,41 +786,37 @@ par(op)
 palette(pal)
 detach(chile)
 @
-\begin{figure}[t]
+\begin{figure}[t!]
 \begin{center}
-<<smooth-plot1, echo=FALSE, fig.height = 6, fig.width = 12, dev='postscript'>>=
+<<smooth-plot1, echo=FALSE, fig.height = 12, fig.width = 12>>=
 <<smooth-plot>>
 @
 \end{center}
-\caption{\label{fig:smooth} Left panel: smoothers with various robust location measures. Right panel: trimmed mean smoother with
+\caption{\label{fig:smooth} Top panel: smoothers with various robust location measures. Bottom panel: trimmed mean smoother with
 varying smoothing parameter $f$.}
 \end{figure}
 
 
 
 \subsection{Robust ANCOVA}
-ANCOVA involves a factorial design and metric covariates that were not part of the experimental manipulation.
+ANCOVA involves a factorial design and metric covariates that were not part of the experimental manipulation. 
 It assumes homogeneity of regression slopes across the groups when regressing the dependent variable on the covariate.
-In addition, normality is assumed as well as two types of
-homoscedasticity. Violating any of these assumptions
-can have a serious negative impact on the classic ANCOVA method.
- The robust ANCOVA function in \pkg{WRS2} does not assume homoscedasticity nor homogeneity of regression slopes. In fact, it does not make any parametric assumption on the regressions at all and uses running interval smoothing (trimmed means) for each subgroup. Both nonparametric curves can be compared for subgroup differences at various points of interest along the $x$-continuum.
+In addition, normality is assumed as well as two types of homoscedasticity. Violating any of these assumptions
+can have a serious negative impact on the classic ANCOVA method.  The robust ANCOVA function in {WRS2} does not assume homoscedasticity nor homogeneity of regression slopes. In fact, it does not make any parametric assumption on the regressions at all and uses running interval smoothing (trimmed means) for each subgroup. Both nonparametric curves can be compared for subgroup differences at various points of interest along the $x$-continuum.
 
 The WRS2 function \code{ancova} fits a robust ANCOVA. In its current implementation it is limited to one factor with two categories and one covariate only. A bootstrap version of it is implemented as well (\code{ancboot}). Both functions perform the running interval smoothing on the trimmed means. Yuen's tests on trimmed mean differences are applied at specified design points. It the design point argument (\code{pts}) is not specified, the routine automatically computes five points \citep[for details see][p. 695]{Wilcox:2012}. It is suggested that group sizes around the design point subject to Yuen's test should be at least 12. Regarding the multiple testing problem, the CIs are adjusted to control the probability of at least one Type I error. The $p$-values are not adjusted.
 
 The dataset we use to demonstrate robust ANCOVA is from \citet{Gelman+Hill:2007}. It is based on data involving an educational TV show for children called ``The Electric Company''. In each of four grades, the classes were randomized into treated groups and control groups. The kids in the treatment group were exposed to the TV show, those in the control group not. At the beginning and at the end of the school year, students in all the classes were given a reading test. The average test scores per class (pre-test and post-test) were recorded. In this analysis we use the pretest score as the covariate and are interested in possible differences between treatment and control group with respect to the post-test scores. We are interested in comparisons at six particular design points. We set the smoothing parameters to a considerably small value.
 
- 
 <<electric>>=
 comppts <- c(18, 70, 80, 90, 100, 110)
 fitanc <- ancova(Posttest ~ Pretest + Group, fr1 = 0.3, fr2 = 0.3,
   data = electric, pts = comppts)
 fitanc
 @
- 
 
 
-Figure~\ref{fig:anc} shows the results of the robust ANCOVA fit. The vertical gray lines mark the design points. By taking into account the multiple testing nature of the problem, the only significant group difference we get for a pretest value of $x = 90$. For illustration, this plot also includes the linear regression fits for both subgroups (this is what a standard ANCOVA would do).
+Figure~\ref{fig:anc} shows the results of the robust ANCOVA fit. The vertical gray lines mark the design points. By taking into account the multiple testing nature of the problem, we get only one significant group difference, for a pre-test value of $x = 90$. For illustration, this plot also includes the linear regression fits for both subgroups (this is what a standard ANCOVA would do).
 
 <<anc-plot, eval=FALSE, echo=FALSE, purl=FALSE>>=
 plot(electric$Pretest, electric$Posttest, col = rep(1:2, each = 96), pch = 1, cex = 0.8,
@@ -919,9 +832,9 @@ abline(lm(elct$Posttest ~ elct$Pretest), col = 2, lty = 2)
 abline(v = comppts, lty = 2, col = "gray")
 legend(30, 120, legend = c("treatment", "control"), lty = 1, col = 1:2)
 @
-\begin{figure}[t]
+\begin{figure}[t!]
 \begin{center}
-<<anc-plot1, echo=FALSE, fig.height = 6, fig.width = 9, dev='postscript'>>=
+<<anc-plot1, echo=FALSE, fig.height = 6, fig.width = 9>>=
 <<anc-plot>>
 @
 \end{center}
@@ -929,7 +842,7 @@ legend(30, 120, legend = c("treatment", "control"), lty = 1, col = 1:2)
 \end{figure}
 
 
-
+ 
 %----------------------------------------- mediation analysis ----------------------------------
 \section{Robust mediation analysis}
 \label{sec:robmed}
@@ -947,11 +860,7 @@ The example we use for illustration is taken from \citet{Howell:2012}, and based
 
 In the first part we fit a standard mediator model with bootstrap-based testing of the mediating effect using the \pkg{mediation} package \citep{Tingley:2014}.
 
-<<echo=FALSE, purl=FALSE, results='hide', message=FALSE>>=
-library("mediation")
-@
 
- 
 <<mediate, cache=TRUE, message=FALSE, warning=FALSE>>=
 library("mediation")
 fit.mx <- lm(Esteem ~ MatCare, data = Leerkes)
@@ -961,27 +870,27 @@ fitmed <- mediation::mediate(fit.mx, fit.yxm, treat = "MatCare",
   mediator = "Esteem", sims = 999, boot = TRUE, boot.ci.type = "bca")
 summary(fitmed)
 @
- 
+
 
 
 In this output the ACME (average causal mediation effect) represents the indirect effect of \code{MatCare} on \code{Efficacy}, including the 95\% bootstrap CI. It suggests that there is a significant mediator effect.
 
-Now we fit this mediation model in a robust way with \code{ZYmediate} from \pkg{WRS2} which uses bootstrap for the CI of the mediation effect as well.
+Now we fit this mediation model in a robust way with \code{ZYmediate} from {WRS2} which uses bootstrap for the CI of the mediation effect as well.
 
- 
+
 <<rmediate, cache=TRUE>>=
 set.seed(123)
 with(Leerkes, ZYmediate(MatCare, Efficacy, Esteem, nboot = 2000))
 @
- 
+
 
 For the robust regression setting we get similar results as with OLS. The bootstrap based robust mediation test suggests again a significant mediator effect.
 
-Note that robust moderator models can be fitted in a similar fashion as ordinary moderator models. Moderator models are often computed on the base of centered versions of predictor and moderator variable, including a corresponding interaction term \citep[see, e.g.,][]{Howell:2012}. In  \proglang{R}, a basic moderator model can be fitted using \code{lm}. A robust version of it can be achieved by replacing the \code{lm} call by an \code{rlm} call from the \pkg{MASS} package.
+Note that robust moderator models can be fitted in a similar fashion as ordinary moderator models. Moderator models are often computed on the base of centered versions of predictor and moderator variable, including a corresponding interaction term \citep[see, e.g.,][]{Howell:2012}. In \proglang{R}, a basic moderator model can be fitted using \code{lm}. A robust version of it can be achieved by replacing the \code{lm} call by an \code{rlm} call from the \pkg{MASS} package.
 
 
 \section{Discussion}
-This article introduced the \pkg{WRS2} package for computing basic robust statistical methods in a user-friendly manner. Such robust models and tests should be used when certain distributional assumptions, as required by classical statistical methods, cannot be justified. The main focus of the WRS2 package is on simple ANOVA (and related) strategies. For more complex designs, we suggest to consider the following packages. The robustlmm package \citep{Koller:2016} implements robust mixed-effects models. For instance, if researchers have to deal with more complex between-within subjects settings that go beyond of what the \code{bwtrim} function offers, robustlmm with its \code{rlmer} function is highly attractive. For complex mediator-moderator structures, or robust path models with or without latent variables in general, lavaan \citep{Rosseel:2012} offers a variety of robust estimators. Some applications are shown in \citet{Field+Wilcox:2017}.
+This article introduced the \pkg{WRS2} package for computing basic robust statistical methods in a user-friendly manner. Such robust models and tests should be used when certain distributional assumptions, as required by classical statistical methods, cannot be justified. The main focus of the \pkg{WRS2} package is on simple ANOVA (and related) strategies. For more complex designs, we suggest to consider the following packages. The \pkg{robustlmm} package \citep{Koller:2016} implements robust mixed-effects models. For instance, if researchers have to deal with more complex between-within subjects settings that go beyond of what the \code{bwtrim} function offers, \pkg{robustlmm} with its \code{rlmer} function is highly attractive. For complex mediator-moderator structures, or robust path models with or without latent variables in general, lavaan \citep{Rosseel:2012} offers a variety of robust estimators. Some applications are shown in \citet{Field+Wilcox:2017}.
 
 
 
@@ -1027,6 +936,7 @@ For unequal Winsorized variances Eq.~(\ref{eq:rcohend}) can be replaced by
 \delta_{t1} &= 0.642 \frac{\bar X_{t1} - \bar X_{t2}}{S_{w1}} \\
 \delta_{t2} &= 0.642 \frac{\bar X_{t1} - \bar X_{t2}}{S_{w2}}.
 \end{align*}
+
 
 
 
@@ -1102,7 +1012,7 @@ which, under the null, is $F$-distributed with df $\nu_1 = J-1$ and $\nu_2 = \in
 
 \bigskip
 \noindent \textbf{Two-way test trimmed means} (\code{t2way}): For a $J \times K$ two-way ANOVA design with factors A and B, let $P = JK$ the total number of cells.
-The starting point is to construct two contrast matrices, one of dimension $(J-1) \times J$ for factor A, and one of dimension $K-1 \times K$ for factor B. In our $2 \times 3$ example we get \citep[see][p. 335 for a general construction principle]{Wilcox:2012}:
+The starting point is to construct two contrast matrices, one of dimension $(J-1) \times J$ for factor A, and one of dimension $K-1 \times K$ for factor B. In our $2 \times 3$ example we get \cite<see>[p. 335 for a general construction principle]{Wilcox:2012}:
 \[
 \mathbf C_J =
 \left(
@@ -1240,6 +1150,10 @@ and
 c = k + 2A - \frac{6A}{k+2}.
 \]
 Under $H_0$, $Q/c$ is $F$-distributed with df $\nu_1 = k$ and $\nu_2 = k(k+2)/(3A)$.
+
+\bigskip
+\noindent \textbf{Hochberg's method for controlling the FWE}: Let $p_{[1]}, \ldots, p_{[C]}$ be the $p$-values associated with $C$ tests, in descending order. Let $\alpha$ be the significance level. The procedure starts with 
+rejecting all hypotheses if $p_{[k]} \leq \alpha/k$ for $k = 1$. If $p_{[1]} > \alpha$, set $k:=k+1$. Again, apply $p_{[k]} \leq \alpha/k$. If $p_{[k]} > \alpha/k$, increment $k$. Repeat until either all hypotheses under consideration are rejected or all $C$ hypotheses have been tested.
 
 \end{document}
 
