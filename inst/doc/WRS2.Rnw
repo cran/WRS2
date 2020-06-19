@@ -190,7 +190,7 @@ ggpairs(hangwide)
 @
 \begin{figure}
 \begin{center}
-<<cor-plot1, echo=FALSE, out.width='0.7\\textwidth'>>=
+<<cor-plot1, echo=FALSE, out.width='0.7\\textwidth', message=FALSE, warning=FALSE>>=
 <<cor-plot>>
 @
 \end{center}
@@ -1012,7 +1012,7 @@ which, under the null, is $F$-distributed with df $\nu_1 = J-1$ and $\nu_2 = \in
 
 \bigskip
 \noindent \textbf{Two-way test trimmed means} (\code{t2way}): For a $J \times K$ two-way ANOVA design with factors A and B, let $P = JK$ the total number of cells.
-The starting point is to construct two contrast matrices, one of dimension $(J-1) \times J$ for factor A, and one of dimension $K-1 \times K$ for factor B. In our $2 \times 3$ example we get \cite<see>[p. 335 for a general construction principle]{Wilcox:2012}:
+The starting point is to construct two contrast matrices, one of dimension $(J-1) \times J$ for factor A, and one of dimension $K-1 \times K$ for factor B. In our $2 \times 3$ example we get \citep[see][p. 335 for a general construction principle]{Wilcox:2012}:
 \[
 \mathbf C_J =
 \left(

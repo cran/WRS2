@@ -146,21 +146,15 @@ sppbi <- function(formula, id, data, est = "mom", nboot = 500){
   sig.level<-1-sum(dv[bplus]>=dv[1:nboot])/nboot
   
   ## reorganizing output
-  if (length(tvec) > 1) {
-    tvec1 <- data.frame(Estimate = tvec)
-    rancomb <- apply(combn(levels(mf[,ranvar]), 2), 2, paste0, collapse = "-")
-    fnames <- levels(mf[,fixvar])
-    tnames <- as.vector(t(outer(fnames, rancomb, paste)))
-    if (length(fnames) > 2) {
-      rownames(tvec1) <- tnames
-    } else {
-      if (length(rancomb) == nrow(tvec1)) rownames(tvec1) <- rancomb
-    }  
-  } else {
-    tvec1 <- tvec
-  }
   
-  result <- list(test = tvec1, p.value = sig.level, call = cl)
+ 
+  tvec1 <- data.frame(Estimate = tvec)
+  rancomb <- apply(combn(levels(mf[,ranvar]), 2), 2, paste0, collapse = "-")
+  fnames <- levels(mf[,fixvar])
+  fcomb <- apply(combn(levels(mf[,fixvar]), 2), 2, paste0, collapse = "-")
+  tnames <- as.vector(t(outer(rancomb, fcomb, paste)))
+  rownames(tvec1) <- tnames
+  result <- list(test = tvec1, p.value = sig.level, contrasts = con, call = cl)
   class(result) <- c("spp")
   result
 }

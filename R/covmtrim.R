@@ -19,28 +19,28 @@ covmtrim<-function(x,tr=.2,p=length(x),grp=c(1:p)){
 #
 #  This function uses winvar from chapter 2.
 #
-if(is.list(x))x=matl(x)
-x=elimna(x)
-x=listm(x)
-if(!is.list(x))stop("The data are not stored in list mode or a matrix.")
-p<-length(grp)
-pm1<-p-1
-for (i in 1:pm1){
-ip<-i+1
-if(length(x[[grp[ip]]])!=length(x[[grp[i]]]))stop("The number of observations in each group must be equal")
-}
-n<-length(x[[grp[1]]])
-h<-length(x[[grp[1]]])-2*floor(tr*length(x[[grp[1]]]))
-covest<-matrix(0,p,p)
-covest[1,1]<-(n-1)*winvar(x[[grp[1]]],tr)/(h*(h-1))
-for (j in 2:p){
-jk<-j-1
-covest[j,j]<-(n-1)*winvar(x[[grp[j]]],tr)/(h*(h-1))
-for (k in 1:jk){
-covest[j,k]<-(n-1)*wincor(x[[grp[j]]],x[[grp[k]]],tr)$cov/(h*(h-1))
-covest[k,j]<-covest[j,k]
-}
-}
-covmtrim<-covest
-covmtrim
+  if(is.list(x))x=matl(x)
+  x=elimna(x)
+  x=listm(x)
+  if(!is.list(x))stop("The data are not stored in list mode or a matrix.")
+  p<-length(grp)
+  pm1<-p-1
+  for (i in 1:pm1){
+    ip<-i+1
+    if(length(x[[grp[ip]]])!=length(x[[grp[i]]]))stop("The number of observations in each group must be equal")
+  }
+  n<-length(x[[grp[1]]])
+  h<-length(x[[grp[1]]])-2*floor(tr*length(x[[grp[1]]]))
+  covest<-matrix(0,p,p)
+  covest[1,1]<-(n-1)*winvar(x[[grp[1]]],tr)/(h*(h-1))
+  for (j in 2:p){
+    jk<-j-1
+    covest[j,j]<-(n-1)*winvar(x[[grp[j]]],tr)/(h*(h-1))
+    for (k in 1:jk){
+      covest[j,k]<-(n-1)*wincor(x[[grp[j]]],x[[grp[k]]],tr, ci=FALSE)$cov/(h*(h-1))
+      covest[k,j]<-covest[j,k]
+    }
+  }
+  covmtrim<-covest
+  covmtrim
 }

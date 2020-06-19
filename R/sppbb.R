@@ -57,8 +57,7 @@ sppbb <- function(formula, id, data, est = "mom", nboot = 500){
       x[[kv2]]<-xmat[,k]
     }}
   xx<-x
-  #if(SEED)set.seed(2) # set seed of random number generator so that
-  #             results can be duplicated.
+  
   # Next determine the n_j values
   nvec<-NA
   jp<-1-K
@@ -85,13 +84,13 @@ sppbb <- function(formula, id, data, est = "mom", nboot = 500){
   temp<-rmdzero(x,est=est,nboot=nboot)
   
   ## reorganizing output
-  if (length(temp$center) > 1) {
+  #if (length(temp$center) > 1) {
     tvec1 <- data.frame(Estimate = temp$center)
     tnames <- apply(combn(levels(mf[,ranvar]), 2), 2, paste0, collapse = "-")
     rownames(tvec1) <- tnames
-  } else {
-    tvec1 <- temp$center
-  }
+  # } else {
+  #   tvec1 <- temp$center
+  # }
   result <- list(test = tvec1, p.value = temp$p.value, call = cl)
   class(result) <- c("spp")
   result

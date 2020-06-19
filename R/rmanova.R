@@ -52,6 +52,10 @@ rmanova <- function(y, groups, blocks, tr = 0.2){
   df1<-(J-1)*etil
   df2<-(J-1)*etil*(nrow(m2)-2*g-1)
   siglevel<-1-pf(test,df1,df2)
+  
+  ## effect size 
+  #esize <- rmES.pro(x)   ## to be done
+  
   result <- list(test=test,df1 = df1, df2 = df2, p.value = siglevel, call = cl)
   class(result) <- c("t1way")
   result

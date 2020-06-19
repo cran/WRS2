@@ -2,6 +2,18 @@
 \title{News for Package \pkg{WRS2}}
 \encoding{UTF-8}
 
+\section{Changes in Version 1.1-0}{
+  \itemize{
+    \item Bootstrap CI for effect size in t1way() added.
+    \item Bootstrap CI for akp.effect() added.
+    \item alpha argument in lincon() and rmmcp() added. 
+    \item Bootstrap CI for pbcor() and wincor() added.
+    \item dep.effect() function added for effect size computations (incl. CI) in paired samples settings. 
+    \item Seed issue in t1waybt() fixed. 
+    \item Labeling in in sppba, sppbi, and sppbb fixed. 
+    } 
+}
+
 
 \section{Changes in Version 1.0-0}{
   \itemize{

@@ -9,8 +9,8 @@
 The \code{t1way} function computes a one-way ANOVA on trimmed means. Homoscedasticity assumption not required. It uses a generalization of Welch's method. Corresponding post hoc tests can be performed using \code{lincon}.
 }
 \usage{
-t1way(formula, data, tr = 0.2)
-lincon(formula, data, tr = 0.2)
+t1way(formula, data, tr = 0.2, alpha = 0.05, nboot = 100)
+lincon(formula, data, tr = 0.2, alpha = 0.05)
 }
 \arguments{
   \item{formula}{
@@ -21,6 +21,12 @@ an optional data frame for the input data.
 }
   \item{tr}{
 trim level for the mean.
+}
+ \item{alpha}{
+alpha level for CI computation.
+}
+ \item{nboot}{
+number of bootstrap samples for effect size CI computation.
 }
 }
 
@@ -35,6 +41,7 @@ In the post hoc computations, confidence intervals are adjusted to control FWE, 
 \item{df2}{degrees of freedom}
 \item{p.value}{p-value}
 \item{effsize}{explanatory measure of effect size}
+\item{effsize_ci}{boostrap effect size CI}
 \item{call}{function call}
 
 \code{lincon} returns an object of class \code{"mcp1"} containing:
@@ -49,6 +56,7 @@ Wilcox, R. (2012). Introduction to Robust Estimation and Hypothesis Testing (3rd
 \code{\link{med1way}},\code{\link{t1waybt}}
 }
 \examples{
+set.seed(123)
 t1way(libido ~ dose, data = viagra)
 
 ## post hoc tests

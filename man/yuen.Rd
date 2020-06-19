@@ -18,7 +18,7 @@ The function \code{yuen} performs Yuen's test for trimmed means, \code{yuenbt} i
 \usage{
 yuen(formula, data, tr = 0.2)
 yuenbt(formula, data, tr = 0.2, nboot = 599, side = TRUE)
-akp.effect(formula, data, EQVAR = TRUE, tr = 0.2)
+akp.effect(formula, data, EQVAR = TRUE, tr = 0.2, nboot = 200, alpha = 0.05)
 yuen.effect.ci(formula, data, tr = 0.2, nboot = 400, alpha = 0.05)
 pb2gen(formula, data, est = "mom", nboot = 599)
 medpb2(formula, data, nboot = 2000)
@@ -92,6 +92,7 @@ Yuen, K. K. (1974). The two sample trimmed t for unequal population variances. B
 \code{\link{t1way}},\code{\link{t1waybt}}
 }
 \examples{
+set.seed(123)
 ## Yuen's test
 yuen(Anxiety ~ Group, data = spider)
 
@@ -100,7 +101,6 @@ yuenbt(Anxiety ~ Group, data = spider)
 
 ## Robust Cohen's delta
 akp.effect(Anxiety ~ Group, data = spider)
-##
 
 ## Using an M-estimator
 pb2gen(Anxiety ~ Group, data = spider, est = "mom")

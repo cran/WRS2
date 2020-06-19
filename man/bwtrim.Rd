@@ -70,6 +70,7 @@ For \code{sppba}, \code{sppbb}, and \code{sppbi} the analysis is carried out on 
 
 \item{test}{value of the test statistic}
 \item{p.value}{p-value}
+\item{contrasts}{contrasts matrix}
 }
 \references{
 Wilcox, R. (2017). Introduction to Robust Estimation and Hypothesis Testing (4th ed.). Elsevier.
@@ -81,6 +82,7 @@ Wilcox, R. (2017). Introduction to Robust Estimation and Hypothesis Testing (4th
 ## data need to be on long format
 pictureLong <- reshape(picture, direction = "long", varying = list(3:4), idvar = "case", 
 timevar = c("pictype"), times = c("couple", "alone"))
+pictureLong$pictype <- as.factor(pictureLong$pictype)
 colnames(pictureLong)[4] <- "friend_requests"
 
 ## 2-way within-between subjects ANOVA

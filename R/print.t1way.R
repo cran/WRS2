@@ -10,6 +10,7 @@ function(x,...)
   cat("p-value:", round(x$p.value, 5), "\n")
   cat("\n")
   if (!is.null(x$effsize)) {
-    cat("Explanatory measure of effect size:", round(x$effsize, 2), "\n\n")
+    cat("Explanatory measure of effect size:", round(x$effsize, 2), "\n")
+    cat("Bootstrap CI: [", round(x$effsize_ci[1], 2), "; ", round(x$effsize_ci[2], 2), "]\n\n", sep = "")
   }
 }

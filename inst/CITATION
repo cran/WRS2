@@ -11,12 +11,13 @@ citEntry(
   entry   = "ARTICLE",
   title   = "{Robust Statistical Methods in R Using the WRS2 Package}",
   author  = c(PM, RW),
-  year    = 2019,
-  journal = "{Behavior Research Methods}",
-  note  = "{Forthcoming}",
+  year    = 2020,
+  journal = "Behavior Research Methods",
+  volume  = "52",
+  pages = "464--488",
   textVersion = paste0(
-    "Mair, P., & Wilcox, R. R. (2019). ",
-    "Robust Statistical Methods in R Using the WRS2 Package",
-    "Behavior Research Methods, Forthcoming"
+    "Mair, P., & Wilcox, R. R. (2020). ",
+    "Robust Statistical Methods in R Using the WRS2 Package. ",
+    "Behavior Research Methods, 52, 464-488."
   )
 )

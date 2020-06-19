@@ -61,6 +61,8 @@ export(onesampb)
 export(winvar)
 export(onestep)
 export(mom)
+export(dep.effect)
+
 
 S3method(print, bwtrim)
 S3method(print, onesampb)

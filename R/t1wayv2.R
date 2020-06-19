@@ -1,5 +1,5 @@
 t1wayv2 <-
-function(x,tr=.2,grp=NA,MAT=FALSE,lev.col=1,var.col=2,nboot=100,SEED=TRUE,pr=TRUE,IV=NULL,loc.fun=median){
+function(x,tr=.2,grp=NA,MAT=FALSE,lev.col=1,var.col=2,nboot=100,SEED=FALSE,pr=TRUE,IV=NULL,loc.fun=median){
   #
   # Same a t1way, but computes explanatory power and related effect size
   #

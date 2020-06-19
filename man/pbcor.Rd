@@ -12,9 +12,9 @@ The \code{pbcor} function computes the percentage bend correlation coefficient, 
 \code{pball} the percentage bend correlation matrix, \code{winall} the Winsorized correlation matrix. 
 }
 \usage{
-pbcor(x, y = NULL, beta = 0.2)
+pbcor(x, y = NULL, beta = 0.2, ci = FALSE, nboot = 500, alpha = 0.05)
 pball(x, beta = 0.2)
-wincor(x, y = NULL, tr = 0.2)
+wincor(x, y = NULL, tr = 0.2, ci = FALSE, nboot = 500, alpha = 0.05)
 winall(x, tr = 0.2)
 }
 \arguments{
@@ -30,6 +30,15 @@ bending constant.
  \item{tr}{
 amount of Winsorization. 
  }
+\item{ci}{
+whether boostrap CI should be computed or not. 
+ }
+  \item{nboot}{
+number of bootstrap samples for CI computation. 
+ }
+  \item{alpha}{
+alpha level for CI computation. 
+ }
 }
 \details{
 It tested is whether the correlation coefficient equals 0 (null hypothesis) or not. Missing values are deleted pairwise. The tests are sensitive to heteroscedasticity. The test statistic H in \code{pball} tests the hypothesis that all correlations are equal to zero. 
@@ -41,6 +50,7 @@ It tested is whether the correlation coefficient equals 0 (null hypothesis) or n
 \item{test}{value of the test statistic}
 \item{p.value}{p-value}
 \item{n}{number of effective observations}
+\item{cor_ci}{bootstrap confidence interval}
 \item{call}{function call}
 
 \code{pball} and \code{winall} return an object of class \code{"pball"} containing: 
@@ -62,10 +72,10 @@ x1 <- subset(hangover, subset = (group == "control" & time == 1))$symptoms
 x2 <- subset(hangover, subset = (group == "control" & time == 2))$symptoms
 
 pbcor(x1, x2)
-pbcor(x1, x2, beta = 0.1)
+pbcor(x1, x2, beta = 0.1, ci = TRUE)
 
 wincor(x1, x2)
-wincor(x1, x2, tr = 0.1)
+wincor(x1, x2, tr = 0.1, ci = TRUE)
 
 require(reshape)
 hanglong <- subset(hangover, subset = group == "control")

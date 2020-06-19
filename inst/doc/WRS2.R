@@ -39,7 +39,7 @@ winall(hangwide)
 #  library("GGally")
 #  ggpairs(hangwide)
 
-## ----cor-plot1, echo=FALSE, out.width='0.7\\textwidth'----------------
+## ----cor-plot1, echo=FALSE, out.width='0.7\\textwidth', message=FALSE, warning=FALSE----
 library("GGally")
 ggpairs(hangwide)
 

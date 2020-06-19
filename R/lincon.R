@@ -1,8 +1,7 @@
-lincon <- function(formula, data, tr = 0.2){
+lincon <- function(formula, data, tr = 0.2, alpha = 0.05){
   #
  
   con=0
-  alpha=.05
   pr=TRUE
   crit=NA
   KB=FALSE

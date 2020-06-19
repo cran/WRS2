@@ -1252,3 +1252,375 @@ yuen.effect<-function(x,y,tr=.2,alpha=.05,plotit=FALSE,
        crit=crit,df=df,Var.Explained=e.pow,Effect.Size=sqrt(e.pow))
 }
 
+## --- 
+D.akp.effect<-function(x,y=NULL,null.value=0,tr=.2){
+  #
+  # Computes the robust effect size for one-sample case using
+  # a simple modification of
+  # Algina, Keselman, Penfield Pcyh Methods, 2005, 317-328
+  #
+  #  When comparing two dependent groups, data for the second group can be stored in
+  #  the second argument y. The function then computes the difference scores x-y
+  #
+  if(!is.null(y))x=x-y
+  x<-elimna(x)
+  s1sq=winvar(x,tr=tr)
+  cterm=1
+  if(tr>0)cterm=area(dnormvar,qnorm(tr),qnorm(1-tr))+2*(qnorm(tr)^2)*tr
+  cterm=sqrt(cterm)
+  dval<-cterm*(tmean(x,tr=tr)-null.value)/sqrt(s1sq)
+  dval
+}
+
+
+
+D.akp.effect.ci<-function(x,y=NULL,null.value=0,alpha=.05,tr=.2,nboot=1000,SEED=FALSE){
+  #
+  # Computes the robust effect size for one-sample case using
+  # a simple modification of
+  # Algina, Keselman, Penfield Pcyh Methods, 2005, 317-328
+  #
+  #  When comparing two dependent groups, data for the second group can be stored in
+  #  the second argument y. The function then computes the difference scores x-y
+  if(SEED)set.seed(2)
+  if(!is.null(y))x=x-y
+  x<-elimna(x)
+  a=D.akp.effect(x=x,tr=tr,null.value=null.value)
+  v=NA
+  for(i in 1:nboot){
+    X=sample(x,replace=TRUE)
+    v[i]=D.akp.effect(X,tr=tr,null.value=null.value)
+  }
+  v=sort(v)
+  ilow<-round((alpha/2) * nboot)
+  ihi<-nboot - ilow
+  ilow<-ilow+1
+  ci=v[ilow]
+  ci[2]=v[ihi]
+  list(Effect.Size=a,ci=ci)
+}
+
+depQS<-function(x,y=NULL,locfun=median,...){
+  #
+  #  Probabilistic measure of effect size: shift of the median
+  #  based on difference scores for two dependent groups.
+  # Note Cohen d: .2 .5 and .8 correspond to 
+  #    depQS= .6, .7 and .8 approximately.
+  #    Cohen d: -.2  -.5 and -.8 correspond to
+  #    .4, .3 and .2
+  #
+  if(!is.null(y))L=x-y
+  else L=x
+  L=elimna(L)
+  est=locfun(L,...)
+  if(est>=0)ef.sizeND=mean(L-est<=est)
+  ef.size=mean(L-est<=est)
+  #if(est<0)ef.sizeND=mean(L-est>=est)
+  #Q.size=(ef.size-.5)/.5
+  list(Q.effect=ef.size)
+}
+
+
+depQSci<-function(x,y=NULL,locfun=median,alpha=.05,nboot=1000,SEED=FALSE,...){
+  #
+  # confidence interval for the quantile shift measure of effect size.
+  #
+  if(SEED)set.seed(2)
+  if(!is.null(y)){
+    xy=elimna(cbind(x,y))
+    xy=xy[,1]-xy[,2]
+  }
+  if(is.null(y))xy=elimna(x)
+  n=length(xy)
+  v=NA
+  for(i in 1:nboot){
+    id=sample(c(1:n),replace=TRUE)
+    v[i]=depQS(xy[id],locfun=locfun,...)$Q.effect                                                                
+  }                                                                                                        
+  v=sort(v)                                                                                                
+  ilow<-round((alpha/2) * nboot)                                                                           
+  ihi<-nboot - ilow                                                                                        
+  ilow<-ilow+1                                                                                             
+  ci=v[ilow]                                                                                               
+  ci[2]=v[ihi]      
+  est=depQS(xy)$Q.effect                                                                                      
+  list(Q.effect=est,ci=ci)                                                                                                       
+} 
+
+binom.conf<-function(x = sum(y), nn = length(y),AUTO=TRUE,
+                     method=c('AC','P','CP','KMS','WIL','SD'), y = NULL, n = NA, alpha = 0.05){
+  #
+  #
+  # P: Pratt's method
+  # AC: Agresti--Coull
+  # CP: Clopper--Pearson
+  # KMS:  Kulinskaya et al. 2008, p. 140
+  #  WIL:  Wilson type CI. Included for completeness; was used in simulations  relevant to binom2g
+  #   SD: Schilling--Doi
+  #
+  method <- 'SD'
+  if(nn<35){
+    if(AUTO)method='SD'
+  }
+  type=match.arg(method)
+  switch(type,
+         #P=binomci(x=x,nn=nn,y=y,n=n,alpha=alpha),
+         #AC=acbinomci(x=x,nn=nn,y=y,n=n,alpha=alpha),
+         #CP=binomCP(x=x,nn=nn,y=y,n=n,alpha=alpha),
+         #KMS=kmsbinomci(x=x,nn=nn,y=y,n=n,alpha=alpha),
+         #WIL=wilbinomci(x=x,y=y,n=nn,alpha=alpha),
+         SD=binomLCO(x=x,nn=nn,y=y,alpha=alpha),
+  )
+}
+
+binomLCO<-function (x = sum(y), nn = length(y), y = NULL, n = NA, alpha = 0.05){
+  #
+  # Compute a confidence interval for the probability of success using the method is
+  #                                                
+  #  Schilling, M., Doi, J. (2014)
+  #  A Coverage Probability Approach to Finding   
+  #  an Optimal Binomial Confidence Procedure,    
+  #  The American Statistician, 68, 133-145.    
+  #                               
+  if(!is.null(y)){
+    y=elimna(y)
+    nn=length(y)
+  }
+  if(nn==1)stop('Something is wrong: number of observations is only 1')
+  cis=LCO.CI(nn,1-alpha,3)
+  ci=cis[x+1,2:3]
+  list(phat=x/nn,ci=ci,n=nn)
+}
+
+LCO.CI <- function(n,level,dp)
+{
+  
+  # For desired decimal place accuracy of dp, search on grid using (dp+1) 
+  # accuracy then round final results to dp accuracy.
+  iter <- 10**(dp+1)
+  
+  p <- seq(0,.5,1/iter)
+  
+  
+  ############################################################################
+  # Create initial cpf with AC[l,u] endpoints by choosing coverage 
+  # probability from highest acceptance curve with minimal span.
+  
+  
+  cpf.matrix <- matrix(NA,ncol=3,nrow=iter+1)
+  colnames(cpf.matrix)<-c("p","low","upp")
+  
+  for (i in 1:(iter/2+1)){
+    p <- (i-1)/iter
+    
+    bin <- dbinom(0:n,n,p)
+    x   <- 0:n
+    pmf <- cbind(x,bin)
+    
+    # Binomial probabilities ordered in descending sequence
+    pmf <- pmf[order(-pmf[,2],pmf[,1]),] 
+    pmf <- data.frame(pmf)
+    
+    # Select the endpoints (l,u) such that AC[l,u] will
+    # be at least equal to LEVEL. The cumulative sum of
+    # the ordered pmf will identify when this occurs.
+    m.row  <- min(which((cumsum(pmf[,2])>=level)==TRUE))
+    low.val <-min(pmf[1:m.row,][,1])
+    upp.val <-max(pmf[1:m.row,][,1])
+    
+    cpf.matrix[i,] <- c(p,low.val,upp.val)
+    
+    # cpf flip only for p != 0.5
+    
+    if (i != iter/2+1){
+      n.p <- 1-p
+      n.low <- n-upp.val
+      n.upp <- n-low.val
+      
+      cpf.matrix[iter+2-i,] <- c(n.p,n.low,n.upp)
+    }
+  }
+  
+  
+  ############################################################################
+  # LCO Gap Fix
+  # If the previous step yields any violations in monotonicity in l for 
+  # AC[l,u], this will cause a CI gap. Apply fix as described in Step 2 of 
+  # algorithm as described in paper.
+  
+  # For p < 0.5, monotonicity violation in l can be determined by using the 
+  # lagged difference in l. If the lagged difference is -1 a violation has 
+  # occurred. The NEXT lagged difference of +1 identifies the (l,u) pair to 
+  # substitute with. The range of p in violation would be from the lagged 
+  # difference of -1 to the point just before the NEXT lagged difference of 
+  # +1. Substitute the old (l,u) with updated (l,u) pair. Then make required
+  # (l,u) substitutions for corresponding p > 0.5. 
+  
+  # Note the initial difference is defined as 99 simply as a place holder.
+  
+  diff.l <- c(99,diff(cpf.matrix[,2],differences = 1))
+  
+  if (min(diff.l)==-1){
+    
+    for (i in which(diff.l==-1)){
+      j <- min(which(diff.l==1)[which(diff.l==1)>i])
+      new.low <- cpf.matrix[j,2]
+      new.upp <- cpf.matrix[j,3]
+      cpf.matrix[i:(j-1),2] <- new.low
+      cpf.matrix[i:(j-1),3] <- new.upp
+    }
+    
+    # cpf flip
+    pointer.1 <- iter - (j - 1) + 2
+    pointer.2 <- iter - i + 2
+    
+    cpf.matrix[pointer.1:pointer.2,2]<- n - new.upp
+    cpf.matrix[pointer.1:pointer.2,3]<- n - new.low
+  }
+  
+  
+  ############################################################################
+  # LCO CI Generation
+  
+  ci.matrix <-  matrix(NA,ncol=3,nrow=n+1) 
+  rownames(ci.matrix) <- c(rep("",nrow(ci.matrix)))
+  colnames(ci.matrix) <- c("x","lower","upper")
+  
+  # n%%2 is n mod 2: if n%%2 == 1 then n is odd
+  # n%/%2 is the integer part of the division: 5/2 = 2.5, so 5%/%2 = 2
+  
+  if (n%%2==1) x.limit <- n%/%2
+  if (n%%2==0) x.limit <- n/2
+  
+  for (x in 0:x.limit)
+  {
+    num.row <- nrow(cpf.matrix[(cpf.matrix[,2]<=x & x<=cpf.matrix[,3]),])
+    
+    low.lim <- 
+      round(cpf.matrix[(cpf.matrix[,2]<=x & x<=cpf.matrix[,3]),][1,1],
+            digits=dp)
+    
+    upp.lim <- 
+      round(cpf.matrix[(cpf.matrix[,2]<=x & x<=cpf.matrix[,3]),][num.row,1],
+            digits=dp)
+    
+    ci.matrix[x+1,]<-c(x,low.lim,upp.lim)
+    
+    # Apply equivariance
+    n.x <- n-x
+    n.low.lim <- 1 - upp.lim
+    n.upp.lim <- 1 - low.lim
+    
+    ci.matrix[n.x+1,]<-c(n.x,n.low.lim,n.upp.lim)
+  }
+  
+  
+  heading <- matrix(NA,ncol=1,nrow=1)    
+  
+  heading[1,1] <- 
+    paste("LCO Confidence Intervals for n = ",n," and Level = ",level,sep="")
+  
+  rownames(heading) <- c("")
+  colnames(heading) <- c("")
+  
+  #  print(heading,quote=FALSE)
+  
+  # print(ci.matrix)
+  ci.matrix
+}
+
+
+## effect size rmanova
+rmES.pro<-function(x, est = tmean, ...){
+  #
+  #  Measure of effect size based on the depth of 
+  #  estimated measure of location relative to the 
+  #  null distribution
+  #
+ 
+  if(is.list(x))x=matl(x)
+  x=elimna(x)
+  E=apply(x,2,est,...)
+  GM=mean(E)
+  J=ncol(x)
+  GMvec=rep(GM,J)
+  DN=pdis(x,GMvec,center=E)
+  DN
+}
+
+pdis<-function(m,pts=m,MM=FALSE,cop=3,dop=1,center=NA,na.rm=TRUE){
+  #
+  # Compute projection distances for points in pts relative to points in m
+  #  That is, the projection distance from the center of m
+  #
+  #
+  #  MM=F  Projected distance scaled
+  #  using interquatile range.
+  #  MM=T  Scale projected distances using MAD.
+  #
+  #  There are five options for computing the center of the
+  #  cloud of points when computing projections:
+  #  cop=1 uses Donoho-Gasko median
+  #  cop=2 uses MCD center
+  #  cop=3 uses median of the marginal distributions.
+  #  cop=4 uses MVE center
+  #  cop=5 uses skipped mean
+  #
+  m<-elimna(m) # Remove missing values
+  pts=elimna(pts)
+  m<-as.matrix(m)
+  nm=nrow(m)
+  pts<-as.matrix(pts)
+  if(ncol(m)>1){
+    if(ncol(pts)==1)pts=t(pts)
+  }
+  npts=nrow(pts)
+  mp=rbind(m,pts)
+  np1=nrow(m)+1
+  if(ncol(m)==1){
+    m=as.vector(m)
+    pts=as.vector(pts)
+    if(is.na(center[1]))center<-median(m)
+    dis<-abs(pts-center)
+    disall=abs(m-center)
+    temp=idealf(disall)
+    if(!MM){
+      pdis<-dis/(temp$qu-temp$ql)
+    }
+    if(MM)pdis<-dis/mad(disall)
+  }
+  #if(ncol(m)>1){
+  else{
+    if(is.na(center[1])){
+      if(cop==1)center<-dmean(m,tr=.5,dop=dop)
+      if(cop==2)center<-cov.mcd(m)$center
+      if(cop==3)center<-apply(m,2,median)
+      if(cop==4)center<-cov.mve(m)$center
+      if(cop==5)center<-smean(m)
+    }
+    dmat<-matrix(NA,ncol=nrow(mp),nrow=nrow(mp))
+    for (i in 1:nrow(mp)){
+      B<-mp[i,]-center
+      dis<-NA
+      BB<-B^2
+      bot<-sum(BB)
+      if(bot!=0){
+        for (j in 1:nrow(mp)){
+          A<-mp[j,]-center
+          temp<-sum(A*B)*B/bot
+          dis[j]<-sqrt(sum(temp^2))
+        }
+        dis.m=dis[1:nm]
+        if(!MM){
+          #temp<-idealf(dis)
+          temp<-idealf(dis.m)
+          dmat[,i]<-dis/(temp$qu-temp$ql)
+        }
+        #if(MM)dmat[,i]<-dis/mad(dis)
+        if(MM)dmat[,i]<-dis/mad(dis.m)
+      }}
+    pdis<-apply(dmat,1,max,na.rm=na.rm)
+    pdis=pdis[np1:nrow(mp)]
+  }
+  pdis
+}

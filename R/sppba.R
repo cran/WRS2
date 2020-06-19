@@ -57,8 +57,6 @@ sppba <- function(formula, id, data, est = "mom", avg = TRUE, nboot = 500, MDIS 
     }
   }
   xx<-x
-  #if(SEED)set.seed(2) # set seed of random number generator so that
-  #             results can be duplicated.
   # Next determine the n_j values
   nvec<-NA
   jp<-1-K
@@ -142,7 +140,7 @@ sppba <- function(formula, id, data, est = "mom", avg = TRUE, nboot = 500, MDIS 
   
   if(!avg)bcon<-t(con)%*%t(bloc) #C by nboot matrix
   if(avg)bcon<-t(con)%*%(bloc)
-  tvec<-t(con)%*%mvec
+  tvec<-t(con)%*%mvec                  
   tvec<-tvec[,1]
   tempcen<-apply(bcon,1,mean)
   vecz<-rep(0,ncol(con))
@@ -167,21 +165,20 @@ sppba <- function(formula, id, data, est = "mom", avg = TRUE, nboot = 500, MDIS 
   sig.level<-1-sum(dv[bplus]>=dv[1:nboot])/nboot
   
   ## reorganizing output
-  if (length(tvec) > 1) {
-    tvec1 <- data.frame(Estimate = tvec)
-    if (avg) {
-      tnames <- levels(mf[,fixvar])
-      rownames(tvec1) <- tnames
-    } else {
-      fixcomb <- apply(combn(levels(mf[,fixvar]), 2), 2, paste0, collapse = "-")
-      rnames <- levels(mf[,ranvar])
-      tnames <- as.vector(t(outer(rnames, fixcomb, paste)))
-      rownames(tvec1) <- tnames
-    }
+  
+  tvec1 <- data.frame(Estimate = tvec)
+  if (avg) {
+    #tnames <- levels(mf[,fixvar])
+    tnames <- apply(combn(levels(mf[,fixvar]), 2), 2, paste0, collapse = "-")
+    rownames(tvec1) <- tnames
   } else {
-    tvec1 <- tvec
+    fixcomb <- apply(combn(levels(mf[,fixvar]), 2), 2, paste0, collapse = "-")
+    rnames <- levels(mf[,ranvar])
+    tnames <- as.vector(t(outer(rnames, fixcomb, paste)))
+    rownames(tvec1) <- tnames
   }
-  result <- list(test = tvec1, p.value = sig.level, call = cl)
+  
+  result <- list(test = tvec1, p.value = sig.level, contrasts = con, call = cl)
   class(result) <- c("spp")
   result
 }

@@ -1,5 +1,4 @@
-t1waybt <-
-function(formula, data, tr = 0.2, nboot = 599){
+t1waybt <- function(formula, data, tr = 0.2, nboot = 599){
   
   if (missing(data)) {
     mf <- model.frame(formula)
@@ -48,7 +47,8 @@ function(formula, data, tr = 0.2, nboot = 599){
   neff <- sum(!is.na(testb))
   test <- t1wayv2(x,tr=tr,grp=grp)
   pval <- mean(test$TEST<=testb,na.rm=TRUE)
-  result <- list(test=test$TEST,p.value=pval,Var.Explained=test$Var.Explained,Effect.Size=test$Effect.Size, nboot.eff = neff, call = cl)
+  result <- list(test=test$TEST,p.value=pval,Var.Explained=test$Var.Explained,Effect.Size=test$Effect.Size, 
+                 nboot.eff = neff, call = cl)
   class(result) <- c("t1waybt")
   result
 }

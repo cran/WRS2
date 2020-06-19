@@ -1,4 +1,4 @@
-rmmcp<-function(y, groups, blocks, tr = 0.2){
+rmmcp<-function(y, groups, blocks, tr = 0.2, alpha = 0.05){
   #
   # MCP on trimmed means with FWE controlled with Rom's method
   #
@@ -14,7 +14,6 @@ rmmcp<-function(y, groups, blocks, tr = 0.2){
   grp <- c(1:length(x))
   
   con = 0
-  alpha = 0.05
   dif=TRUE
   flagcon=F
   if(!is.matrix(x))x<-matl(x)
