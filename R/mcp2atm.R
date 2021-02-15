@@ -23,11 +23,15 @@ mcp2atm<-function(formula, data, tr = 0.2){
   data$row <- unlist(alply(nfac1, 1, sequence), use.names = FALSE)
   dataMelt <- melt(data, id = c("row", colnames(mf)[2], colnames(mf)[3]), measured = mf[,1])
   
-  dataWide <- cast(dataMelt, as.formula(paste(colnames(dataMelt)[1], "~", colnames(mf)[2], "+", colnames(mf)[3]))) 
+  dataWide <- cast(dataMelt, as.formula(paste(colnames(dataMelt)[1], "~", colnames(mf)[2], "+", colnames(mf)[3])), 
+                   fun.aggregate = mean)
   dataWide$row <- NULL
-  x <- dataWide
+  # x <- dataWide
+  # x <- listm(x)
+  # 
+  x <- fac2list(mf[,1], mf[,2:3])
   
-  x <- listm(x)
+  
   if(!is.na(grp[1])) {
     yy <- x
     x<-list()

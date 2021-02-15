@@ -62,6 +62,7 @@ export(winvar)
 export(onestep)
 export(mom)
 export(dep.effect)
+export(wmcpAKP)
 
 
 S3method(print, bwtrim)

@@ -27,11 +27,14 @@ mcp2a <- function(formula, data, est = "mom", nboot = 599){
   data$row <- unlist(alply(nfac1, 1, sequence), use.names = FALSE)
   dataMelt <- melt(data, id = c("row", colnames(mf)[2], colnames(mf)[3]), measured = mf[,1])
   
-  dataWide <- cast(dataMelt, as.formula(paste(colnames(dataMelt)[1], "~", colnames(mf)[2], "+", colnames(mf)[3]))) 
+  dataWide <- cast(dataMelt, as.formula(paste(colnames(dataMelt)[1], "~", colnames(mf)[2], "+", colnames(mf)[3])), 
+                   fun.aggregate = mean) 
   dataWide$row <- NULL
-  x <- dataWide
+  # x <- dataWide
+  # x <- listm(x)
   
-  x <- listm(x)
+  x <- fac2list(mf[,1], mf[,2:3])
+  
   if(!is.na(grp)) {
     yy <- x
     for(j in 1:length(grp))

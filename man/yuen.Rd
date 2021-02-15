@@ -80,7 +80,7 @@ Returns objects of classes \code{"yuen"} or \code{"pb2"} containing:
 \item{partable}{parameter table}
 }
 \references{
-Algina, J., Keselman, H.J., & Penfield, R.D. (2005). An alternative to Cohen's standardized mean difference effect size: A robust parameter and confidence interval in the two independent groups xase. Psychological Methods, 10, 317-328.
+Algina, J., Keselman, H.J., & Penfield, R.D. (2005). An alternative to Cohen's standardized mean difference effect size: A robust parameter and confidence interval in the two independent groups case. Psychological Methods, 10, 317-328.
 
 Wilcox, R. (2012). Introduction to Robust Estimation and Hypothesis Testing (3rd ed.). Elsevier.
 

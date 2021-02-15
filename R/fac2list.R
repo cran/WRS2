@@ -27,7 +27,7 @@ res=selby2(cbind(x,g),c(2:Lp1),1)
 group.id=res$grpn
 res=res$x
 }
-print("Group Levels:")
-print(group.id)
+# print("Group Levels:")
+# print(group.id)
 res
 }
