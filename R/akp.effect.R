@@ -1,25 +1,25 @@
-akp.effect <- function(formula, data, EQVAR = TRUE, tr = 0.2, nboot = 200, alpha = 0.05){
+akp.effect <- function(formula, data, EQVAR = TRUE, tr = 0.2, nboot = 200, alpha = 0.05, ...){
   #
   # Computes the robust effect size suggested by
   #Algina, Keselman, Penfield Psych Methods, 2005, 317-328
-  
+
   if (missing(data)) {
     mf <- model.frame(formula)
   } else {
     mf <- model.frame(formula, data)
   }
   cl <- match.call()
-  
+
   xy <- split(model.extract(mf, "response"), mf[,2])
   faclevels <- names(xy)
   x <- xy[[1]]
   y <- xy[[2]]
-  
+
   x<-elimna(x)
   y<-elimna(y)
   n1<-length(x)
   n2<-length(y)
-  
+
   ## effect size computation
   s1sq=winvar(x,tr=tr)
   s2sq=winvar(y,tr=tr)
@@ -30,8 +30,8 @@ akp.effect <- function(formula, data, EQVAR = TRUE, tr = 0.2, nboot = 200, alpha
   cterm=sqrt(cterm)
   if(EQVAR)dval<-cterm*(tmean(x,tr)-tmean(y,tr))/sp
   if(!EQVAR) dval<-cterm*(tmean(x,tr)-tmean(y,tr))/sqrt(s1sq)
-    
-  ## bootstrap CI 
+
+  ## bootstrap CI
   be.f=NA
   for(i in 1:nboot){
     X=sample(x,n1,replace=TRUE)
@@ -52,8 +52,8 @@ akp.effect <- function(formula, data, EQVAR = TRUE, tr = 0.2, nboot = 200, alpha
   be.f=sort(be.f)
   ci=be.f[L+1]
   ci[2]=be.f[U]
-  
-  ## output 
+
+  ## output
   result <- list(AKPeffect = dval, AKPci = ci, call = cl)
   class(result) = "AKP"
   result

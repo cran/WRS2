@@ -1,5 +1,4 @@
-msmedse <-
-function(x, sewarn = TRUE){
+msmedse <- function(x, sewarn = TRUE, ...){
 #
 # Compute  standard error of the median using method
 # recommended by McKean and Shrader (1984).

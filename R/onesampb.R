@@ -1,5 +1,5 @@
 
-onesampb <- function(x, est = "onestep", nboot = 2000, nv = 0, alpha = 0.05){
+onesampb <- function(x, est = "onestep", nboot = 2000, nv = 0, alpha = 0.05, ...){
   #
   #   Compute a bootstrap, .95 confidence interval for the
   #   measure of location corresponding to the argument est.
@@ -7,13 +7,13 @@ onesampb <- function(x, est = "onestep", nboot = 2000, nv = 0, alpha = 0.05){
   #   M-estimator of location based on Huber's Psi is used.
   #   The default number of bootstrap samples is nboot=500
   #
-  #    nv=null value when  computing a p-value
+  #    nv=null value when computing a p-value
   #
   cl <- match.call()
   est <- match.arg(est, c("mom", "onestep", "median"), several.ok = FALSE)
   est <- get(est)
-  
-  
+
+
   null.value <- NULL
   if(!is.null(null.value))nv=null.value
   #if(SEED)set.seed(2) # set seed of random number generator so that

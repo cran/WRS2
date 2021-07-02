@@ -1,4 +1,4 @@
-mestse<-function(x,bend=1.28){
+mestse<-function(x,bend=1.28,...){
 #
 #   Estimate the standard error of M-estimator using Huber's Psi
 #   using estimate of influence function

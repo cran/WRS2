@@ -1,5 +1,5 @@
-sppba <- function(formula, id, data, est = "mom", avg = TRUE, nboot = 500, MDIS = FALSE){
-  
+sppba <- function(formula, id, data, est = "mom", avg = TRUE, nboot = 500, MDIS = FALSE, ...){
+
   if (missing(data)) {
     mf <- model.frame(formula)
   } else {
@@ -7,13 +7,13 @@ sppba <- function(formula, id, data, est = "mom", avg = TRUE, nboot = 500, MDIS 
   }
   cl <- match.call()
   est <- match.arg(est, c("mom", "onestep", "median"), several.ok = FALSE)
-  
+
   mf1 <- match.call()
   m <- match(c("formula", "data", "id"), names(mf1), 0L)
   mf1 <- mf1[c(1L, m)]
   mf1$drop.unused.levels <- TRUE
   mf1[[1L]] <- quote(stats::model.frame)
-  mf1 <- eval(mf1, parent.frame())  
+  mf1 <- eval(mf1, parent.frame())
 
   random1 <- mf1[, "(id)"]
   depvar <- colnames(mf)[1]
@@ -32,7 +32,7 @@ sppba <- function(formula, id, data, est = "mom", avg = TRUE, nboot = 500, MDIS 
   J <- length(table(mf[, fixvar]))  ## number of levels
   p <- J*K
   grp <- 1:p
-  est <- get(est)  
+  est <- get(est)
 
   fixsplit <- split(mf[,depvar], mf[,fixvar])
   indsplit <- split(mf[,ranvar], mf[,fixvar])
@@ -72,7 +72,7 @@ sppba <- function(formula, id, data, est = "mom", avg = TRUE, nboot = 500, MDIS 
   #print("Taking bootstrap samples. Please wait.")
   mvec<-NA
   ik<-0
-  
+
   for(j in 1:J){
     #paste("Working on level ",j," of Factor A")
     x<-matrix(NA,nrow=nvec[j],ncol=K)
@@ -98,8 +98,8 @@ sppba <- function(formula, id, data, est = "mom", avg = TRUE, nboot = 500, MDIS 
       if(j>1)bloc<-cbind(bloc,bvec)
     }
   }
-  
-  
+
+
   if(avg){
     d<-(J^2-J)/2
     con<-matrix(0,J,d)
@@ -137,10 +137,10 @@ sppba <- function(formula, id, data, est = "mom", avg = TRUE, nboot = 500, MDIS 
         con1<-push(con1)
         con<-cbind(con,con1)
       }}}
-  
+
   if(!avg)bcon<-t(con)%*%t(bloc) #C by nboot matrix
   if(avg)bcon<-t(con)%*%(bloc)
-  tvec<-t(con)%*%mvec                  
+  tvec<-t(con)%*%mvec
   tvec<-tvec[,1]
   tempcen<-apply(bcon,1,mean)
   vecz<-rep(0,ncol(con))
@@ -163,9 +163,9 @@ sppba <- function(formula, id, data, est = "mom", avg = TRUE, nboot = 500, MDIS 
     }}
   bplus<-nboot+1
   sig.level<-1-sum(dv[bplus]>=dv[1:nboot])/nboot
-  
+
   ## reorganizing output
-  
+
   tvec1 <- data.frame(Estimate = tvec)
   if (avg) {
     #tnames <- levels(mf[,fixvar])
@@ -177,7 +177,7 @@ sppba <- function(formula, id, data, est = "mom", avg = TRUE, nboot = 500, MDIS 
     tnames <- as.vector(t(outer(rnames, fixcomb, paste)))
     rownames(tvec1) <- tnames
   }
-  
+
   result <- list(test = tvec1, p.value = sig.level, contrasts = con, call = cl)
   class(result) <- c("spp")
   result

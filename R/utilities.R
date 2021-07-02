@@ -661,41 +661,41 @@ HuberTun=function(kappa,p){
   # Output
   # r: the critical value of Mahalalanobis distance, as defined in (20)
   # tau: the constant to make the robust estimator of Sigma to be unbiased, as defined in (20)
-  
+
   prob=1-kappa
   chip=qchisq(prob,p)
   r=sqrt(chip)
-  tau=(p*pchisq(chip,p+2)+ chip*(1-prob))/p	
+  tau=(p*pchisq(chip,p+2)+ chip*(1-prob))/p
   Results=list(r=r,tau=tau)
-  return(Results)	
+  return(Results)
 }
 
 
 robEst=function(Z,r,tau,ep){
-  
+
   p=ncol(Z)
   n=nrow(Z)
-  # Starting values 	
+  # Starting values
   mu0=MeanCov(Z)$zbar
   Sigma0=MeanCov(Z)$S
   Sigin=solve(Sigma0)
-  
+
   diverg=0 # convergence flag
-  
-  for (k in 1:200) {   	
+
+  for (k in 1:200) {
     sumu1=0
     mu=matrix(0,p,1)
     Sigma=matrix(0,p,p)
     d=rep(NA,n)
     u1=rep(NA,n)
     u2=rep(NA,n)
-    
+
     for (i in 1:n) {			zi=Z[i,]
     zi0=zi-mu0
     di2=t(zi0)%*%Sigin%*%zi0
     di=as.numeric(sqrt(di2))
     d[i]=di
-    
+
     #get u1i,u2i
     if (di<=r) {
       u1i=1.0
@@ -706,35 +706,35 @@ robEst=function(Z,r,tau,ep){
     }
     u1[i]=u1i
     u2[i]=u2i
-    
+
     sumu1=sumu1+u1i
     mu=mu+u1i*zi
     Sigma=Sigma+u2i*zi0%*%t(zi0)
-    
+
     } # end of loop i
-    
+
     mu1=mu/sumu1
     Sigma1=Sigma/n
     Sigdif=Sigma1-Sigma0
     dt=sum(Sigdif^2)
-    
+
     mu0=mu1
     Sigma0=Sigma1
     Sigin=solve(Sigma0)
     if (dt<ep) {break}
-    
+
   } # end of loop k
-  
-  
+
+
   if (k==200) {
     diverg=1
     mu0=rep(0,p)
     sigma0=matrix(NA,p,p)
-    
+
   }
-  
+
   theta=MLEst(Sigma0)
-  
+
   Results=list(mu=mu0,Sigma=Sigma0,theta=theta,d=d,u1=u1,u2=u2,diverg=diverg)
   return(Results)
 }
@@ -746,21 +746,21 @@ SErob=function(Z,mu,Sigma,theta,d,r,tau){
   q=6
   Dup=Dp(p)
   DupPlus=solve(t(Dup)%*%Dup)%*%t(Dup)
-  
+
   InvSigma=solve(Sigma)
   sigma=vech(Sigma)
   W=0.5*t(Dup)%*%(InvSigma%x%InvSigma)%*%Dup
-  
+
   Zr=matrix(NA,n,p) # robustly transformed data
   A=matrix(0,p+q,p+q)
   B=matrix(0,p+q,p+q)
   sumg=rep(0,p+q)
-  
+
   for (i in 1:n) {
     zi=Z[i,]
     zi0=zi-mu
     di=d[i]
-    
+
     if (di<=r) {
       u1i=1.0
       u2i=1.0/tau
@@ -772,58 +772,58 @@ SErob=function(Z,mu,Sigma,theta,d,r,tau){
       du1i=-r/di^2
       du2i=-2*r^2/tau/di^3
     }
-    
+
     #robust transformed data
     Zr[i,]=sqrt(u2i)*t(zi0)
-    
+
     ####	gi
-    
+
     g1i=u1i*zi0	# defined in (24)
     vTi=vech(zi0%*%t(zi0))
     g2i=u2i*vTi-sigma	# defined in (25)
     gi=rbind(g1i,g2i)
     sumg=gi+sumg
-    
+
     B=B+gi%*%t(gi)
-    
+
     ####	gdoti
-    
+
     #	derivatives of di with respect to mu and sigma
     ddmu=-1/di*t(zi0)%*%InvSigma
     ddsigma=-t(vTi)%*%W/di
-    
-    #	
+
+    #
     dg1imu=-u1i*diag(p)+du1i*zi0%*%ddmu
     dg1isigma=du1i*zi0%*%ddsigma
     dg2imu=-u2i*DupPlus%*%(zi0%x%diag(p)+diag(p)%x%zi0)+du2i*vTi%*%ddmu
     dg2isigma=du2i*vTi%*%ddsigma-diag(q)
-    
+
     dgi=rbind(cbind(dg1imu,dg1isigma),cbind(dg2imu,dg2isigma))
     A=A+dgi
   } # end of loop n
-  
+
   A=-1*A/n
   B=B/n
   invA=solve(A)
   OmegaSW=invA%*%B%*%t(invA)
   OmegaSW=OmegaSW[(p+1):(p+q),(p+1):(p+q)]
-  
-  
+
+
   SEsw=getSE(theta,OmegaSW,n)
   SEinf=SEML(Zr,theta)$inf
-  
-  Results=list(inf=SEinf,sand=SEsw,Zr=Zr)  	
+
+  Results=list(inf=SEinf,sand=SEsw,Zr=Zr)
   return(Results)
-  
+
 }
 
 MeanCov=function(Z){
   n=nrow(Z)
   p=ncol(Z)
-  
+
   zbar=t(Z)%*%matrix(1/n,n,1)
   S=t(Z)%*%(diag(n)-matrix(1/n,n,n))%*%Z/n
-  
+
   Results=list(zbar=zbar,S=S)
   return(Results)
 }
@@ -843,7 +843,7 @@ MLEst=function(S){
   Sxx=S[1:2,1:2]
   sxy=S[1:2,3]
   vem=S[2,2]-S[2,1]*S[1,2]/S[1,1]
-  
+
   # Y on X and M
   invSxx=solve(Sxx)
   beta.v=invSxx%*%sxy # chat, bhat
@@ -867,9 +867,9 @@ Dp=function(p){
         Dup[(i-1)*p+j, count]=1
       }
     }
-  }	
-  
-  return(Dup)	
+  }
+
+  return(Dup)
 }
 
 vech=function(A){
@@ -880,35 +880,35 @@ vech=function(A){
   for (i in 1:p) {
     for (j in i:p) {
       l=l+1
-      vA[l,1]=A[j,i]			
-    }	
+      vA[l,1]=A[j,i]
+    }
   }
-  
-  return(vA)	
+
+  return(vA)
 }
 
 
 getSE=function(theta,Omega,n){
-  
+
   hdot=gethdot(theta)
   COV=hdot%*%(Omega/n)%*%t(hdot)  # delta method
   se.v=sqrt(diag(COV)) # se.v of theta
-  
+
   a=theta[1]
   b=theta[2]
   SobelSE=sqrt(a^2*COV[2,2]+b^2*COV[1,1])
-  
+
   se.v=c(se.v,SobelSE) # including Sobel SE
-  
+
   return(se.v)
-  
+
 }
 gethdot=function(theta){
-  
+
   p=3
   ps=p*(p+1)/2
   q=ps
-  
+
   a=theta[1]
   b=theta[2]
   c=theta[3]
@@ -916,7 +916,7 @@ gethdot=function(theta){
   vx=theta[4]
   vem=theta[5]
   vey=theta[6]
-  
+
   sigmadot=matrix(NA,ps,q)
   sigmadot[1,]=c(0,0,0,1,0,0)
   sigmadot[2,]=c(vx,0,0,a,0,0)
@@ -924,9 +924,9 @@ gethdot=function(theta){
   sigmadot[4,]=c(2*a*vx,0,0,a^2,1,0)
   sigmadot[5,]=c((2*a*b+c)*vx,a^2*vx+vem,a*vx,a^2*b+a*c,b,0)
   sigmadot[6,]=c((2*b*c+2*a*b^2)*vx,(2*c*a+2*a^2*b)*vx+2*b*vem,(2*a*b+2*c)*vx,c^2+2*c*a*b+a^2*b^2,b^2,1)
-  
+
   hdot=solve(sigmadot)
-  
+
   return(hdot)
 }
 SEML=function(Z,thetaMLE){
@@ -940,28 +940,28 @@ SEML=function(Z,thetaMLE){
   InvS=solve(S)
   W=0.5*t(Dup)%*%(InvS%x%InvS)%*%Dup
   OmegaInf=solve(W)  # only about sigma, not mu
-  
-  
+
+
   # Sandwich-type Omega
   S12=matrix(0,p,ps)
   S22=matrix(0,ps,ps)
-  
+
   for (i in 1:n){
     zi0=Z[i,]-zbar
     difi=zi0%*%t(zi0)-S
-    vdifi=vech(difi)   		
-    S12=S12+zi0%*%t(vdifi)	
-    S22=S22+vdifi%*%t(vdifi)		
+    vdifi=vech(difi)
+    S12=S12+zi0%*%t(vdifi)
+    S22=S22+vdifi%*%t(vdifi)
   }
-  
+
   OmegaSW=S22/n # only about sigma, not mu
-  
+
   SEinf=getSE(thetaMLE,OmegaInf,n)
   SEsw=getSE(thetaMLE,OmegaSW,n)
-  
+
   Results=list(inf=SEinf,sand=SEsw)
   return(Results)
-  
+
 }
 BCI=function(Z,Zr,ab=NULL,abH,B,level){
   p=ncol(Z)
@@ -969,49 +969,49 @@ BCI=function(Z,Zr,ab=NULL,abH,B,level){
   #	abhat.v=rep(NA,B) # save MLEs of a*b in the B bootstrap samples
   abhatH.v=matrix(NA,B)
   Index.m=matrix(NA,n,B)
-  
+
   t1=0
-  t2=0	
+  t2=0
   for(i in 1:B){
     U=runif(n,min=1,max=n+1)
-    index=floor(U)	
+    index=floor(U)
     Index.m[,i]=index
     #H(.05)
     Zrb=Zr[index,]
     SH=MeanCov(Zrb)$S
     thetaH=MLEst(SH)
-    abhatH=thetaH[1]*thetaH[2]	
+    abhatH=thetaH[1]*thetaH[2]
     abhatH.v[i]=abhatH
     if (abhatH<abH){
-      t2=t2+1	
+      t2=t2+1
     }
-    
+
   } # end of B loop
-  
+
   abhatH.v=abhatH.v[!is.na(abhatH.v)]
   SEBH=sd(abhatH.v)
-  
+
   # bootstrap confidence intervals using robust method
   CI2 =BpBCa(Zr,abhatH.v,t2,level)
   #    Results=list(CI=CI2)
   Results=list(CI=CI2[[1]],pv=CI2[[2]])
   return(Results)
-  
+
 }# end of function
 
 BpBCa=function(Z,abhat.v,t,level){
   # Bootstrap percentile
   oab.v=sort(abhat.v)
   B=length(abhat.v)
-  
+
   ranklowBp=round(B*level/2)
-  
+
   if(ranklowBp==0){
     ranklowBp=1
   }
-  
+
   Bpl=oab.v[ranklowBp]
-  Bph=oab.v[round(B*(1-level/2))]	
+  Bph=oab.v[round(B*(1-level/2))]
   BP=c(Bpl,Bph)
   pstar=mean(oab.v>0)
   pv=2*min(c(pstar,1-pstar))
@@ -1046,7 +1046,7 @@ ifmest<-function(x,bend=1.28,op=2){
   #
   tt<-mest(x,bend)  # Store M-estimate in tt
   s<-mad(x)*qnorm(.75)
-  
+
 #   if(op==2){
 #     val<-akerd(x,pts=tt,plotit=FALSE,pyhat=T)
 #     val1<-akerd(x,pts=tt-s,plotit=FALSE,pyhat=T)
@@ -1102,7 +1102,7 @@ hpsi<-function(x,bend=1.28){
 
 
 yuenv2<-function(x,y=NULL,tr=.2,alpha=.05,plotit=FALSE,op=TRUE,VL=TRUE,cor.op=FALSE,loc.fun=median,
-                 xlab="Groups",ylab="",PB=FALSE,nboot=100,SEED=FALSE){
+                 xlab="Groups",ylab="",PB=FALSE,nboot=100,SEED=FALSE, ...){
   #plotfun=splot,
   #  Perform Yuen's test for trimmed means on the data in x and y.
   #  The default amount of trimming is 20%
@@ -1193,7 +1193,7 @@ yuenv2<-function(x,y=NULL,tr=.2,alpha=.05,plotit=FALSE,op=TRUE,VL=TRUE,cor.op=FA
 
 yuen.effect<-function(x,y,tr=.2,alpha=.05,plotit=FALSE,
                       op=TRUE,VL=TRUE,cor.op=FALSE,
-                      xlab="Groups",ylab="",PB=FALSE){
+                      xlab="Groups",ylab="",PB=FALSE, ...){
   #plotfun=splot,
   #  Same as yuen, only it computes explanatory power and the related
   # measure of effect size. Only use this with n1=n2. Called by yuenv2
@@ -1247,12 +1247,12 @@ yuen.effect<-function(x,y,tr=.2,alpha=.05,plotit=FALSE,
     y0=c(x,y)
     e.pow=wincor(x0,y0,tr=tr)$cor^2
   }
- 
+
   list(ci=c(low,up),p.value=yuen,dif=dif,se=sqrt(q1+q2),teststat=test,
        crit=crit,df=df,Var.Explained=e.pow,Effect.Size=sqrt(e.pow))
 }
 
-## --- 
+## ---
 D.akp.effect<-function(x,y=NULL,null.value=0,tr=.2){
   #
   # Computes the robust effect size for one-sample case using
@@ -1304,7 +1304,7 @@ depQS<-function(x,y=NULL,locfun=median,...){
   #
   #  Probabilistic measure of effect size: shift of the median
   #  based on difference scores for two dependent groups.
-  # Note Cohen d: .2 .5 and .8 correspond to 
+  # Note Cohen d: .2 .5 and .8 correspond to
   #    depQS= .6, .7 and .8 approximately.
   #    Cohen d: -.2  -.5 and -.8 correspond to
   #    .4, .3 and .2
@@ -1335,17 +1335,17 @@ depQSci<-function(x,y=NULL,locfun=median,alpha=.05,nboot=1000,SEED=FALSE,...){
   v=NA
   for(i in 1:nboot){
     id=sample(c(1:n),replace=TRUE)
-    v[i]=depQS(xy[id],locfun=locfun,...)$Q.effect                                                                
-  }                                                                                                        
-  v=sort(v)                                                                                                
-  ilow<-round((alpha/2) * nboot)                                                                           
-  ihi<-nboot - ilow                                                                                        
-  ilow<-ilow+1                                                                                             
-  ci=v[ilow]                                                                                               
-  ci[2]=v[ihi]      
-  est=depQS(xy)$Q.effect                                                                                      
-  list(Q.effect=est,ci=ci)                                                                                                       
-} 
+    v[i]=depQS(xy[id],locfun=locfun,...)$Q.effect
+  }
+  v=sort(v)
+  ilow<-round((alpha/2) * nboot)
+  ihi<-nboot - ilow
+  ilow<-ilow+1
+  ci=v[ilow]
+  ci[2]=v[ihi]
+  est=depQS(xy)$Q.effect
+  list(Q.effect=est,ci=ci)
+}
 
 binom.conf<-function(x = sum(y), nn = length(y),AUTO=TRUE,
                      method=c('AC','P','CP','KMS','WIL','SD'), y = NULL, n = NA, alpha = 0.05){
@@ -1376,12 +1376,12 @@ binom.conf<-function(x = sum(y), nn = length(y),AUTO=TRUE,
 binomLCO<-function (x = sum(y), nn = length(y), y = NULL, n = NA, alpha = 0.05){
   #
   # Compute a confidence interval for the probability of success using the method is
-  #                                                
+  #
   #  Schilling, M., Doi, J. (2014)
-  #  A Coverage Probability Approach to Finding   
-  #  an Optimal Binomial Confidence Procedure,    
-  #  The American Statistician, 68, 133-145.    
-  #                               
+  #  A Coverage Probability Approach to Finding
+  #  an Optimal Binomial Confidence Procedure,
+  #  The American Statistician, 68, 133-145.
+  #
   if(!is.null(y)){
     y=elimna(y)
     nn=length(y)
@@ -1394,74 +1394,74 @@ binomLCO<-function (x = sum(y), nn = length(y), y = NULL, n = NA, alpha = 0.05){
 
 LCO.CI <- function(n,level,dp)
 {
-  
-  # For desired decimal place accuracy of dp, search on grid using (dp+1) 
+
+  # For desired decimal place accuracy of dp, search on grid using (dp+1)
   # accuracy then round final results to dp accuracy.
   iter <- 10**(dp+1)
-  
+
   p <- seq(0,.5,1/iter)
-  
-  
+
+
   ############################################################################
-  # Create initial cpf with AC[l,u] endpoints by choosing coverage 
+  # Create initial cpf with AC[l,u] endpoints by choosing coverage
   # probability from highest acceptance curve with minimal span.
-  
-  
+
+
   cpf.matrix <- matrix(NA,ncol=3,nrow=iter+1)
   colnames(cpf.matrix)<-c("p","low","upp")
-  
+
   for (i in 1:(iter/2+1)){
     p <- (i-1)/iter
-    
+
     bin <- dbinom(0:n,n,p)
     x   <- 0:n
     pmf <- cbind(x,bin)
-    
+
     # Binomial probabilities ordered in descending sequence
-    pmf <- pmf[order(-pmf[,2],pmf[,1]),] 
+    pmf <- pmf[order(-pmf[,2],pmf[,1]),]
     pmf <- data.frame(pmf)
-    
+
     # Select the endpoints (l,u) such that AC[l,u] will
     # be at least equal to LEVEL. The cumulative sum of
     # the ordered pmf will identify when this occurs.
     m.row  <- min(which((cumsum(pmf[,2])>=level)==TRUE))
     low.val <-min(pmf[1:m.row,][,1])
     upp.val <-max(pmf[1:m.row,][,1])
-    
+
     cpf.matrix[i,] <- c(p,low.val,upp.val)
-    
+
     # cpf flip only for p != 0.5
-    
+
     if (i != iter/2+1){
       n.p <- 1-p
       n.low <- n-upp.val
       n.upp <- n-low.val
-      
+
       cpf.matrix[iter+2-i,] <- c(n.p,n.low,n.upp)
     }
   }
-  
-  
+
+
   ############################################################################
   # LCO Gap Fix
-  # If the previous step yields any violations in monotonicity in l for 
-  # AC[l,u], this will cause a CI gap. Apply fix as described in Step 2 of 
+  # If the previous step yields any violations in monotonicity in l for
+  # AC[l,u], this will cause a CI gap. Apply fix as described in Step 2 of
   # algorithm as described in paper.
-  
-  # For p < 0.5, monotonicity violation in l can be determined by using the 
-  # lagged difference in l. If the lagged difference is -1 a violation has 
-  # occurred. The NEXT lagged difference of +1 identifies the (l,u) pair to 
-  # substitute with. The range of p in violation would be from the lagged 
-  # difference of -1 to the point just before the NEXT lagged difference of 
+
+  # For p < 0.5, monotonicity violation in l can be determined by using the
+  # lagged difference in l. If the lagged difference is -1 a violation has
+  # occurred. The NEXT lagged difference of +1 identifies the (l,u) pair to
+  # substitute with. The range of p in violation would be from the lagged
+  # difference of -1 to the point just before the NEXT lagged difference of
   # +1. Substitute the old (l,u) with updated (l,u) pair. Then make required
-  # (l,u) substitutions for corresponding p > 0.5. 
-  
+  # (l,u) substitutions for corresponding p > 0.5.
+
   # Note the initial difference is defined as 99 simply as a place holder.
-  
+
   diff.l <- c(99,diff(cpf.matrix[,2],differences = 1))
-  
+
   if (min(diff.l)==-1){
-    
+
     for (i in which(diff.l==-1)){
       j <- min(which(diff.l==1)[which(diff.l==1)>i])
       new.low <- cpf.matrix[j,2]
@@ -1469,62 +1469,62 @@ LCO.CI <- function(n,level,dp)
       cpf.matrix[i:(j-1),2] <- new.low
       cpf.matrix[i:(j-1),3] <- new.upp
     }
-    
+
     # cpf flip
     pointer.1 <- iter - (j - 1) + 2
     pointer.2 <- iter - i + 2
-    
+
     cpf.matrix[pointer.1:pointer.2,2]<- n - new.upp
     cpf.matrix[pointer.1:pointer.2,3]<- n - new.low
   }
-  
-  
+
+
   ############################################################################
   # LCO CI Generation
-  
-  ci.matrix <-  matrix(NA,ncol=3,nrow=n+1) 
+
+  ci.matrix <-  matrix(NA,ncol=3,nrow=n+1)
   rownames(ci.matrix) <- c(rep("",nrow(ci.matrix)))
   colnames(ci.matrix) <- c("x","lower","upper")
-  
+
   # n%%2 is n mod 2: if n%%2 == 1 then n is odd
   # n%/%2 is the integer part of the division: 5/2 = 2.5, so 5%/%2 = 2
-  
+
   if (n%%2==1) x.limit <- n%/%2
   if (n%%2==0) x.limit <- n/2
-  
+
   for (x in 0:x.limit)
   {
     num.row <- nrow(cpf.matrix[(cpf.matrix[,2]<=x & x<=cpf.matrix[,3]),])
-    
-    low.lim <- 
+
+    low.lim <-
       round(cpf.matrix[(cpf.matrix[,2]<=x & x<=cpf.matrix[,3]),][1,1],
             digits=dp)
-    
-    upp.lim <- 
+
+    upp.lim <-
       round(cpf.matrix[(cpf.matrix[,2]<=x & x<=cpf.matrix[,3]),][num.row,1],
             digits=dp)
-    
+
     ci.matrix[x+1,]<-c(x,low.lim,upp.lim)
-    
+
     # Apply equivariance
     n.x <- n-x
     n.low.lim <- 1 - upp.lim
     n.upp.lim <- 1 - low.lim
-    
+
     ci.matrix[n.x+1,]<-c(n.x,n.low.lim,n.upp.lim)
   }
-  
-  
-  heading <- matrix(NA,ncol=1,nrow=1)    
-  
-  heading[1,1] <- 
+
+
+  heading <- matrix(NA,ncol=1,nrow=1)
+
+  heading[1,1] <-
     paste("LCO Confidence Intervals for n = ",n," and Level = ",level,sep="")
-  
+
   rownames(heading) <- c("")
   colnames(heading) <- c("")
-  
+
   #  print(heading,quote=FALSE)
-  
+
   # print(ci.matrix)
   ci.matrix
 }
@@ -1533,11 +1533,11 @@ LCO.CI <- function(n,level,dp)
 ## effect size rmanova
 rmES.pro<-function(x, est = tmean, ...){
   #
-  #  Measure of effect size based on the depth of 
-  #  estimated measure of location relative to the 
+  #  Measure of effect size based on the depth of
+  #  estimated measure of location relative to the
   #  null distribution
   #
- 
+
   if(is.list(x))x=matl(x)
   x=elimna(x)
   E=apply(x,2,est,...)

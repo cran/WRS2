@@ -13,10 +13,10 @@
 The \code{t2way} function computes a two-way ANOVA for trimmed means with interactions effects. Corresponding post hoc tests are in \code{mcp2atm}. \code{pbad2way} performs a two-way ANOVA using M-estimators for location with \code{mcp2a} for post hoc tests.
 }
 \usage{
-t2way(formula, data, tr = 0.2)
-pbad2way(formula, data, est = "mom", nboot = 599, pro.dis = FALSE)
-mcp2atm(formula, data, tr = 0.2)
-mcp2a(formula, data, est = "mom", nboot = 599)
+t2way(formula, data, tr = 0.2, ...)
+pbad2way(formula, data, est = "mom", nboot = 599, pro.dis = FALSE, ...)
+mcp2atm(formula, data, tr = 0.2, ...)
+mcp2a(formula, data, est = "mom", nboot = 599, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -30,18 +30,21 @@ an optional data frame for the input data.
 trim level for the mean.
 }
  \item{est}{
-Estimate to be used for the group comparisons: either \code{"onestep"} for one-step M-estimator of location using Huber's Psi, \code{"mom"} for the modified one-step (MOM) estimator of location based on Huber's Psi, or \code{"median"}. 
+Estimate to be used for the group comparisons: either \code{"onestep"} for one-step M-estimator of location using Huber's Psi, \code{"mom"} for the modified one-step (MOM) estimator of location based on Huber's Psi, or \code{"median"}.
 }
  \item{nboot}{
-number of bootstrap samples. 
+number of bootstrap samples.
 }
 \item{pro.dis}{
 If \code{FALSE}, Mahalanobis distances are used; if \code{TRUE} projection distances are computed.
 }
+\item{...}{
+currently ignored.
+}
 }
 \details{
-\code{t2way} does not report any degrees of freedom since an adjusted critical value is used. 
-\code{pbad2way} returns p-values only; if it happens that the variance-covariance matrix in the Mahalanobis distance computation is singular, it is suggested to use the projection distances by setting \code{pro.dis = TRUE}.  
+\code{t2way} does not report any degrees of freedom since an adjusted critical value is used.
+\code{pbad2way} returns p-values only; if it happens that the variance-covariance matrix in the Mahalanobis distance computation is singular, it is suggested to use the projection distances by setting \code{pro.dis = TRUE}.
 }
 \value{
 The functions \code{t2way} and \code{pbad2way} return an object of class \code{t2way} containing:
@@ -65,7 +68,7 @@ The functions \code{mcp2atm} and \code{mcp2a} return an object of class \code{mc
 Wilcox, R. (2012). Introduction to Robust Estimation and Hypothesis Testing (3rd ed.). Elsevier.
 }
 \seealso{
-\code{\link{t1way}}, \code{\link{med1way}}, \code{\link{t2way}} 
+\code{\link{t1way}}, \code{\link{med1way}}, \code{\link{t2way}}
 }
 \examples{
 ## 2-way ANOVA on trimmed means

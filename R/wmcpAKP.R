@@ -1,4 +1,4 @@
-wmcpAKP <- function(x, tr = 0.2, nboot = 200) {
+wmcpAKP <- function(x, tr = 0.2, nboot = 200, ...) {
   #  Compute Algina et al measure of effect size for pairs of J dependent groups
   if (is.matrix(x) || is.data.frame(x)) x <- listm(x)
   J <- length(x)
@@ -18,10 +18,13 @@ wmcpAKP <- function(x, tr = 0.2, nboot = 200) {
       }
     }
   }
+
   res <- c("Effect.Size" = mean(A[, 3]), "ci.low" = mean(A[, 4]), "ci.up" = mean(A[, 5]))
-  return(res)
+
+  class(res) = c("numeric", "wmcpAKP")
+  res
 }
-  
+
 
 
 

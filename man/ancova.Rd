@@ -10,12 +10,12 @@ This function computes robust ANCOVA for 2 independent groups and one covariate.
 confidence intervals using a percentile t-bootstrap is provided as well.
 }
 \usage{
-ancova(formula, data, tr = 0.2, fr1 = 1, fr2 = 1, pts = NA)
+ancova(formula, data, tr = 0.2, fr1 = 1, fr2 = 1, pts = NA, ...)
 
-ancboot(formula, data, tr = 0.2, nboot = 599, fr1 = 1, fr2 = 1, pts = NA)
+ancboot(formula, data, tr = 0.2, nboot = 599, fr1 = 1, fr2 = 1, pts = NA, ...)
 }
 %- maybe also 'usage' for other objects documented here.
-\arguments{ 
+\arguments{
  \item{formula}{
 an object of class formula.
 }
@@ -36,6 +36,9 @@ can be used to specify the design points where the regression lines are to be co
 }
 \item{nboot}{
 number of bootstrap samples
+}
+\item{...}{
+currently ignored.
 }
 }
 \value{

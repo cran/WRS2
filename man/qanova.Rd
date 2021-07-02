@@ -8,7 +8,7 @@
 One-way ANOVA based on quantiles. Only known method to work well when tied values are likely to occur.
 }
 \usage{
-Qanova(formula, data, q = 0.5, nboot = 600)
+Qanova(formula, data, q = 0.5, nboot = 600, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,6 +23,9 @@ quantile (or vector of quantiles) to be used.
 }
 \item{nboot}{
 number of bootstrap samples
+}
+\item{...}{
+currently ignored.
 }
 }
 \details{

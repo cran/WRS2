@@ -1,24 +1,24 @@
 med1way <-
-function(formula, data, iter = 1000) {
-  
+function(formula, data, iter = 1000, ...) {
+
   if (missing(data)) {
     mf <- model.frame(formula)
   } else {
     mf <- model.frame(formula, data)
   }
   cl <- match.call()
-  
+
   alpha <- 0.05
   crit <- NA
   SEED <- TRUE
-  x <- split(model.extract(mf, "response"), mf[,2])   
-  
-  grp <- 1:length(x)      
+  x <- split(model.extract(mf, "response"), mf[,2])
+
+  grp <- 1:length(x)
   J <- length(grp)  # The number of groups to be compared
   n <- vector("numeric",J)
   w <- vector("numeric",J)
   xbar <- vector("numeric",J)
-  
+
   for(j in 1:J){
     xx <- !is.na(x[[j]])
     val <- x[[j]]
@@ -31,7 +31,7 @@ function(formula, data, iter = 1000) {
  u <- sum(w)
  xtil <- sum(w*xbar)/u
  TEST <- sum(w*(xbar-xtil)^2)/(J-1)
- 
+
  if(is.na(crit)){
    temp <- med1way.crit(n,alpha,SEED=SEED,iter=iter,TEST=TEST)
    crit.val <- temp$crit.val

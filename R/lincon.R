@@ -1,27 +1,27 @@
-lincon <- function(formula, data, tr = 0.2, alpha = 0.05){
+lincon <- function(formula, data, tr = 0.2, alpha = 0.05, ...){
   #
- 
+
   con=0
   pr=TRUE
   crit=NA
   KB=FALSE
-  
+
   if (missing(data)) {
     mf <- model.frame(formula)
   } else {
     mf <- model.frame(formula, data)
   }
   cl <- match.call()
-  
-  x <- split(model.extract(mf, "response"), mf[,2])   
-  
+
+  x <- split(model.extract(mf, "response"), mf[,2])
+
   if(tr==.5)stop("Use the R function medpb to compare medians")
   if(is.data.frame(x))x=as.matrix(x)
   flag<-T
   if(alpha!= .05 && alpha!=.01)flag<-F
   if(is.matrix(x))x<-listm(x)
   if(!is.list(x))stop("Data must be stored in a matrix or in list mode.")
-  
+
   con<-as.matrix(con)
   J<-length(x)
   sam=NA
@@ -103,9 +103,9 @@ lincon <- function(formula, data, tr = 0.2, alpha = 0.05){
       psihat[d,5]<-2*(1-pt(abs(test[d,2]),df))
     }
   }
-  
+
   psihat[, 6] <- p.adjust(psihat[,6], method = 'hochberg')
-  
+
   #fnames <- as.character(unique(mf[,2]))
   fnames <- names(x)
   result <- list(comp = psihat, fnames = fnames, call = cl)

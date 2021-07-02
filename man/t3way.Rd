@@ -5,10 +5,10 @@
 \title{A three-way ANOVA for trimmed means.
 }
 \description{
-This function computes a three-way ANOVA for trimmed means with all interactions effects. 
+This function computes a three-way ANOVA for trimmed means with all interactions effects.
 }
 \usage{
-t3way(formula, data, tr = 0.2)
+t3way(formula, data, tr = 0.2, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,6 +20,9 @@ an optional data frame for the input data.
 }
   \item{tr}{
 trim level for the mean.
+}
+\item{...}{
+currently ignored.
 }
 }
 \value{

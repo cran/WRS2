@@ -1,4 +1,4 @@
-twopcor <- function(x1, y1, x2, y2, nboot = 599){
+twopcor <- function(x1, y1, x2, y2, nboot = 599, ...){
   #
   #   Compute a .95 confidence interval for
   #   the difference between two Pearson
@@ -12,20 +12,20 @@ twopcor <- function(x1, y1, x2, y2, nboot = 599){
   #   unknown how to adjust the confidence interval when n1+n2 < 250.
   #
   cl <- match.call()
-  if (nboot < 599) warning("It is unknown how to adjust the confidence interval when n1+n2 < 250.")  
+  if (nboot < 599) warning("It is unknown how to adjust the confidence interval when n1+n2 < 250.")
   X<-elimna(cbind(x1,y1))
   x1<-X[,1]
   y1<-X[,2]
   X<-elimna(cbind(x2,y2))
   x2<-X[,1]
   y2<-X[,2]
-  
+
   data1<-matrix(sample(length(y1),size=length(y1)*nboot,replace=TRUE),nrow=nboot)
   bvec1 <- apply(data1, 1, function(xx) cor(x1[xx], y1[xx]))
-  
+
   data2<-matrix(sample(length(y2),size=length(y2)*nboot,replace=TRUE),nrow=nboot)
-  bvec2<-apply(data2,1,function(xx) cor(x2[xx], y2[xx])) 
-  
+  bvec2<-apply(data2,1,function(xx) cor(x2[xx], y2[xx]))
+
   bvec<-bvec1-bvec2
   ilow<-15
   ihi<-584

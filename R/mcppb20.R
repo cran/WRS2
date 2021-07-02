@@ -1,21 +1,21 @@
-mcppb20 <- function(formula, data, tr = 0.2, nboot = 599){
+mcppb20 <- function(formula, data, tr = 0.2, nboot = 599, ...){
   #
- 
+
   if (missing(data)) {
     mf <- model.frame(formula)
   } else {
     mf <- model.frame(formula, data)
   }
   cl <- match.call()
-  
-  x <- split(model.extract(mf, "response"), mf[,2])   
+
+  x <- split(model.extract(mf, "response"), mf[,2])
   con=0
   alpha=.05
   grp=NA
   WIN=FALSE
   win=.1
   crit = NA
-  
+
   con<-as.matrix(con)
   if(is.matrix(x)){
     xx<-list()
@@ -128,20 +128,20 @@ mcppb20 <- function(formula, data, tr = 0.2, nboot = 599){
     psihat[d,2]<-testit$psihat[1,2]
     psihat[d,3]<-testit$test[1,4]
   }
- 
+
  list(psihat=psihat,crit.p.value=2*crit,con=con)
- 
+
  fnames <- as.character(unique(mf[,2]))
- 
+
  groups <- t(apply(con, 2, function(cc) {
    c(which(cc == 1), which(cc == -1))
  }))
- 
+
  psihat1 <- cbind(groups, psihat[, -c(1, 3)])
  colnames(psihat1)[1:2] <- c("Group")
- 
+
  result <- list(comp = psihat1, fnames = fnames, call = cl)
  class(result) <- "mcp1"
  result
- 
+
 }

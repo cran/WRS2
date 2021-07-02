@@ -1,4 +1,4 @@
-ZYmediate <- function(x, y, med, nboot = 2000, alpha = 0.05, kappa = 0.05){
+ZYmediate <- function(x, y, med, nboot = 2000, alpha = 0.05, kappa = 0.05, ...){
   #
   # Robust mediation analysis using M-estimator as
   # described in Zu and Yuan, 2010, MBR, 45, 1--44.
@@ -14,9 +14,9 @@ ZYmediate <- function(x, y, med, nboot = 2000, alpha = 0.05, kappa = 0.05){
   #kappa    # the percent of cases to be controlled when robust method is used
   # Zu and Yuan used .05, so this is the default value used here.
   level=alpha    # alpha level
-  
+
   Z=elimna(cbind(x,med,y))
-  
+
   p=3
   n=nrow(Z)
   HT=HuberTun(kappa,p)
@@ -27,45 +27,45 @@ ZYmediate <- function(x, y, med, nboot = 2000, alpha = 0.05, kappa = 0.05){
   oH=order(R.v)
   oCaseH=(1:n)[oH]        # case number with its Ri increases
   oR.v=R.v[oH]
-  
+
   thetaH=H$theta
   aH=thetaH[1]
   bH=thetaH[2]
   abH=aH*bH
-  
+
   muH=H$mu
   SigmaH=H$Sigma
   dH=H$d
-  
-  
+
+
   ### Use robust method
   # point estimate
   thetaH=H$theta
   aH=thetaH[1]
   bH=thetaH[2]
   abH=aH*bH
-  
+
   muH=H$mu
   SigmaH=H$Sigma
   dH=H$d
-  
+
 #   #Standard errors
 #   RH=SErob(Z,muH,SigmaH,thetaH,dH,r,tau)
-#   
+#
 #   Zr=RH$Zr
 #   SEHI=RH$inf
 #   SEHS=RH$sand
-#   
+#
 #   #Standard errors
 #   RH=SErob(Z,muH,SigmaH,thetaH,dH,r,tau)
-#   
+#
 #   Zr=RH$Zr
 #   SEHI=RH$inf
 #   SEHS=RH$sand
-#   
+#
   #Standard errors
   RH=SErob(Z,muH,SigmaH,thetaH,dH,r,tau)
-  
+
   Zr=RH$Zr
   SEHI=RH$inf
   SEHS=RH$sand

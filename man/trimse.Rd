@@ -13,28 +13,28 @@
 \title{Robust location measures and their standard errors (se).
 }
 \description{
-The following functions for estimating robust location measures and their standard errors are provided: \code{winmean} 
-for the Winsorized mean, \code{winse} for its se, \code{trimse} for the trimmend mean se, \code{msmedse} for the median se, 
-\code{mest} for the M-estimator with se in \code{mestse}. The functions \code{onestep} and \code{mom} compute the one-step and 
-modified one-step (MOM) M-estimator. The Winsorized variance is implemented in \code{winvar}. 
+The following functions for estimating robust location measures and their standard errors are provided: \code{winmean}
+for the Winsorized mean, \code{winse} for its se, \code{trimse} for the trimmend mean se, \code{msmedse} for the median se,
+\code{mest} for the M-estimator with se in \code{mestse}. The functions \code{onestep} and \code{mom} compute the one-step and
+modified one-step (MOM) M-estimator. The Winsorized variance is implemented in \code{winvar}.
 }
 \usage{
-winmean(x, tr = 0.2, na.rm = FALSE)
-winvar(x, tr = 0.2, na.rm = FALSE, STAND = NULL)
-winse(x, tr = 0.2)
-trimse(x, tr = 0.2, na.rm = FALSE)
-msmedse(x, sewarn = TRUE)
-mest(x, bend = 1.28, na.rm = FALSE)
-mestse(x, bend = 1.28)
-onestep(x, bend = 1.28, na.rm = FALSE, MED = TRUE)
-mom(x, bend = 2.24, na.rm = TRUE)
+winmean(x, tr = 0.2, na.rm = FALSE, ...)
+winvar(x, tr = 0.2, na.rm = FALSE, STAND = NULL, ...)
+winse(x, tr = 0.2, ...)
+trimse(x, tr = 0.2, na.rm = FALSE, ...)
+msmedse(x, sewarn = TRUE, ...)
+mest(x, bend = 1.28, na.rm = FALSE, ...)
+mestse(x, bend = 1.28, ...)
+onestep(x, bend = 1.28, na.rm = FALSE, MED = TRUE, ...)
+mom(x, bend = 2.24, na.rm = TRUE, ...)
 }
 \arguments{
   \item{x}{
 a numeric vector containing the values whose measure is to be computed.
 }
   \item{tr}{
-trim lor Winsorizing level. 
+trim lor Winsorizing level.
 }
 \item{na.rm}{
 a logical value indicating whether NA values should be stripped before the computation proceeds.
@@ -51,6 +51,9 @@ if \code{TRUE}, median is used as initial estimate.
 \item{STAND}{
 no functionality, kept for WRS compatibility purposes.
 }
+\item{...}{
+currently ignored.
+}
 }
 
 \details{
@@ -60,19 +63,19 @@ The standard error for the median is computed according to McKean and Shrader (1
 \references{
 Wilcox, R. (2012). Introduction to Robust Estimation and Hypothesis Testing (3rd ed.). Elsevier.
 
-McKean, J. W., & Schrader, R. M. (1984). A comparison of methods for studentizing the sample median. 
-Communications in Statistics - Simulation and Computation, 13, 751-773. 
+McKean, J. W., & Schrader, R. M. (1984). A comparison of methods for studentizing the sample median.
+Communications in Statistics - Simulation and Computation, 13, 751-773.
 
-Dana, E. (1990). Salience of the self and salience of standards: Attempts to match self to standard. 
-Unpublished PhD thesis, Department of Psychology, University of Southern California. 
+Dana, E. (1990). Salience of the self and salience of standards: Attempts to match self to standard.
+Unpublished PhD thesis, Department of Psychology, University of Southern California.
 }
 
 \examples{
-## Self-awareness data (Dana, 1990): Time persons could keep a portion of an 
+## Self-awareness data (Dana, 1990): Time persons could keep a portion of an
 ## apparatus in contact with a specified range.
-self <- c(77, 87, 88, 114, 151, 210, 219, 246, 253, 262, 296, 299, 306, 376, 
+self <- c(77, 87, 88, 114, 151, 210, 219, 246, 253, 262, 296, 299, 306, 376,
           428, 515, 666, 1310, 2611)
-mean(self, 0.1)     ## .10 trimmed mean 
+mean(self, 0.1)     ## .10 trimmed mean
 trimse(self, 0.1)   ## se trimmed mean
 winmean(self, 0.1)  ## Winsorized mean (.10 Winsorizing amount)
 winse(self, 0.1)    ## se Winsorized mean
@@ -80,7 +83,7 @@ winvar(self, 0.1)   ## Winsorized variance
 median(self)        ## median
 msmedse(self)       ## se median
 mest(self)          ## Huber M-estimator
-mestse(self)        
+mestse(self)
 onestep(self)       ## one-step M-estimator
 mom(self)           ## modified one-step M-estimator
 }

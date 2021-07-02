@@ -1,4 +1,4 @@
-disc2.chi.sq<-function(x,y,simulate.p.value=FALSE,B=2000){
+disc2.chi.sq<-function(x,y,simulate.p.value=FALSE,B=2000, ...){
   #
   # Test the hypothesis of identical discrete distributions
   # using a chi-squared test and a simulated p.value

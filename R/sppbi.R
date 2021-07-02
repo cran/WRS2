@@ -1,4 +1,4 @@
-sppbi <- function(formula, id, data, est = "mom", nboot = 500){
+sppbi <- function(formula, id, data, est = "mom", nboot = 500, ...){
   if (missing(data)) {
     mf <- model.frame(formula)
   } else {
@@ -6,17 +6,17 @@ sppbi <- function(formula, id, data, est = "mom", nboot = 500){
   }
   cl <- match.call()
   est <- match.arg(est, c("mom", "onestep", "median"), several.ok = FALSE)
-  
+
   mf1 <- match.call()
   m <- match(c("formula", "data", "id"), names(mf1), 0L)
   mf1 <- mf1[c(1L, m)]
   mf1$drop.unused.levels <- TRUE
   mf1[[1L]] <- quote(stats::model.frame)
-  mf1 <- eval(mf1, parent.frame())  
-  
+  mf1 <- eval(mf1, parent.frame())
+
   random1 <- mf1[, "(id)"]
   depvar <- colnames(mf)[1]
-  
+
   ## check which one is the within subjects factor
   if (all(length(table(random1)) == table(mf[,3]))) {
     ranvar <- colnames(mf)[3]
@@ -25,20 +25,20 @@ sppbi <- function(formula, id, data, est = "mom", nboot = 500){
     ranvar <- colnames(mf)[2]
     fixvar <- colnames(mf)[3]
   }
-  
+
   MC <- FALSE
   K <- length(table(mf[, ranvar]))  ## number of repeated measurements
   J <- length(table(mf[, fixvar]))  ## number of levels
   p <- J*K
   grp <- 1:p
-  est <- get(est)  
-  
+  est <- get(est)
+
   fixsplit <- split(mf[,depvar], mf[,fixvar])
   indsplit <- split(mf[,ranvar], mf[,fixvar])
   dattemp <- mapply(split, fixsplit, indsplit, SIMPLIFY = FALSE)
   data <- do.call(c, dattemp)
   x <- data
-  
+
   JK<-J*K
   MJ<-(J^2-J)/2
   MK<-(K^2-K)/2
@@ -144,10 +144,10 @@ sppbi <- function(formula, id, data, est = "mom", nboot = 500){
   }
   bplus<-nboot+1
   sig.level<-1-sum(dv[bplus]>=dv[1:nboot])/nboot
-  
+
   ## reorganizing output
-  
- 
+
+
   tvec1 <- data.frame(Estimate = tvec)
   rancomb <- apply(combn(levels(mf[,ranvar]), 2), 2, paste0, collapse = "-")
   fnames <- levels(mf[,fixvar])

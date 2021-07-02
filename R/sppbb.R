@@ -1,4 +1,4 @@
-sppbb <- function(formula, id, data, est = "mom", nboot = 500){
+sppbb <- function(formula, id, data, est = "mom", nboot = 500, ...){
 #
   if (missing(data)) {
     mf <- model.frame(formula)

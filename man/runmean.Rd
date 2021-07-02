@@ -6,13 +6,13 @@
 \title{Running Interval Smoother
 }
 \description{
-The \code{runmean} implements a running interval smoother on the trimmed mean, \code{rungen} uses general M-estimators, \code{runmbo} performs 
-interval smoothing on M-estimators with bagging. 
+The \code{runmean} implements a running interval smoother on the trimmed mean, \code{rungen} uses general M-estimators, \code{runmbo} performs
+interval smoothing on M-estimators with bagging.
 }
 \usage{
-runmean(x, y, fr = 1, tr = 0.2)
-rungen(x, y, fr = 1, est = "mom")
-runmbo(x, y, fr = 1, est = "mom", nboot = 40)
+runmean(x, y, fr = 1, tr = 0.2, ...)
+rungen(x, y, fr = 1, est = "mom", ...)
+runmbo(x, y, fr = 1, est = "mom", nboot = 40, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -29,16 +29,19 @@ smoothing factor (see details)
 trim level for the mean
 }
   \item{est}{
-type of M-estimator (\code{"mom"}, \code{"onestep"}, or \code{"median"}) 
+type of M-estimator (\code{"mom"}, \code{"onestep"}, or \code{"median"})
 }
   \item{nboot}{
 number of bootstrap samples
 }
+\item{...}{
+currently ignored.
+}
 }
 
 \details{
-The larger the smoothing factor, the stronger the smoothing. Often the choice \code{fr = 1} gives good results; the general strategy is 
-to find the smallest constant so that the plot looks reasonably smooth. 
+The larger the smoothing factor, the stronger the smoothing. Often the choice \code{fr = 1} gives good results; the general strategy is
+to find the smallest constant so that the plot looks reasonably smooth.
 }
 \value{
 Returns the fitted values.

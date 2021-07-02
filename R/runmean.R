@@ -1,4 +1,4 @@
-runmean <- function(x, y, fr = 1, tr = 0.2){
+runmean <- function(x, y, fr = 1, tr = 0.2, ...){
   #
   # running mean using interval method
   #

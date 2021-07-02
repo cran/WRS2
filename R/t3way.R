@@ -1,5 +1,5 @@
-t3way <- function(formula, data, tr = 0.2){
-  
+t3way <- function(formula, data, tr = 0.2, ...){
+
   if (missing(data)) {
     mf <- model.frame(formula)
   } else {
@@ -15,9 +15,9 @@ t3way <- function(formula, data, tr = 0.2){
   lev.col <- 2:4
   var.col <- 1
   alpha <- 0.05
-  
+
     data=as.matrix(mf)
-    
+
     temp=selby2(data,lev.col,var.col)
     lev1=length(unique(temp$grpn[,1]))
     lev2=length(unique(temp$grpn[,2]))
@@ -29,15 +29,15 @@ t3way <- function(formula, data, tr = 0.2){
     K=lev2
     L=lev3
     data=temp$x
-  
+
   if(is.matrix(data))data=listm(data)
   data <- lapply(data, as.numeric)
   tmeans<-0
   h<-0
   v<-0
-  
+
   if(length(grp) != p) stop("Incomplete design! It needs to be full factorial!")
-  
+
   for (i in 1:p){
     tmeans[i]<-mean(data[[grp[i]]],tr)
     h[i]<-length(data[[grp[i]]])-2*floor(tr*length(data[[grp[i]]]))
@@ -115,7 +115,7 @@ t3way <- function(formula, data, tr = 0.2){
        Qab=Qab$teststat,AB.p.value=AB.p.value,
        Qac=Qac$teststat,AC.p.value=AC.p.value,
        Qbc=Qbc$teststat,BC.p.value=BC.p.value,
-       Qabc=Qabc$teststat,ABC.p.value=ABC.p.value, 
+       Qabc=Qabc$teststat,ABC.p.value=ABC.p.value,
        call = mcl, varnames = colnames(mf))
   class(result) <- c("t3way")
   result

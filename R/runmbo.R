@@ -1,5 +1,5 @@
-runmbo <- function(x, y, fr = 1, est = "mom", nboot = 40){
-                  
+runmbo <- function(x, y, fr = 1, est = "mom", nboot = 40, ...){
+
   #
   # running interval smooth with bagging
   #
@@ -20,7 +20,7 @@ runmbo <- function(x, y, fr = 1, est = "mom", nboot = 40){
   # est=tmean means estimate 20% trimmed mean of y given x
   #
   est <- match.arg(est, c("mom", "onestep", "median"), several.ok = FALSE)
-  est <- get(est)                 
+  est <- get(est)
   temp <- cbind(x,y)
   temp <- elimna(temp) # Eliminate any rows with missing values
   #if(eout && xout)stop("Not allowed to have eout=xout=T")

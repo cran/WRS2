@@ -1,4 +1,4 @@
-yuen.effect.ci<-function(formula, data, tr = 0.2, nboot = 400, alpha = 0.05){
+yuen.effect.ci<-function(formula, data, tr = 0.2, nboot = 400, alpha = 0.05, ...){
   #
   # Compute a 1-alpha  confidence interval
   # for a robust, heteroscedastic  measure of effect size
@@ -10,12 +10,12 @@ yuen.effect.ci<-function(formula, data, tr = 0.2, nboot = 400, alpha = 0.05){
     mf <- model.frame(formula, data)
   }
   cl <- match.call()
-  
+
   xy <- split(model.extract(mf, "response"), mf[,2])
   faclevels <- names(xy)
   x <- xy[[1]]
   y <- xy[[2]]
-  
+
   x=elimna(x)
   y=elimna(y)
   bvec=0

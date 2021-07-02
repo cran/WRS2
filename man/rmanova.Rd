@@ -8,8 +8,8 @@
 The \code{rmanova} function computes a one-way repeated measures ANOVA for the trimmed means. Homoscedasticity assumption not required. Corresponding post hoc tests can be performed using \code{rmmcp}.
 }
 \usage{
-rmanova(y, groups, blocks, tr = 0.2)
-rmmcp(y, groups, blocks, tr = 0.2, alpha = 0.05)
+rmanova(y, groups, blocks, tr = 0.2, ...)
+rmmcp(y, groups, blocks, tr = 0.2, alpha = 0.05, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -27,6 +27,9 @@ trim level for the mean.
 }
  \item{alpha}{
 alpha level for post hoc comparisons.
+}
+\item{...}{
+currently ignored.
 }
 }
 \value{

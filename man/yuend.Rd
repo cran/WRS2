@@ -7,12 +7,12 @@
 }
 \description{
 The function \code{yuend} performs Yuen's test on trimmed means for dependent samples. \code{Dqcomhd} compares the quantiles of the marginal distributions associated with two dependent groups via hd estimator. Tied values are allowed.
-\code{dep.effect} computes various effect sizes and confidence intervals for two dependent samples (see Details). 
+\code{dep.effect} computes various effect sizes and confidence intervals for two dependent samples (see Details).
 }
 \usage{
-yuend(x, y, tr = 0.2)
-Dqcomhd(x, y, q = c(1:9)/10, nboot = 1000, na.rm = TRUE)
-dep.effect(x, y, tr = 0.2, nboot = 1000)
+yuend(x, y, tr = 0.2, ...)
+Dqcomhd(x, y, q = c(1:9)/10, nboot = 1000, na.rm = TRUE, ...)
+dep.effect(x, y, tr = 0.2, nboot = 1000, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -32,20 +32,22 @@ quantiles to be compared.
 number of bootstrap samples.
 }
   \item{na.rm}{
-whether missing values should be removed. 
+whether missing values should be removed.
 }
-
+\item{...}{
+currently ignored.
+}
 }
 \details{
 The test statistic is a paired samples generalization of Yuen's independent samples t-test on trimmed means.
 
-\code{dep.effect} computes the following effect sizes: 
+\code{dep.effect} computes the following effect sizes:
 
 AKP: robust standardized difference similar to  Cohen's d
 
-QS:  Quantile shift based on the median of the distribution of difference scores, 
+QS:  Quantile shift based on the median of the distribution of difference scores,
 
-QStr: Quantile shift based on the trimmed mean of the distribution of X-Y 
+QStr: Quantile shift based on the trimmed mean of the distribution of X-Y
 
 SIGN:  P(X<Y), probability that for a random pair, the first is less than the second.
 }
@@ -64,14 +66,14 @@ SIGN:  P(X<Y), probability that for a random pair, the first is less than the se
 
 \item{partable}{parameter table}
 
-\code{dep.effect} returns a matrix with the null value of the effect size, the estimated effect size, small/medium/large conventions, and lower/upper CI bounds.  
+\code{dep.effect} returns a matrix with the null value of the effect size, the estimated effect size, small/medium/large conventions, and lower/upper CI bounds.
 
 }
 \references{
 Wilcox, R. (2012). Introduction to Robust Estimation and Hypothesis Testing (3rd ed.). Elsevier.
 }
 \seealso{
-\code{\link{yuen}}, \code{\link{qcomhd}} 
+\code{\link{yuen}}, \code{\link{qcomhd}}
 }
 
 \examples{

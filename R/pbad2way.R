@@ -1,5 +1,5 @@
-pbad2way<-function(formula, data, est = "mom", nboot = 599, pro.dis = FALSE){
-  
+pbad2way<-function(formula, data, est = "mom", nboot = 599, pro.dis = FALSE, ...){
+
   if (missing(data)) {
     mf <- model.frame(formula)
   } else {
@@ -7,32 +7,32 @@ pbad2way<-function(formula, data, est = "mom", nboot = 599, pro.dis = FALSE){
   }
   cl <- match.call()
   est <- match.arg(est, c("mom", "onestep", "median"), several.ok = FALSE)
-  
+
   J <- nlevels(mf[,2])
   K <- nlevels(mf[,3])
-  
+
   alpha=.05
-  conall = TRUE 
+  conall = TRUE
   op=FALSE
   MM=FALSE
-  
+
   grp <- NA
   JK <- J * K
   est <- get(est)
-  
+
   nfac <- tapply(mf[,1], list(mf[,2],mf[,3]), length, simplify = FALSE)
   nfac1 <- nfac[unique(mf[,2]), unique(mf[,3])]    ## reordering factor levels
-  
+
   data <- na.omit(data[variable.names(mf)])
-  data <- data[order(mf[,2], mf[,3]),]              
+  data <- data[order(mf[,2], mf[,3]),]
   data$row <- unlist(alply(nfac1, 1, sequence), use.names = FALSE)
   dataMelt <- melt(data, id = c("row", colnames(mf)[2], colnames(mf)[3]), measured = mf[,1])
-  
-  dataWide <- cast(dataMelt, as.formula(paste(colnames(dataMelt)[1], "~", colnames(mf)[2], "+", colnames(mf)[3]))) 
+
+  dataWide <- cast(dataMelt, as.formula(paste(colnames(dataMelt)[1], "~", colnames(mf)[2], "+", colnames(mf)[3])))
   dataWide$row <- NULL
   x <- dataWide
-  
-  
+
+
   if(is.matrix(x)) x <- as.data.frame(x)
   x <- listm(x)
   for(j in 1:JK) {
@@ -78,14 +78,14 @@ pbad2way<-function(formula, data, est = "mom", nboot = 599, pro.dis = FALSE){
     mvec[j]<-est(temp)
   }
   bvec<-matrix(NA,nrow=JK,ncol=nboot)
-  
+
   for(j in 1:JK){
     data<-matrix(sample(x[[j]],size=length(x[[j]])*nboot,replace=TRUE),nrow=nboot)
     bvec[j,]<-apply(data,1,est) # J by nboot matrix, jth row contains bootstrapped  estimates for jth group
     naind <- which(is.na(bvec[j,]))
     if (length(naind) > 0) bvec[j,][naind] <- mean(bvec[j,], na.rm = TRUE)    ## fix for missing est values
   }
-  
+
   bconA<-t(conA)%*%bvec #C by nboot matrix
   tvecA<-t(conA)%*%mvec
   tvecA<-tvecA[,1]
@@ -117,7 +117,7 @@ pbad2way<-function(formula, data, est = "mom", nboot = 599, pro.dis = FALSE){
     }}
   if(pro.dis)dv=pdis(bconB,MM=MM)
   sig.levelB<-1-sum(dv[bplus]>=dv[1:nboot])/nboot
-  
+
   bconAB<-t(conAB)%*%bvec #C by nboot matrix
   tvecAB<-t(conAB)%*%mvec
   tvecAB<-tvecAB[,1]
@@ -133,8 +133,8 @@ pbad2way<-function(formula, data, est = "mom", nboot = 599, pro.dis = FALSE){
     }}
   if(pro.dis)dv=pdis(bconAB,MM=MM)
   sig.levelAB<-1-sum(dv[bplus]>=dv[1:nboot])/nboot
-  
-  result <- list(Qa = NA, A.p.value=sig.levelA, Qb=NA, B.p.value=sig.levelB, Qab=NA, AB.p.value=sig.levelAB, 
+
+  result <- list(Qa = NA, A.p.value=sig.levelA, Qb=NA, B.p.value=sig.levelB, Qab=NA, AB.p.value=sig.levelAB,
                  call = cl, varnames = colnames(mf), dim = c(J,K))
   class(result) <- c("t2way")
   result

@@ -1,4 +1,4 @@
-mcp2a <- function(formula, data, est = "mom", nboot = 599){
+mcp2a <- function(formula, data, est = "mom", nboot = 599, ...){
   #
   if (missing(data)) {
     mf <- model.frame(formula)
@@ -7,34 +7,34 @@ mcp2a <- function(formula, data, est = "mom", nboot = 599){
   }
   cl <- match.call()
   est <- match.arg(est, c("mom", "onestep", "median"), several.ok = FALSE)
-  
+
   J <- nlevels(mf[,2])
   K <- nlevels(mf[,3])
-  
+
   grp=NA
   con=0
   alpha=.05
-  
+
   JK <- J * K
-  
+
   est <- get(est)
-  
+
   nfac <- tapply(mf[,1], list(mf[,2],mf[,3]), length, simplify = FALSE)
   nfac1 <- nfac[unique(mf[,2]), unique(mf[,3])]    ## reordering factor levels
-  
+
   data <- na.omit(data[variable.names(mf)])
-  data <- data[order(mf[,2], mf[,3]),]              
+  data <- data[order(mf[,2], mf[,3]),]
   data$row <- unlist(alply(nfac1, 1, sequence), use.names = FALSE)
   dataMelt <- melt(data, id = c("row", colnames(mf)[2], colnames(mf)[3]), measured = mf[,1])
-  
-  dataWide <- cast(dataMelt, as.formula(paste(colnames(dataMelt)[1], "~", colnames(mf)[2], "+", colnames(mf)[3])), 
-                   fun.aggregate = mean) 
+
+  dataWide <- cast(dataMelt, as.formula(paste(colnames(dataMelt)[1], "~", colnames(mf)[2], "+", colnames(mf)[3])),
+                   fun.aggregate = mean)
   dataWide$row <- NULL
   # x <- dataWide
   # x <- listm(x)
-  
+
   x <- fac2list(mf[,1], mf[,2:3])
-  
+
   if(!is.na(grp)) {
     yy <- x
     for(j in 1:length(grp))
@@ -129,7 +129,7 @@ mcp2a <- function(formula, data, est = "mom", nboot = 599){
     }
     outvec[[jj]]<-output
   }
-  
+
   cnamesA <- colnames(mf)[2]
   conA <- temp3[[1]]
   dnamesA <- paste0(cnamesA, 1:ncol(conA))
@@ -137,19 +137,19 @@ mcp2a <- function(formula, data, est = "mom", nboot = 599){
   conB <- temp3[[2]]
   dnamesB <- paste0(cnamesB, 1:ncol(conB))
   colnames(conB) <- dnamesB
-  dnamesAB <- apply(expand.grid(dnamesA, dnamesB), 1, function(ss) paste(ss[1], ss[2], sep = ":")) 
+  dnamesAB <- apply(expand.grid(dnamesA, dnamesB), 1, function(ss) paste(ss[1], ss[2], sep = ":"))
   conAB <- temp3[[3]]
   contrasts <- as.data.frame(cbind(conA, conB, conAB))
   colnames(contrasts) <- c(dnamesA, dnamesB, dnamesAB)
   rownames(contrasts) <- colnames(dataWide)
-  
+
   alpha.crit <- outvec[[1]][, "sig.crit"]
   outA <- list(psihat = outvec[[1]][, "psihat"], conf.int = outvec[[1]][, c("ci.lower", "ci.upper")], p.value = outvec[[1]][, "sig.test"])
   outB <- list(psihat = outvec[[2]][, "psihat"], conf.int = outvec[[2]][, c("ci.lower", "ci.upper")], p.value = outvec[[2]][, "sig.test"])
   outAB <- list(psihat = outvec[[3]][, "psihat"], conf.int = outvec[[3]][, c("ci.lower", "ci.upper")], p.value = outvec[[3]][, "sig.test"])
   effects <- list(outA, outB, outAB)
   names(effects) <- c(colnames(mf)[2:3], paste(colnames(mf)[2], colnames(mf)[3], sep = ":"))
-  
+
   result <- list(effects = effects, contrasts = contrasts, alpha.crit = alpha.crit, call = cl)
   class(result) <- "mcp"
   result

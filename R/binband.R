@@ -1,4 +1,4 @@
-binband <- function(x, y, KMS = FALSE, alpha = 0.05, ADJ.P = FALSE){
+binband <- function(x, y, KMS = FALSE, alpha = 0.05, ADJ.P = FALSE, ...){
   #
   #  Comparing two independent variables in terms of their probability function.
   #  For each value that occurs, say x, test P(X=x)=P(Y=x)
@@ -6,11 +6,11 @@ binband <- function(x, y, KMS = FALSE, alpha = 0.05, ADJ.P = FALSE){
   #
   #  If KMS=T, use Kulinskaya, Morgenthaler and Staudte (2010)
   #   method for comparing binomials
-  # Kulinskaya, E., Morgenthaler, S. and Staudte, R. (2010). 
+  # Kulinskaya, E., Morgenthaler, S. and Staudte, R. (2010).
   # Variance Stabilizing the Difference of two Binomial
-  #  Proportions. {\em American Statistician, 64}, 
+  #  Proportions. {\em American Statistician, 64},
   #  350--356 DOI:10.1198/tast.2010.09096
-  
+
   #  Otherwise use Storer and Kim.
   #
   #   ADJ.P=T means that critical p-value is adjusted to control FWE when the sample
@@ -90,10 +90,10 @@ binband <- function(x, y, KMS = FALSE, alpha = 0.05, ADJ.P = FALSE){
     output[temp2,6]=dvec
   }
   output
-  
+
   outtable <- data.frame(output)
   colnames(outtable)[4] <- "p1-p2"
-  
+
   result <- list(partable = outtable, call = cl)
   class(result) <- "robtab"
   result

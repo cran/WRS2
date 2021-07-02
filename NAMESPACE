@@ -63,6 +63,7 @@ export(onestep)
 export(mom)
 export(dep.effect)
 export(wmcpAKP)
+export(trimcibt)
 
 
 S3method(print, bwtrim)

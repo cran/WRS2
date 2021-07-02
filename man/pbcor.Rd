@@ -8,14 +8,14 @@
 \title{Robust correlation coefficients.
 }
 \description{
-The \code{pbcor} function computes the percentage bend correlation coefficient, \code{wincor} the Winsorized correlation, 
-\code{pball} the percentage bend correlation matrix, \code{winall} the Winsorized correlation matrix. 
+The \code{pbcor} function computes the percentage bend correlation coefficient, \code{wincor} the Winsorized correlation,
+\code{pball} the percentage bend correlation matrix, \code{winall} the Winsorized correlation matrix.
 }
 \usage{
-pbcor(x, y = NULL, beta = 0.2, ci = FALSE, nboot = 500, alpha = 0.05)
-pball(x, beta = 0.2)
-wincor(x, y = NULL, tr = 0.2, ci = FALSE, nboot = 500, alpha = 0.05)
-winall(x, tr = 0.2)
+pbcor(x, y = NULL, beta = 0.2, ci = FALSE, nboot = 500, alpha = 0.05, ...)
+pball(x, beta = 0.2, ...)
+wincor(x, y = NULL, tr = 0.2, ci = FALSE, nboot = 500, alpha = 0.05, ...)
+winall(x, tr = 0.2, ...)
 }
 \arguments{
   \item{x}{
@@ -28,20 +28,23 @@ a second numeric vector (for correlation functions).
 bending constant.
 }
  \item{tr}{
-amount of Winsorization. 
+amount of Winsorization.
  }
 \item{ci}{
-whether boostrap CI should be computed or not. 
+whether boostrap CI should be computed or not.
  }
   \item{nboot}{
-number of bootstrap samples for CI computation. 
+number of bootstrap samples for CI computation.
  }
   \item{alpha}{
-alpha level for CI computation. 
+alpha level for CI computation.
  }
+ \item{...}{
+currently ignored.
+}
 }
 \details{
-It tested is whether the correlation coefficient equals 0 (null hypothesis) or not. Missing values are deleted pairwise. The tests are sensitive to heteroscedasticity. The test statistic H in \code{pball} tests the hypothesis that all correlations are equal to zero. 
+It tested is whether the correlation coefficient equals 0 (null hypothesis) or not. Missing values are deleted pairwise. The tests are sensitive to heteroscedasticity. The test statistic H in \code{pball} tests the hypothesis that all correlations are equal to zero.
 }
 \value{
 \code{pbcor} and \code{wincor} return an object of class \code{"pbcor"} containing:
@@ -53,7 +56,7 @@ It tested is whether the correlation coefficient equals 0 (null hypothesis) or n
 \item{cor_ci}{bootstrap confidence interval}
 \item{call}{function call}
 
-\code{pball} and \code{winall} return an object of class \code{"pball"} containing: 
+\code{pball} and \code{winall} return an object of class \code{"pball"} containing:
 
 \item{pbcorm}{robust correlation matrix}
 \item{p.values}{p-values}

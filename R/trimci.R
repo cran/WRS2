@@ -1,4 +1,4 @@
-trimci<-function(x,tr=.2,alpha=.05,null.value=0,pr=TRUE){
+trimci<-function(x,tr=.2,alpha=.05,null.value=0,pr=TRUE,...){
 #
 #  Compute a 1-alpha confidence interval for the trimmed mean
 #

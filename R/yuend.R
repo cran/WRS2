@@ -1,4 +1,4 @@
-yuend <- function(x, y, tr = 0.2){
+yuend <- function(x, y, tr = 0.2, ...){
 #
 #  Compare the trimmed means of two dependent random variables
 #  using the data in x and y.
@@ -14,7 +14,7 @@ yuend <- function(x, y, tr = 0.2){
 #  This function uses winvar from chapter 2.
 #
   cl <- match.call()
-  alpha=.05  
+  alpha=.05
   if(length(x)!=length(y))stop("The number of observations must be equal")
   m<-cbind(x,y)
   m<-elimna(m)
@@ -33,7 +33,7 @@ yuend <- function(x, y, tr = 0.2){
   test<-dif/se
   yuend<-2*(1-pt(abs(test),df))
   epow <- yuenv2(x,y,tr=tr)$Effect.Size
-  
+
   result <- list(test = test, conf.int = c(low,up), se = se, p.value = yuend, df = df, diff = dif, effsize = epow, call = cl)
   class(result) <- "yuen"
   result

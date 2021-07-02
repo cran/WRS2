@@ -1,15 +1,15 @@
-rmanova <- function(y, groups, blocks, tr = 0.2){
-  
+rmanova <- function(y, groups, blocks, tr = 0.2, ...){
+
   cols1 <- deparse(substitute(y))
   cols2 <- deparse(substitute(groups))
   cols3 <- deparse(substitute(blocks))
   dat <- data.frame(y, groups, blocks)
   colnames(dat) <- c(cols1, cols2, cols3)
   cl <- match.call()
- 
+
   x <- reshape(dat, idvar = cols3, timevar = cols2, direction = "wide")[-1]  ## wide format
   grp <- c(1:length(x))
-  
+
   if(is.list(x)){
     J<-length(grp)  # The number of groups to be compared
     m1<-matrix(x[[grp[1]]],length(x[[grp[1]]]),1)
@@ -18,7 +18,7 @@ rmanova <- function(y, groups, blocks, tr = 0.2){
       m1<-cbind(m1,m2)
     }
   }
-  
+
   m2<-matrix(0,nrow(m1),ncol(m1))
   xvec<-1
   g<-floor(tr*nrow(m1))  #2g is the number of observations trimmed.
@@ -52,10 +52,10 @@ rmanova <- function(y, groups, blocks, tr = 0.2){
   df1<-(J-1)*etil
   df2<-(J-1)*etil*(nrow(m2)-2*g-1)
   siglevel<-1-pf(test,df1,df2)
-  
-  ## effect size 
+
+  ## effect size
   #esize <- rmES.pro(x)   ## to be done
-  
+
   result <- list(test=test,df1 = df1, df2 = df2, p.value = siglevel, call = cl)
   class(result) <- c("t1way")
   result

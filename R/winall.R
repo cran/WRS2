@@ -1,11 +1,11 @@
-winall<-function(x, tr = 0.2){
+winall<-function(x, tr = 0.2, ...){
 #
 #    Compute the Winsorized correlation and covariance matrix for the
 #    data in the n by p matrix m.
 #
 #    This function also returns the two-sided significance level
 #
-m <- x  
+m <- x
 cl <- match.call()
 if(is.data.frame(m))m=as.matrix(m)
 if(!is.matrix(m))stop("The data must be stored in a n by p matrix")

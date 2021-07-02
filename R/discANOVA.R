@@ -1,7 +1,7 @@
-discANOVA<-function(formula, data, nboot = 500){
+discANOVA<-function(formula, data, nboot = 500, ...){
   #
   #  Test the global hypothesis that for two or more independent groups,
-  #  the corresponding discrete distributions are identical. 
+  #  the corresponding discrete distributions are identical.
   #  That is, test the hypothesis that independent groups have identical
   #  multinomial distributions. A generalization of the Storer--Kim method is used.
   #
@@ -16,16 +16,16 @@ discANOVA<-function(formula, data, nboot = 500){
   #  x is a matrix with n rows and J columns
   #  or it can have list mode.
   #
-  
+
   if (missing(data)) {
     mf <- model.frame(formula)
   } else {
     mf <- model.frame(formula, data)
   }
   cl <- match.call()
-  
-  x <- split(model.extract(mf, "response"), mf[,2])   
-  
+
+  x <- split(model.extract(mf, "response"), mf[,2])
+
   #if(is.matrix(x) || is.data.frame(x))x=listm(x)
   vals=lapply(x,unique)
   vals=sort(elimna(list2vec(vals)))
@@ -53,7 +53,7 @@ discANOVA<-function(formula, data, nboot = 500){
     TB[ib]=discANOVA.sub(xx)$test
   }
   pv=1-mean(test>TB)-.5*mean(test==TB)
-  
+
   result <- list(test = test, crit.val = NA, p.value = pv, call = cl)
   class(result) <- "med1way"
   result

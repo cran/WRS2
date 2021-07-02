@@ -1,4 +1,4 @@
-wincor <- function(x, y = NULL, tr = 0.2, ci = FALSE, nboot = 500, alpha = 0.05){
+wincor <- function(x, y = NULL, tr = 0.2, ci = FALSE, nboot = 500, alpha = 0.05, ...){
 #   Compute the Winsorized correlation between x and y.
 #
 #   tr is the amount of Winsorization
@@ -53,7 +53,7 @@ wincor <- function(x, y = NULL, tr = 0.2, ci = FALSE, nboot = 500, alpha = 0.05)
     corci <- NA
   }
   ## end CI
-  
+
 result <- list(cor = wcor, cov = wcov, test = test, p.value = sig, n = nval, cor_ci = corci, call = cl)
 class(result) <- "pbcor"
 result

@@ -1,4 +1,4 @@
-pairdepb <- function(y, groups, blocks, tr = 0.2, nboot = 599){
+pairdepb <- function(y, groups, blocks, tr = 0.2, nboot = 599, ...){
 #
   cols1 <- deparse(substitute(y))
   cols2 <- deparse(substitute(groups))
@@ -6,10 +6,10 @@ pairdepb <- function(y, groups, blocks, tr = 0.2, nboot = 599){
   dat <- data.frame(y, groups, blocks)
   colnames(dat) <- c(cols1, cols2, cols3)
   cl <- match.call()
-  
+
   x <- reshape(dat, idvar = cols3, timevar = cols2, direction = "wide")[-1]  ## wide format
   grp <- c(1:length(x))
-  
+
   alpha=.05
   grp=0
   if(is.data.frame(x)) x <- as.matrix(x)
@@ -34,7 +34,7 @@ pairdepb <- function(y, groups, blocks, tr = 0.2, nboot = 599){
   data<-matrix(sample(nrow(mat),size=nrow(mat)*nboot,replace=TRUE),nrow=nboot)
   xcen<-matrix(0,nrow(mat),ncol(mat))
   for (j in 1:J)xcen[,j]<-mat[,j]-mean(mat[,j],tr) #Center data
-  
+
   it<-0
   for (j in 1:J){
     for (k in 1:J){
@@ -69,10 +69,10 @@ pairdepb <- function(y, groups, blocks, tr = 0.2, nboot = 599){
         test[it,3]<-yuend(mat[,j],mat[,k])$test
         test[it,4]<-estse
       }}}
- 
+
  fnames <- as.character(unique(groups))
  psihat1 <- cbind(psihat, test[,3], crit)
- 
+
  result <- list(comp = psihat1, fnames = fnames, call = cl)
  class(result) <- "mcp1"
  result

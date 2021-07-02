@@ -1,4 +1,4 @@
-pball <- function(x, beta = 0.2){
+pball <- function(x, beta = 0.2, ...){
   #
   #    Compute the percentage bend correlation matrix for the
   #    data in the n by p matrix m.
@@ -7,7 +7,7 @@ pball <- function(x, beta = 0.2){
   #    for all pairs of variables, plus a test of zero correlations
   #    among all pairs. (See chapter 6 for details.)
   #
-  
+
   cl <- match.call()
   m <- x
   pbcorm<-matrix(0,ncol(m),ncol(m))
@@ -34,9 +34,9 @@ pball <- function(x, beta = 0.2){
   H<-sum(cmat^2)
   df<-ncol(m)*(ncol(m)-1)/2
   h.siglevel<-1-pchisq(H,df)
-  
+
   if (!is.null(colnames(x))) rownames(temp) <- colnames(temp) <- rownames(siglevel) <- colnames(siglevel) <- colnames(x)
-  
+
   result <- list(pbcorm = temp, p.values = siglevel, H = H, H.p.value = h.siglevel, call = cl)
   class(result) <- "pball"
   result

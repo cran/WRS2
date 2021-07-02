@@ -6,11 +6,11 @@
 \title{Confidence intervals for two-sided tests on correlation coefficients.
 }
 \description{
-The \code{twopcor} function tests whether the difference between two Pearson correlations is 0. The \code{twocor} function performs the same test on a robust correlation coefficient (percentage bend correlation or Winsorized correlation). 
+The \code{twopcor} function tests whether the difference between two Pearson correlations is 0. The \code{twocor} function performs the same test on a robust correlation coefficient (percentage bend correlation or Winsorized correlation).
 }
 \usage{
-twopcor(x1, y1, x2, y2, nboot = 599)
-twocor(x1, y1, x2, y2, corfun = "pbcor", nboot = 599, tr = 0.2, beta = 0.2)
+twopcor(x1, y1, x2, y2, nboot = 599, ...)
+twocor(x1, y1, x2, y2, corfun = "pbcor", nboot = 599, tr = 0.2, beta = 0.2, ...)
 }
 \arguments{
   \item{x1}{
@@ -32,14 +32,17 @@ number of bootstrap samples.
 Either \code{"pbcor"} for percentage based correlation or \code{"wincor"} for Winsorized correlation.
 }
  \item{tr}{
-amount of Winsorization. 
+amount of Winsorization.
  }
  \item{beta}{
 bending constant.
 }
+\item{...}{
+currently ignored.
+}
 }
 \details{
-It is tested whether the first correlation coefficient (based on \code{x1} and \code{y1}) equals to the second correlation coefficient (based on \code{x2} and \code{y2}). Both approaches return percentile bootstrap CIs. 
+It is tested whether the first correlation coefficient (based on \code{x1} and \code{y1}) equals to the second correlation coefficient (based on \code{x2} and \code{y2}). Both approaches return percentile bootstrap CIs.
 }
 \value{
 \code{twopcor} and \code{twocor} return an object of class \code{"twocor"} containing:

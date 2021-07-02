@@ -1,4 +1,4 @@
-yuen1<-function(x,y=NULL,tr=.2,alpha=.05){
+yuen1<-function(x,y=NULL,tr=.2,alpha=.05, ...){
 #
 #  Perform Yuen's test for trimmed means on the data in x and y.
 #  The default amount of trimming is 20%
@@ -13,7 +13,7 @@ yuen1<-function(x,y=NULL,tr=.2,alpha=.05){
 #         tr=0 results in using the sample mean
 #
 #  The function returns both a confidence interval and a p-value.
-#  
+#
 #  For an omnibus test with more than two independent groups,
 #  use t1way.
 #  This function uses winvar from chapter 2.

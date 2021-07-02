@@ -1,18 +1,18 @@
-rmmcp<-function(y, groups, blocks, tr = 0.2, alpha = 0.05){
+rmmcp<-function(y, groups, blocks, tr = 0.2, alpha = 0.05, ...){
   #
   # MCP on trimmed means with FWE controlled with Rom's method
   #
-  
+
   cols1 <- deparse(substitute(y))
   cols2 <- deparse(substitute(groups))
   cols3 <- deparse(substitute(blocks))
   dat <- data.frame(y, groups, blocks)
   colnames(dat) <- c(cols1, cols2, cols3)
   cl <- match.call()
-  
+
   x <- reshape(dat, idvar = cols3, timevar = cols2, direction = "wide")[-1]  ## wide format
   grp <- c(1:length(x))
-  
+
   con = 0
   dif=TRUE
   flagcon=F

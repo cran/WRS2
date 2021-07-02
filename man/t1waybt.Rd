@@ -4,14 +4,14 @@
 \alias{print.t1waybt}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Bootstrap version of the heteroscedastic one-way ANOVA for trimmed means. 
+Bootstrap version of the heteroscedastic one-way ANOVA for trimmed means.
 }
 \description{
 Test the hypothesis of equal trimmed means using a percentile t bootstrap method. Corresponding post hoc tests are provided in \code{mcppb20}.
 }
 \usage{
-t1waybt(formula, data, tr = 0.2, nboot = 599)
-mcppb20(formula, data, tr = 0.2, nboot = 599)
+t1waybt(formula, data, tr = 0.2, nboot = 599, ...)
+mcppb20(formula, data, tr = 0.2, nboot = 599, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -25,7 +25,10 @@ an optional data frame for the input data.
 trim level for the mean.
 }
   \item{nboot}{
-number of bootstrap samples. 
+number of bootstrap samples.
+}
+\item{...}{
+currently ignored.
 }
 
 }

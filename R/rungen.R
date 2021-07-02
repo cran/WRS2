@@ -1,4 +1,4 @@
-rungen<-function(x, y, fr = 1, est = "mom"){
+rungen<-function(x, y, fr = 1, est = "mom", ...){
   #
   # running  interval smoother that can  be used  with any measure
   # of location or scale. By default, an M-estimator is used.
@@ -9,7 +9,7 @@ rungen<-function(x, y, fr = 1, est = "mom"){
   eout <- FALSE
   xout <- FALSE
   pyhat <- TRUE
-  
+
   est <- match.arg(est, c("mom", "onestep", "median"), several.ok = FALSE)
   est <- get(est)
   m <- cbind(x,y)
@@ -27,5 +27,5 @@ rungen<-function(x, y, fr = 1, est = "mom"){
   y <- m[,2]
   rmd <- c(1:length(x))
   for(i in 1:length(x)) rmd[i] <- est(y[near(x,x[i],fr)])
-  return(rmd)  
+  return(rmd)
 }

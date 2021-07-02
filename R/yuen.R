@@ -1,4 +1,4 @@
-yuen <- function(formula, data, tr = 0.2){
+yuen <- function(formula, data, tr = 0.2, ...){
 
   if (missing(data)) {
     mf <- model.frame(formula)
@@ -6,14 +6,14 @@ yuen <- function(formula, data, tr = 0.2){
     mf <- model.frame(formula, data)
   }
   cl <- match.call()
-  
+
   xy <- split(model.extract(mf, "response"), mf[,2])
   faclevels <- names(xy)
   x <- xy[[1]]
   y <- xy[[2]]
-  
+
   if (tr==0.5) warning("Comparing medians should not be done with this function!")
-  
+
 
   alpha <- 0.05
   if(is.null(y)){
@@ -41,9 +41,9 @@ yuen <- function(formula, data, tr = 0.2){
   up<-dif+crit*sqrt(q1+q2)
   test<-abs(dif/sqrt(q1+q2))
   yuen<-2*(1-pt(test,df))
-  
+
   es=abs(yuenv2(x,y,tr=tr)$Effect.Size)
-  
+
   result <- list(test = test, conf.int = c(low, up), p.value = yuen, df = df, diff = dif, effsize = es, call = cl)
   class(result) <- "yuen"
   result

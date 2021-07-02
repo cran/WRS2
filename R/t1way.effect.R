@@ -1,5 +1,5 @@
 t1way.effect <-
-function(x,tr=.2,grp=NA,MAT=FALSE,lev.col=1,var.col=2){
+function(x,tr=.2,grp=NA,MAT=FALSE,lev.col=1,var.col=2,...){
 #
 # Same as t1way, but computes explanatory power and related effect size
 # Only use this function with = n's

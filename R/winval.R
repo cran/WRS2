@@ -1,4 +1,4 @@
-winval<-function(x,tr=.2){
+winval<-function(x,tr=.2, ...){
 #
 #  Winsorize the data in the vector x.
 #  tr is the amount of Winsorization which defaults to .2.

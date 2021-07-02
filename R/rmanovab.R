@@ -1,19 +1,19 @@
-rmanovab <- function(y, groups, blocks, tr = 0.2, nboot = 599){
-  
+rmanovab <- function(y, groups, blocks, tr = 0.2, nboot = 599, ...){
+
   cols1 <- deparse(substitute(y))
   cols2 <- deparse(substitute(groups))
   cols3 <- deparse(substitute(blocks))
   dat <- data.frame(y, groups, blocks)
   colnames(dat) <- c(cols1, cols2, cols3)
   cl <- match.call()
-  
+
   x <- reshape(dat, idvar = cols3, timevar = cols2, direction = "wide")[-1]  ## wide format
-  
+
   alpha <- 0.05
   grp <- 0
   if(is.data.frame(x)) x=as.matrix(x)
-  
-  
+
+
   if(is.matrix(x)){
     if(sum(grp)==0)grp<-c(1:ncol(x))
     mat<-x[,grp]

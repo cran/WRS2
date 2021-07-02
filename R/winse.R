@@ -1,4 +1,4 @@
-winse<-function(x, tr = .2){
+winse<-function(x, tr = .2, ...){
 #
 # Estimate the standard error of the Winsorized mean
 #

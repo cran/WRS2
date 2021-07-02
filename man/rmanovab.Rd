@@ -5,11 +5,11 @@
 \title{ A heteroscedastic one-way repeated measures bootstrap ANOVA for trimmed means.
 }
 \description{
-The \code{rmanovab} function computes a bootstrap version of the one-way repeated measures ANOVA for the trimmed means. Homoscedasticity assumption not required. Corresponding post hoc tests can be performed using \code{pairdepb}.   
+The \code{rmanovab} function computes a bootstrap version of the one-way repeated measures ANOVA for the trimmed means. Homoscedasticity assumption not required. Corresponding post hoc tests can be performed using \code{pairdepb}.
 }
 \usage{
-rmanovab(y, groups, blocks, tr = 0.2, nboot = 599)
-pairdepb(y, groups, blocks, tr = 0.2, nboot = 599)
+rmanovab(y, groups, blocks, tr = 0.2, nboot = 599, ...)
+pairdepb(y, groups, blocks, tr = 0.2, nboot = 599, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -27,6 +27,9 @@ trim level for the mean.
 }
  \item{nboot}{
 number of bootstrap samples.
+}
+\item{...}{
+currently ignored.
 }
 }
 \value{

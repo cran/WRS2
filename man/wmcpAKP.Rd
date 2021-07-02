@@ -8,7 +8,7 @@ Effect size for dependent samples ANOVA
 Compute an AKP-type effect size for dependent sample ANOVA
 }
 \usage{
-wmcpAKP(x, tr = 0.2, nboot = 200)
+wmcpAKP(x, tr = 0.2, nboot = 200, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,6 +21,9 @@ trim level for the means.
   \item{nboot}{
 number of bootstrap samples.
 }
+\item{...}{
+currently ignored.
+}
 }
 \details{
 The computation is based on a modification of the Algina-Keselman-Penfield effect size for J dependent samples.
@@ -32,7 +35,7 @@ Algina, J., Keselman, H.J., & Penfield, R.D. (2005). An alternative to Cohen's s
 
 }
 \seealso{
-\code{\link{rmanova}}, \code{\link{yuend}} 
+\code{\link{rmanova}}, \code{\link{yuend}}
 }
 
 \examples{

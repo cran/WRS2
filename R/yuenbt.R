@@ -1,4 +1,4 @@
-yuenbt <- function(formula, data, tr = 0.2, nboot = 599, side = TRUE){
+yuenbt <- function(formula, data, tr = 0.2, nboot = 599, side = TRUE, ...){
 
   if (missing(data)) {
     mf <- model.frame(formula)
@@ -6,7 +6,7 @@ yuenbt <- function(formula, data, tr = 0.2, nboot = 599, side = TRUE){
     mf <- model.frame(formula, data)
   }
   cl <- match.call()
-  
+
   xy <- split(model.extract(mf, "response"), mf[,2])
   faclevels <- names(xy)
   x <- xy[[1]]
@@ -19,12 +19,12 @@ yuenbt <- function(formula, data, tr = 0.2, nboot = 599, side = TRUE){
   side<-as.logical(side)
   p.value<-NA
   yuenbt<-vector(mode="numeric",length=2)
-  
+
   x<-x[!is.na(x)]  # Remove missing values in x
   y<-y[!is.na(y)]  # Remove missing values in y
   xcen<-x-mean(x,tr)
   ycen<-y-mean(y,tr)
-  
+
   test<-(mean(x,tr)-mean(y,tr))/sqrt(trimse(x,tr=tr)^2+trimse(y,tr=tr)^2)
   datax<-matrix(sample(xcen,size=length(x)*nboot,replace=TRUE),nrow=nboot)
   datay<-matrix(sample(ycen,size=length(y)*nboot,replace=TRUE),nrow=nboot)
@@ -32,7 +32,7 @@ yuenbt <- function(formula, data, tr = 0.2, nboot = 599, side = TRUE){
   botx<-apply(datax,1,trimse,tr)
   boty<-apply(datay,1,trimse,tr)
   tval<-top/sqrt(botx^2+boty^2)
- 
+
   if(side)tval<-abs(tval)
   tval<-sort(tval)
   icrit<-floor((1-alpha)*nboot+.5)
@@ -47,9 +47,9 @@ yuenbt <- function(formula, data, tr = 0.2, nboot = 599, side = TRUE){
     p.value<-(sum(abs(test)<=abs(tval)))/nboot
   }
   mdiff <- mean(x,tr)-mean(y,tr)
-  
+
   result <- list(test = test, conf.int = yuenbt, p.value = p.value, df = NA, diff = mdiff, call = cl)
   class(result) <- "yuen"
   result
-  
+
 }

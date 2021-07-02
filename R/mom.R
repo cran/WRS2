@@ -1,4 +1,4 @@
-mom<-function(x,bend=2.24,na.rm=TRUE){
+mom<-function(x,bend=2.24,na.rm=TRUE,...){
   #
   #  Compute MOM-estimator of location.
   #  The default bending constant is 2.24

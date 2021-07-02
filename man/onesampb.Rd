@@ -3,10 +3,10 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{One-sample percentile bootstrap}
 \description{
-Tests whether a robust location measure (median, Huber Psi) differs from a null value and reports a 95\% confidence interval based on percentile bootstrap. 
+Tests whether a robust location measure (median, Huber Psi) differs from a null value and reports a 95\% confidence interval based on percentile bootstrap.
 }
 \usage{
-onesampb(x, est = "onestep", nboot = 2000, nv = 0, alpha = 0.05)
+onesampb(x, est = "onestep", nboot = 2000, nv = 0, alpha = 0.05, ...)
 }
 \arguments{
   \item{x}{
@@ -19,11 +19,14 @@ robust estimator to be used (\code{"onestep"}, \code{"mom"}, or \code{"median"})
 number of bootstrap samples.
 }
  \item{nv}{
-value under H0. 
+value under H0.
  }
   \item{alpha}{
-alpha level. 
+alpha level.
  }
+ \item{...}{
+currently ignored.
+}
 }
 \value{
 Returns an object of class \code{"onesampb"} containing:

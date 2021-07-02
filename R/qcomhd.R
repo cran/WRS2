@@ -1,4 +1,4 @@
-qcomhd <- function(formula, data, q = c(0.1, 0.25, 0.5, 0.75, 0.9), nboot = 2000, alpha = 0.05, ADJ.CI = TRUE){
+qcomhd <- function(formula, data, q = c(0.1, 0.25, 0.5, 0.75, 0.9), nboot = 2000, alpha = 0.05, ADJ.CI = TRUE, ...){
   #
   # Compare quantiles using pb2gen
   # via hd estimator. Tied values are allowed.
@@ -8,19 +8,19 @@ qcomhd <- function(formula, data, q = c(0.1, 0.25, 0.5, 0.75, 0.9), nboot = 2000
   # q defaults to comparing the .1,.25,.5,.75, and .9 quantiles
   #   Function returns p-values and critical p-values based on Hochberg's method.
   #
-  
+
   if (missing(data)) {
     mf <- model.frame(formula)
   } else {
     mf <- model.frame(formula, data)
   }
   cl <- match.call()
-  
+
   xy <- split(model.extract(mf, "response"), mf[,2])
   faclevels <- names(xy)
   x <- xy[[1]]
   y <- xy[[2]]
-  
+
   pv=NULL
   output=matrix(NA,nrow=length(q),ncol=10)
   dimnames(output)<-list(NULL,c("q","n1","n2","est.1","est.2","est.1_minus_est.2","ci.low","ci.up", "p_crit","p-value"))
@@ -54,7 +54,7 @@ qcomhd <- function(formula, data, q = c(0.1, 0.25, 0.5, 0.75, 0.9), nboot = 2000
     if(output[temp[i],10]>output[temp[i],9])output$signif[temp[i]]="NO"
     if(output[temp[i],10]<=output[temp[i],9])break
   }
- 
+
   output <- output[,-ncol(output)]
   colnames(output) <- c("q", "n1", "n2", "est1", "est2", "est1-est.2", "ci.low", "ci.up", "p.crit", "p.value")
   result <- list(partable = output, call = cl)

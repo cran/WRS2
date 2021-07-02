@@ -1,4 +1,4 @@
-mest <- function(x, bend = 1.28, na.rm = FALSE){
+mest <- function(x, bend = 1.28, na.rm = FALSE, ...){
 #
 #  Compute M-estimator of location using Huber's Psi.
 #  The default bending constant is 1.28

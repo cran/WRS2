@@ -1,4 +1,4 @@
-t2way <- function(formula, data, tr = 0.2){
+t2way <- function(formula, data, tr = 0.2, ...){
 
   if (missing(data)) {
     mf <- model.frame(formula)
@@ -6,10 +6,10 @@ t2way <- function(formula, data, tr = 0.2){
     mf <- model.frame(formula, data)
   }
   cl <- match.call()
-  
+
   ## sanity check for incomplete design
   if (any(table(mf[,2], mf[,3]) == 0)) stop("Estimation not possible due to incomplete design.")
-  
+
   J <- nlevels(mf[,2])  # FIXME: convert into factor
   K <- nlevels(mf[,3])
   p <- J*K
@@ -74,7 +74,7 @@ t2way <- function(formula, data, tr = 0.2){
   }
   AB.p.value=irem/1000
   tmeans=matrix(tmeans,J,K,byrow=T)
-  result <- list(Qa=Qa$teststat, A.p.value=A.p.value, Qb=Qb$teststat, B.p.value=B.p.value, Qab=Qab$teststat, 
+  result <- list(Qa=Qa$teststat, A.p.value=A.p.value, Qb=Qb$teststat, B.p.value=B.p.value, Qab=Qab$teststat,
                  AB.p.value=AB.p.value, call = cl, varnames = colnames(mf), dim = c(J,K))
   class(result) <- c("t2way")
   result

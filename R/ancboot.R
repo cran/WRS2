@@ -1,5 +1,5 @@
-ancboot <- function(formula, data, tr = 0.2, nboot = 599, fr1 = 1, fr2 = 1, pts = NA){
- 
+ancboot <- function(formula, data, tr = 0.2, nboot = 599, fr1 = 1, fr2 = 1, pts = NA, ...){
+
   # Confidence intervals are computed using a percentile t bootstrap
   # method. Comparisons are made at five empirically chosen design points.
   #
@@ -10,14 +10,14 @@ ancboot <- function(formula, data, tr = 0.2, nboot = 599, fr1 = 1, fr2 = 1, pts 
   LP <- TRUE
   pr <- TRUE
   sm <- FALSE
-  
+
   if (missing(data)) {
     mf <- model.frame(formula)
   } else {
     mf <- model.frame(formula, data)
   }
   mcl <- match.call()
-  
+
   if(is.factor(mf[,2])) {
     datfac <- 2
     datcov <- 3
@@ -25,7 +25,7 @@ ancboot <- function(formula, data, tr = 0.2, nboot = 599, fr1 = 1, fr2 = 1, pts 
     datfac <- 3
     datcov <- 2
   }
-  
+
   grnames <- levels(mf[,datfac])
   if (is.null(grnames)) stop("Group variable needs to be provided as factor!")
   if (length(grnames) > 2) stop("Robust ANCOVA implemented for 2 groups only!")
@@ -35,9 +35,9 @@ ancboot <- function(formula, data, tr = 0.2, nboot = 599, fr1 = 1, fr2 = 1, pts 
   xx <- split(mf[,datcov], mf[, datfac])
   x1 <- xx[[1]]
   x2 <- xx[[2]]
-  
+
   ## bugfix
-  if(length(x1) < length(x2)) {              
+  if(length(x1) < length(x2)) {
     dummy <- x1
     x1 <- x2
     x2 <- dummy
@@ -48,8 +48,8 @@ ancboot <- function(formula, data, tr = 0.2, nboot = 599, fr1 = 1, fr2 = 1, pts 
   } else {
     change <- FALSE
   }
-  
-  
+
+
   if(is.na(pts[1])){
     isub<-c(1:5)  # Initialize isub
     test<-c(1:5)
@@ -142,7 +142,7 @@ ancboot <- function(formula, data, tr = 0.2, nboot = 599, fr1 = 1, fr2 = 1, pts 
     mat[,8]<-test$psihat[,4]
     mat[,9]<-test$test[,4]
   }
-  
+
   mat <- as.data.frame(mat)
   if(change) grnames <- grnames[2:1]
   result <- list(evalpts = mat$X, n1 = mat$n1, n2 = mat$n2, trDiff = mat$DIF, ci.low = mat$ci.low, ci.hi = mat$ci.hi, test = mat$TEST,  crit.vals = mat$crit.val, p.vals = mat$p.value, cnames = colnames(mf[,c(1, datfac, datcov)]), faclevels = grnames, call = mcl)

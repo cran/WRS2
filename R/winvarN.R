@@ -1,5 +1,5 @@
 winvarN <-
-function(x,tr=.2){
+function(x,tr=.2, ...){
 #
 # rescale the winsorized variance so that it equals one for the standard
 # normal distribution

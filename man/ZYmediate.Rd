@@ -4,10 +4,10 @@
 \title{Robust mediation test
 }
 \description{
-Performs a robust mediation test according to the method proposed by Zu & Yuan (2010). 
+Performs a robust mediation test according to the method proposed by Zu & Yuan (2010).
 }
 \usage{
-ZYmediate(x, y, med, nboot = 2000, alpha = 0.05, kappa = 0.05)
+ZYmediate(x, y, med, nboot = 2000, alpha = 0.05, kappa = 0.05, ...)
 }
 \arguments{
   \item{x}{
@@ -28,6 +28,9 @@ alpha level.
 \item{kappa}{
 the percent of cases to be controlled when robust method is used.
 }
+\item{...}{
+currently ignored.
+}
 }
 
 \value{
@@ -45,7 +48,7 @@ the percent of cases to be controlled when robust method is used.
 Zu J., Yuan, K.-H. (2010). Local influence and robust procedures for mediation analysis. Multivariate Behavioral Research, 45, 1-44.
 }
 \examples{
-## Leerkes data: 
+## Leerkes data:
 ## Y: Efficacy
 ## X: MatCare
 ## M: Esteem

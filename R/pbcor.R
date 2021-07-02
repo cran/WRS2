@@ -1,4 +1,4 @@
-pbcor <- function(x, y = NULL, beta = 0.2, ci = FALSE, nboot = 500, alpha = 0.05){
+pbcor <- function(x, y = NULL, beta = 0.2, ci = FALSE, nboot = 500, alpha = 0.05, ...){
   #   Compute the percentage bend correlation between x and y.
   #
   #   beta is the bending constant for omega sub N.
@@ -9,7 +9,7 @@ pbcor <- function(x, y = NULL, beta = 0.2, ci = FALSE, nboot = 500, alpha = 0.05
   }
   if(length(x)!=length(y))stop("The vectors do not have equal lengths!")
   cl <- match.call()
-  
+
   m1<-cbind(x,y)
   m1<-na.omit(m1)
   nval<-nrow(m1)
@@ -29,7 +29,7 @@ pbcor <- function(x, y = NULL, beta = 0.2, ci = FALSE, nboot = 500, alpha = 0.05
   pbcor<-sum(a*b)/sqrt(sum(a^2)*sum(b^2))
   test<-pbcor*sqrt((length(x) - 2)/(1 - pbcor^2))
   sig<-2*(1 - pt(abs(test),length(x)-2))
-  
+
   ## confidence interval
   if (ci) {
   data<-matrix(sample(length(y),size=length(y)*nboot,replace=TRUE),nrow=nboot)
@@ -59,7 +59,7 @@ pbcor <- function(x, y = NULL, beta = 0.2, ci = FALSE, nboot = 500, alpha = 0.05
     corci <- NA
   }
   ## end CI
-  
+
   result <- list(cor=pbcor,test=test,p.value=sig,n=nval, cor_ci = corci, call = cl)
   class(result) <- "pbcor"
   result

@@ -8,7 +8,7 @@ Heteroscedastic one-way ANOVA for medians.
 This function computes a one-way ANOVA for the medians. Homoscedasticity assumption not required. There shouldn't be too many ties.
 }
 \usage{
-med1way(formula, data, iter = 1000)
+med1way(formula, data, iter = 1000, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,10 +21,13 @@ an optional data frame for the input data.
 \item{iter}{
 number of iterations to determine critical value.
 }
+\item{...}{
+currently ignored.
+}
 }
 \details{
-Evaluating the test statistic using the df proposed in the literature can result in the actual level being less than the nominal level, (i.e., around 0.02-0.025 when testing at the 0.05 level and the sample size is small). A better strategy is to simulate the critical 
-value and computing the p-value accordingly, as implemented in this function.  
+Evaluating the test statistic using the df proposed in the literature can result in the actual level being less than the nominal level, (i.e., around 0.02-0.025 when testing at the 0.05 level and the sample size is small). A better strategy is to simulate the critical
+value and computing the p-value accordingly, as implemented in this function.
 }
 \value{
 Returns an object of class \code{med1way} containing:
