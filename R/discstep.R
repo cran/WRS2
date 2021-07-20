@@ -79,7 +79,7 @@ discstep<-function(formula, data, nboot = 500, alpha = 0.05, ...){
 
   outtable <- mout[nrow(mout):1,]
   rownames(outtable) <- NULL
-  result <- list(partable = outtable, call = cl)
+  result <- list(partable = outtable, alpha = alpha, call = cl)
   class(result) <- "robtab"
   result
 }

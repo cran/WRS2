@@ -52,7 +52,7 @@ discmcp <- function(formula, data, alpha = 0.05, nboot = 500, ...){
   num.sig<-sum(output[,3]<=output[,4])
 
   outtable <- output
-  result <- list(partable = outtable, call = cl)
+  result <- list(partable = outtable, alpha = alpha, call = cl)
   class(result) <- "robtab"
   result
 

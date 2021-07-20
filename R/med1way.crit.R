@@ -27,5 +27,5 @@ med1way.crit <- function(n,alpha=.05,iter=1000,TEST=NA,SEED=TRUE){
   crit.val<-chk[iv]
   pval<-NA
   if(!is.na(TEST))pval<-sum((TEST<=chk))/iter
-  list(crit.val=crit.val,p.value=pval)
+  list(crit.val=crit.val,alpha = alpha, p.value=pval)
 }

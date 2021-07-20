@@ -94,7 +94,7 @@ binband <- function(x, y, KMS = FALSE, alpha = 0.05, ADJ.P = FALSE, ...){
   outtable <- data.frame(output)
   colnames(outtable)[4] <- "p1-p2"
 
-  result <- list(partable = outtable, call = cl)
+  result <- list(partable = outtable, alpha = alpha, call = cl)
   class(result) <- "robtab"
   result
 }

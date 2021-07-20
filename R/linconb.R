@@ -94,5 +94,5 @@ psihat[d,4]<-testit$psihat[1,2]+testb[ic]*testit$test[1,4]
 psihat[d,2]<-testit$psihat[1,2]
 test[d,3]<-testit$test[1,4]
 }
-list(n=nsam,psihat=psihat,test=test,crit=testb[ic],con=con)
+list(n=nsam,psihat=psihat,test=test,crit=testb[ic],alpha = alpha, con=con)
 }

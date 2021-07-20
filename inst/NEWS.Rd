@@ -2,6 +2,14 @@
 \title{News for Package \pkg{WRS2}}
 \encoding{UTF-8}
 
+
+\section{Changes in Version 1.1-3}{
+  \itemize{
+    \item method argument added in lincon().
+    \item For some selected functions alpha is returned.
+    }
+}
+
 \section{Changes in Version 1.1-2}{
   \itemize{
     \item Outputs from wmcpAKP() and dep.effect() functions get additional classes named after these functions (thanks to Indrajeet Patil).

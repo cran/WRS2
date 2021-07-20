@@ -73,7 +73,7 @@ t1way <- function(formula, data, tr = 0.2, alpha = 0.05, nboot = 100, ...) {
    #if(chk$p.value>alpha)ci[1]=0
 
 
- result <- list(test = TEST, df1 =nu1, df2 = nu2, p.value = sig, effsize = e.pow, effsize_ci = ci,
+ result <- list(test = TEST, df1 =nu1, df2 = nu2, p.value = sig, effsize = e.pow, effsize_ci = ci, alpha = alpha,
                 call = cl)
  class(result) <- c("t1way")
  result

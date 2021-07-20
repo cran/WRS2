@@ -75,7 +75,7 @@ ZYmediate <- function(x, y, med, nboot = 2000, alpha = 0.05, kappa = 0.05, ...){
   res=t(ParEstH)
   #
   Res=BCI(Z,Zr,ab=3,abH,B,level)
-  result <- list(CI.ab=Res$CI,p.value=Res$pv,a.est=aH,b.est=bH,ab.est=abH, call = cl)
+  result <- list(CI.ab=Res$CI,p.value=Res$pv,a.est=aH,b.est=bH,ab.est=abH, alpha = alpha, call = cl)
   class(result) <- "robmed"
   result
 }

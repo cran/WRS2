@@ -57,7 +57,7 @@ qcomhd <- function(formula, data, q = c(0.1, 0.25, 0.5, 0.75, 0.9), nboot = 2000
 
   output <- output[,-ncol(output)]
   colnames(output) <- c("q", "n1", "n2", "est1", "est2", "est1-est.2", "ci.low", "ci.up", "p.crit", "p.value")
-  result <- list(partable = output, call = cl)
+  result <- list(partable = output, alpha = alpha, call = cl)
   class(result) <- "robtab"
   result
 }

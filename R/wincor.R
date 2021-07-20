@@ -54,7 +54,7 @@ wincor <- function(x, y = NULL, tr = 0.2, ci = FALSE, nboot = 500, alpha = 0.05,
   }
   ## end CI
 
-result <- list(cor = wcor, cov = wcov, test = test, p.value = sig, n = nval, cor_ci = corci, call = cl)
+result <- list(cor = wcor, cov = wcov, test = test, p.value = sig, n = nval, cor_ci = corci, alpha = alpha, call = cl)
 class(result) <- "pbcor"
 result
 }

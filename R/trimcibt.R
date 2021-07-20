@@ -22,7 +22,8 @@ trimcibt <- function(x,
     test.stat = test,
     tr = tr,
     p.value = p.value,
-    n = length(x)
+    n = length(x),
+    alpha = alpha
   )
 
   class(result) <- "trimcibt"

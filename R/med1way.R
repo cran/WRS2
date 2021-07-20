@@ -1,5 +1,4 @@
-med1way <-
-function(formula, data, iter = 1000, ...) {
+med1way <- function(formula, data, iter = 1000, ...) {
 
   if (missing(data)) {
     mf <- model.frame(formula)

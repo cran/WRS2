@@ -13,5 +13,5 @@ trimci[1]<-mean(x,tr)-qt(1-alpha/2,df)*se
 trimci[2]<-mean(x,tr)+qt(1-alpha/2,df)*se
 test<-(mean(x,tr)-null.value)/se
 sig<-2*(1-pt(abs(test),df))
-list(ci=trimci,estimate=mean(x,tr),test.stat=test,se=se,p.value=sig,n=length(x))
+list(ci=trimci,estimate=mean(x,tr),test.stat=test,se=se,alpha = alpha, p.value=sig,n=length(x))
 }

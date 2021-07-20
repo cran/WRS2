@@ -1,4 +1,4 @@
-lincon <- function(formula, data, tr = 0.2, alpha = 0.05, ...){
+lincon <- function(formula, data, tr = 0.2, alpha = 0.05, method = "hochberg",...){
   #
 
   con=0
@@ -104,11 +104,10 @@ lincon <- function(formula, data, tr = 0.2, alpha = 0.05, ...){
     }
   }
 
-  psihat[, 6] <- p.adjust(psihat[,6], method = 'hochberg')
+  psihat[, 6] <- p.adjust(psihat[,6], method = method)
 
-  #fnames <- as.character(unique(mf[,2]))
   fnames <- names(x)
-  result <- list(comp = psihat, fnames = fnames, call = cl)
+  result <- list(comp = psihat, fnames = fnames, alpha = alpha, call = cl)
   class(result) <- "mcp1"
   result
 }

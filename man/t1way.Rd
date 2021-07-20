@@ -10,7 +10,7 @@ The \code{t1way} function computes a one-way ANOVA on trimmed means. Homoscedast
 }
 \usage{
 t1way(formula, data, tr = 0.2, alpha = 0.05, nboot = 100, ...)
-lincon(formula, data, tr = 0.2, alpha = 0.05, ...)
+lincon(formula, data, tr = 0.2, alpha = 0.05, method = "hochberg", ...)
 }
 \arguments{
   \item{formula}{
@@ -27,6 +27,9 @@ alpha level for CI computation.
 }
  \item{nboot}{
 number of bootstrap samples for effect size CI computation.
+}
+ \item{method}{
+method to correct the p-value (see \code{\link{p.adjust}})
 }
 \item{...}{
 currently ignored.

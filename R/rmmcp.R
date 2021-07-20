@@ -151,7 +151,7 @@ rmmcp<-function(y, groups, blocks, tr = 0.2, alpha = 0.05, ...){
 
   fnames <- as.character(unique(groups))
   psihat1 <- cbind(psihat, test[,4:5])
-  result <- list(comp = psihat1, fnames = fnames, call = cl)
+  result <- list(comp = psihat1, fnames = fnames, alpha = alpha, call = cl)
   class(result) <- "mcp2"
   result
 }

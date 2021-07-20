@@ -54,7 +54,7 @@ akp.effect <- function(formula, data, EQVAR = TRUE, tr = 0.2, nboot = 200, alpha
   ci[2]=be.f[U]
 
   ## output
-  result <- list(AKPeffect = dval, AKPci = ci, call = cl)
+  result <- list(AKPeffect = dval, AKPci = ci, alpha = alpha, call = cl)
   class(result) = "AKP"
   result
 }

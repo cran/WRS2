@@ -35,5 +35,5 @@ yuen.effect.ci<-function(formula, data, tr = 0.2, nboot = 400, alpha = 0.05, ...
   ci[2]<-bvec[icu]
   if(ci[1]<0)ci[1]=0
   es=abs(yuenv2(x,y,tr=tr)$Effect.Size)
-  list(effsize = es, CI=ci)
+  list(effsize = es, alpha = alpha, CI=ci)
 }

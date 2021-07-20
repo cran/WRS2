@@ -43,5 +43,5 @@ low<-dif-crit*sqrt(q1+q2)
 up<-dif+crit*sqrt(q1+q2)
 test<-abs(dif/sqrt(q1+q2))
 yuen<-2*(1-pt(test,df))
-list(n1=length(x),n2=length(y),est.1=mean(x,tr),est.2=mean(y,tr),ci=c(low,up),p.value=yuen,dif=dif,se=sqrt(q1+q2),teststat=test,crit=crit,df=df)
+list(n1=length(x),n2=length(y),est.1=mean(x,tr),est.2=mean(y,tr),ci=c(low,up),p.value=yuen,dif=dif,se=sqrt(q1+q2),teststat=test,alpha = alpha, crit=crit,df=df)
 }
