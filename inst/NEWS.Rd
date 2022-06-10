@@ -3,6 +3,13 @@
 \encoding{UTF-8}
 
 
+\section{Changes in Version 1.1-4}{
+  \itemize{
+    \item Some character escapes fixed in help files.
+    }
+}
+
+
 \section{Changes in Version 1.1-3}{
   \itemize{
     \item method argument added in lincon().

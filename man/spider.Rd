@@ -16,7 +16,7 @@
 Dataset from Field et al. book (p. 362).   
 }
 \references{
-Field, A., Miles, J, \& Field, Z. (2012). Discovering Statistics Using R. Sage.
+Field, A., Miles, J., & Field, Z. (2012). Discovering Statistics Using R. Sage.
 }
 \examples{
 spider

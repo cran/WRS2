@@ -20,7 +20,7 @@ This dataset records the time taken to retch when eating these things.
 Dataset from Field et al. book (p. 557).   
 }
 \references{
-Field, A., Miles, J, \& Field, Z. (2012). Discovering Statistics Using R. Sage.
+Field, A., Miles, J., & Field, Z. (2012). Discovering Statistics Using R. Sage.
 }
 \examples{
 bush
