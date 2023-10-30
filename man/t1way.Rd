@@ -37,7 +37,7 @@ currently ignored.
 }
 
 \details{
-In the post hoc computations, confidence intervals are adjusted to control FWE, but p-values are not adjusted to control FWE.
+In the post hoc computations, confidence intervals and p-values are adjusted to control FWE. The default for the p-values is to use Hochberg's 1988 sharper Bonferroni procedure.
 }
 \value{
 \code{t1way} returns an object of class \code{"t1way"} containing:

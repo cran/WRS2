@@ -3,7 +3,6 @@ importFrom("plyr", "alply")
 importFrom("grDevices", "chull")
 importFrom("utils", "head")
 importFrom("utils", "combn")
-importFrom("mc2d", "rmultinomial")
 
 export(med1way)
 export(med2way)

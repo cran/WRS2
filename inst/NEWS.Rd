@@ -2,6 +2,12 @@
 \title{News for Package \pkg{WRS2}}
 \encoding{UTF-8}
 
+\section{Changes in Version 1.1-5}{
+  \itemize{
+    \item mc2d package removed from the dependencies.
+    }
+}
+
 
 \section{Changes in Version 1.1-4}{
   \itemize{

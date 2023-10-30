@@ -18,9 +18,7 @@ Weight loss is studied for three different types of diets.
     \item{\code{weight.loss}}{weight loss}
   }
 }
-\details{
-Original data taken from \url{https://www.sheffield.ac.uk/polopoly_fs/1.570199!/file/stcp-Rdataset-Diet.csv}, slightly modified.
-}
+
 \references{
 Couturier, D. L., Nicholls, R., and Fernandes, M. (2018). ANOVA with R: analysis of the diet dataset. Retrieved online. 
 }

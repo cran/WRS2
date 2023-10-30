@@ -1,5 +1,5 @@
-20165985c979bc88001bbd538c0c0a81 *DESCRIPTION
-ef1b2b4e94f1f67a488294492a912ee3 *NAMESPACE
+dc51d11fc29c5f51f66b9cf2a8858d02 *DESCRIPTION
+e31a0d1b0a3c9b98ca487a9a3e5979c3 *NAMESPACE
 a350679f277f684812c0222d3faba744 *R/Dqcomhd.R
 ae16c21c14bf59cd09b049eeae67cc6d *R/Qanova.R
 a07c04d6cafb9fe985426eabe8da1295 *R/ZYmediate.R
@@ -105,6 +105,7 @@ a86e19804805bf36f23fd84cc0c26d6a *R/rmanovab.R
 c93a8561fc871f33c7a838e70340c568 *R/rmba.R
 1208f33f3a2da2cc1fea8ba601e08071 *R/rmdzero.R
 ba7f2830e4770f72525865740b48996d *R/rmmcp.R
+c651f954c26f5c1a4ced9b565166073d *R/rmultinomial.R
 6ef95722065620e9a2f9e41f73d32931 *R/rungen.R
 d7bc45ab7b6ce108ef6df72870bc0a54 *R/runhat.R
 a2bd9b3390205ec560bf1e69317bf289 *R/runmbo.R
@@ -158,7 +159,7 @@ aca67cdebb98e00b0d7bee17072d9f65 *R/winmean.R
 213779a9bf630a44394f691c2ece363d *R/yuen1.R
 b207cf97ed6ce8ff5058b3ef0c48fc80 *R/yuenbt.R
 ab6ee1d84a11db1c9a6bf7b65c6f8915 *R/yuend.R
-2d4d421b0eb408a7ee72c7e74f5793a1 *build/vignette.rds
+ff2e04af3f44edd7906e5fb69f9fae7f *build/vignette.rds
 1b20c44fce93f8ef5be35e9edd0625ca *data/Leerkes.rda
 b41a164d9f55ead84f9fb0ee10a2e7bf *data/Pygmalion.rda
 9bf49bb81d8fea01ca8c5b0c63fe3a87 *data/WineTasting.rda
@@ -176,12 +177,12 @@ fccde0a4fdeb4a276c03c860ca2e2cec *data/hangover.rda
 6077f938d92e786da849193b377c2100 *data/spider.rda
 3371e8dc043c11a8331feee73d347989 *data/swimming.rda
 0719354b1d140023ed162daf4f9888bd *data/viagra.rda
-c5324f4edd35d70d217961b1aea6481c *inst/CITATION
-eaa2b27e190664c18cc3f7824fe7dadf *inst/NEWS.Rd
+2379c405d1c12d9e07161646f996d48e *inst/CITATION
+d47e8cd56d6d99b9b90132533cfe5cd3 *inst/NEWS.Rd
 4e4e59bb75337807d8e098cd31a99b07 *inst/NEWSRd2txt.R
 a9f4ef334ddca38cf553950e6e940a58 *inst/doc/WRS2.R
 a998f6ddb4317a8887a928214dbbfa66 *inst/doc/WRS2.Rnw
-e4a8648a90f7b509f8ada727ffeed262 *inst/doc/WRS2.pdf
+9637bbcd1378b4823f0f5a87d36e8ad7 *inst/doc/WRS2.pdf
 dba6bc47d46bc9de1755149a13010c60 *man/Leerkes.Rd
 c067cb107ec77ba0042b223f269b8129 *man/Pygmalion.Rd
 a62eabf0e9b3836c4d1eac48d2c68de2 *man/WineTasting.Rd
@@ -191,7 +192,7 @@ bbc10760e7140b9f25ed484d45a2d742 *man/ancova.Rd
 dfe73a7c5a3bbc490439bd18075c33f9 *man/bush.Rd
 bacf7ec96f4c2c00d960b3cfa96d28fe *man/bwtrim.Rd
 b8fc0246524c5357c33e046aef436e84 *man/chile.Rd
-0c8d94c9860b8fc6fc359d220f767861 *man/diet.Rd
+8a5674afc2de5a0577e149d3dacda6b6 *man/diet.Rd
 828c73864189f9ed131b246cbf72ba7a *man/electric.Rd
 f748f89b92b70999bbf8b5f0bc9e1866 *man/essays.Rd
 ed20dff4b0c4323564989ba6e293fe34 *man/eurosoccer.Rd
@@ -210,7 +211,7 @@ ad45735355988879fc78efff723ef765 *man/picture.Rd
 694a519979e05aefe870c904caed6fc6 *man/runmean.Rd
 8025b06811ecaa15e363558bed1e75d4 *man/spider.Rd
 7a0b123208a36dbba9aa903c559b8792 *man/swimming.Rd
-fbccc0ddaad4e4f8185985492fe1c33b *man/t1way.Rd
+b89e26a588bed49c23eb48539a0f516b *man/t1way.Rd
 b9f99950da2eff25e9cdb1969db5f98b *man/t1waybt.Rd
 65661e7f5365280e0970e33eff743c86 *man/t2way.Rd
 f6adf89fddcefefce72bca536d22039e *man/t3way.Rd
