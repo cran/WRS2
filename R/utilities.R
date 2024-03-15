@@ -1020,19 +1020,7 @@ BpBCa=function(Z,abhat.v,t,level){
   list(BP,pv)
 }
 
-idealf<-function(x,na.rm=FALSE){
-  #
-  # Compute the ideal fourths for data in x
-  #
-  if(na.rm)x<-x[!is.na(x)]
-  j<-floor(length(x)/4 + 5/12)
-  y<-sort(x)
-  g<-(length(x)/4)-j+(5/12)
-  ql<-(1-g)*y[j]+g*y[j+1]
-  k<-length(x)-j+1
-  qu<-(1-g)*y[k]+g*y[k-1]
-  list(ql=ql,qu=qu)
-}
+
 
 ifmest<-function(x,bend=1.28,op=2){
   #
@@ -1089,15 +1077,6 @@ kerden<-function(x,q=.5,xval=0){
   B<-length(y[y<xmh])
   fhat<-(A-B)/(2*n*h)
   fhat
-}
-
-hpsi<-function(x,bend=1.28){
-  #
-  #   Evaluate Huber`s Psi function for each value in the vector x
-  #   The bending constant defaults to 1.28.
-  #
-  hpsi<-ifelse(abs(x)<=bend,x,bend*sign(x))
-  hpsi
 }
 
 

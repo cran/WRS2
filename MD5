@@ -1,4 +1,4 @@
-dc51d11fc29c5f51f66b9cf2a8858d02 *DESCRIPTION
+dcd5b1405fdbf73d286dc68d672cb4b9 *DESCRIPTION
 e31a0d1b0a3c9b98ca487a9a3e5979c3 *NAMESPACE
 a350679f277f684812c0222d3faba744 *R/Dqcomhd.R
 ae16c21c14bf59cd09b049eeae67cc6d *R/Qanova.R
@@ -40,7 +40,6 @@ d80ba2d93a0c15c77ffa49ba74ceb156 *R/johansp.R
 10e284061c29f311adca366b24d7ab82 *R/linconb.R
 3650258bfecdb3667e48bc578be4dacf *R/listm.R
 9bd8eddf5cbccdc6b3e15b56a3fe3c48 *R/lloc.R
-c8b9f624afe47e91ada4388a86735771 *R/matl.R
 e7f5867bf17e6db2cdd32ddbd980a209 *R/mcp2a.R
 efa19f4bff168cd946c8e430404358d8 *R/mcp2atm.R
 d0c65c7bf601cb9bf5743ecca0db32b8 *R/mcppb20.R
@@ -72,7 +71,6 @@ d810bcae66ea7b922c86980c102ac0d3 *R/pbadepth1.R
 4dd9d836b9d06572365e367fcd79112e *R/pball.R
 9c7434d67fd4d51ee0a31bb91b4fcf5f *R/pbcor.R
 073d36b45fb26163479683d4d523b1ec *R/pbos.R
-a8f945002cfd6524281cfaee081944c5 *R/pdis.R
 4eef8d8591ec2f9b0dbd98fec8613c3d *R/print.AKP.R
 6124a78e57899f776c20ae8b7b4279c1 *R/print.ancova.R
 36ee51a79997b6e95fd8f8a1885348d0 *R/print.bwtrim.R
@@ -145,7 +143,7 @@ c72b2900c00fcd54aa615eb5df151245 *R/twobinom.R
 6b84f9aed602857e16317c1a848eb8d2 *R/twocor.R
 b34114bc12dacc4873b29da3ef38b867 *R/twopcor.R
 b999c8e5228308d33f5048cfa09b6e02 *R/unidepth.R
-4fac1e2a44008a040866e288bd8a289b *R/utilities.R
+1d1bde8050e905c40797c41cc84276e1 *R/utilities.R
 b846d0b55c8351fbad5531eaf5adfb17 *R/winall.R
 91717991a7b6e63ed537c7398a06457b *R/wincor.R
 aca67cdebb98e00b0d7bee17072d9f65 *R/winmean.R
@@ -159,7 +157,7 @@ aca67cdebb98e00b0d7bee17072d9f65 *R/winmean.R
 213779a9bf630a44394f691c2ece363d *R/yuen1.R
 b207cf97ed6ce8ff5058b3ef0c48fc80 *R/yuenbt.R
 ab6ee1d84a11db1c9a6bf7b65c6f8915 *R/yuend.R
-ff2e04af3f44edd7906e5fb69f9fae7f *build/vignette.rds
+1f33d6dd7e8f02a3485fd186f0edde7c *build/vignette.rds
 1b20c44fce93f8ef5be35e9edd0625ca *data/Leerkes.rda
 b41a164d9f55ead84f9fb0ee10a2e7bf *data/Pygmalion.rda
 9bf49bb81d8fea01ca8c5b0c63fe3a87 *data/WineTasting.rda
@@ -178,11 +176,11 @@ fccde0a4fdeb4a276c03c860ca2e2cec *data/hangover.rda
 3371e8dc043c11a8331feee73d347989 *data/swimming.rda
 0719354b1d140023ed162daf4f9888bd *data/viagra.rda
 2379c405d1c12d9e07161646f996d48e *inst/CITATION
-d47e8cd56d6d99b9b90132533cfe5cd3 *inst/NEWS.Rd
+ea1b4df18f2bc9adbf2b9c5ad50fac2d *inst/NEWS.Rd
 4e4e59bb75337807d8e098cd31a99b07 *inst/NEWSRd2txt.R
 a9f4ef334ddca38cf553950e6e940a58 *inst/doc/WRS2.R
 a998f6ddb4317a8887a928214dbbfa66 *inst/doc/WRS2.Rnw
-9637bbcd1378b4823f0f5a87d36e8ad7 *inst/doc/WRS2.pdf
+154a7bafb278c28b8546fcab27afad18 *inst/doc/WRS2.pdf
 dba6bc47d46bc9de1755149a13010c60 *man/Leerkes.Rd
 c067cb107ec77ba0042b223f269b8129 *man/Pygmalion.Rd
 a62eabf0e9b3836c4d1eac48d2c68de2 *man/WineTasting.Rd
