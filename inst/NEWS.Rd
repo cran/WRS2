@@ -2,6 +2,13 @@
 \title{News for Package \pkg{WRS2}}
 \encoding{UTF-8}
 
+
+\section{Changes in Version 1.1-7}{
+  \itemize{
+    \item Label bugfix in \code{mcppb20}.
+    }
+}
+
 \section{Changes in Version 1.1-6}{
   \itemize{
     \item duplicated top-level assignments removed.
@@ -153,7 +160,7 @@
 }
 \section{Changes in Version 0.3-0}{
   \itemize{
-    \item Post hoc tests  with corresponding S3 methods added: \code{rmmcp}, \code{pairdepb}, \code{mcppb20}, \code{pbad2way}, \code{mcp2a}, \code{mcp2atm}.
+    \item Post hoc tests with corresponding S3 methods added: \code{rmmcp}, \code{pairdepb}, \code{mcppb20}, \code{pbad2way}, \code{mcp2a}, \code{mcp2atm}.
     \item Yuen's tests added: \code{yuen}, \code{yuenbt}.
     }
 }

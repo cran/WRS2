@@ -1,4 +1,4 @@
-dcd5b1405fdbf73d286dc68d672cb4b9 *DESCRIPTION
+c25cf97a68e0dc7a322fc031792261b3 *DESCRIPTION
 e31a0d1b0a3c9b98ca487a9a3e5979c3 *NAMESPACE
 a350679f277f684812c0222d3faba744 *R/Dqcomhd.R
 ae16c21c14bf59cd09b049eeae67cc6d *R/Qanova.R
@@ -42,7 +42,7 @@ d80ba2d93a0c15c77ffa49ba74ceb156 *R/johansp.R
 9bd8eddf5cbccdc6b3e15b56a3fe3c48 *R/lloc.R
 e7f5867bf17e6db2cdd32ddbd980a209 *R/mcp2a.R
 efa19f4bff168cd946c8e430404358d8 *R/mcp2atm.R
-d0c65c7bf601cb9bf5743ecca0db32b8 *R/mcppb20.R
+d1ff75a1f44b200ff9af57005b161f77 *R/mcppb20.R
 f25ebf19dd5201b67019a0407d954b3e *R/med1way.R
 c6bdd09dd030a660d6c86e6d616b3ced *R/med1way.crit.R
 aca8427e7f91dedea724b4835d435239 *R/med2way.R
@@ -157,7 +157,7 @@ aca67cdebb98e00b0d7bee17072d9f65 *R/winmean.R
 213779a9bf630a44394f691c2ece363d *R/yuen1.R
 b207cf97ed6ce8ff5058b3ef0c48fc80 *R/yuenbt.R
 ab6ee1d84a11db1c9a6bf7b65c6f8915 *R/yuend.R
-1f33d6dd7e8f02a3485fd186f0edde7c *build/vignette.rds
+208c3a84121b0f000dde1f4cd938935c *build/vignette.rds
 1b20c44fce93f8ef5be35e9edd0625ca *data/Leerkes.rda
 b41a164d9f55ead84f9fb0ee10a2e7bf *data/Pygmalion.rda
 9bf49bb81d8fea01ca8c5b0c63fe3a87 *data/WineTasting.rda
@@ -176,11 +176,11 @@ fccde0a4fdeb4a276c03c860ca2e2cec *data/hangover.rda
 3371e8dc043c11a8331feee73d347989 *data/swimming.rda
 0719354b1d140023ed162daf4f9888bd *data/viagra.rda
 2379c405d1c12d9e07161646f996d48e *inst/CITATION
-ea1b4df18f2bc9adbf2b9c5ad50fac2d *inst/NEWS.Rd
+cd245a74ca2023a04fc67f2132302b37 *inst/NEWS.Rd
 4e4e59bb75337807d8e098cd31a99b07 *inst/NEWSRd2txt.R
-a9f4ef334ddca38cf553950e6e940a58 *inst/doc/WRS2.R
+2418142da0cdd72983f9eaf52b7a2ed8 *inst/doc/WRS2.R
 a998f6ddb4317a8887a928214dbbfa66 *inst/doc/WRS2.Rnw
-154a7bafb278c28b8546fcab27afad18 *inst/doc/WRS2.pdf
+e184a872ea5347a2bd4892c8eec7549e *inst/doc/WRS2.pdf
 dba6bc47d46bc9de1755149a13010c60 *man/Leerkes.Rd
 c067cb107ec77ba0042b223f269b8129 *man/Pygmalion.Rd
 a62eabf0e9b3836c4d1eac48d2c68de2 *man/WineTasting.Rd

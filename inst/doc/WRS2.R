@@ -36,8 +36,8 @@ colnames(hangwide) <- paste("Time", 1:3)
 winall(hangwide)
 
 ## ----cor-plot, eval=FALSE, echo = FALSE, message=FALSE, warning=FALSE----
-#  library("GGally")
-#  ggpairs(hangwide)
+# library("GGally")
+# ggpairs(hangwide)
 
 ## ----cor-plot1, echo=FALSE, out.width='0.7\\textwidth', message=FALSE, warning=FALSE----
 library("GGally")
@@ -52,12 +52,12 @@ set.seed(123)
 twocor(ct1, ct2, at1, at2, corfun = "pbcor", beta = 0.15)
 
 ## ----soccer-plot, eval=FALSE, echo = FALSE, message=FALSE-------------
-#  library("ggplot2")
-#  SpainGer <- subset(eurosoccer, League == "Spain" | League == "Germany")
-#  SpainGer <- droplevels(SpainGer)
-#  ggplot(SpainGer, aes(x = League, y = GoalsGame)) +
-#    geom_boxplot(outlier.shape = NA) +
-#    geom_jitter(position = position_jitter(0.1))
+# library("ggplot2")
+# SpainGer <- subset(eurosoccer, League == "Spain" | League == "Germany")
+# SpainGer <- droplevels(SpainGer)
+# ggplot(SpainGer, aes(x = League, y = GoalsGame)) +
+#   geom_boxplot(outlier.shape = NA) +
+#   geom_jitter(position = position_jitter(0.1))
 
 ## ----soccer-plot1, echo=FALSE, out.width='0.7\\textwidth'-------------
 library("ggplot2")
@@ -89,12 +89,12 @@ fitqt <- qcomhd(GoalsGame ~ League, data = SpainGer,
 fitqt
 
 ## ----ano-plot, echo=FALSE, eval=FALSE, message=FALSE------------------
-#  library("MASS")
-#  anorexiaFT <- subset(anorexia, subset = Treat == "FT")
-#  anorexiaLong <- reshape(anorexiaFT, varying = list(2:3), direction = "long", v.names = "weight")
-#  anorexiaLong$time <- factor(anorexiaLong$time, labels = c("prior", "post"))
-#  gp <- ggplot(anorexiaLong, aes(x = time, y = weight, colour = as.factor(id), group = id))
-#  gp + geom_point(size = 1) + geom_line() + theme(legend.position="none")
+# library("MASS")
+# anorexiaFT <- subset(anorexia, subset = Treat == "FT")
+# anorexiaLong <- reshape(anorexiaFT, varying = list(2:3), direction = "long", v.names = "weight")
+# anorexiaLong$time <- factor(anorexiaLong$time, labels = c("prior", "post"))
+# gp <- ggplot(anorexiaLong, aes(x = time, y = weight, colour = as.factor(id), group = id))
+# gp + geom_point(size = 1) + geom_line() + theme(legend.position="none")
 
 ## ----ano-plot1, echo=FALSE, out.width='0.6\\textwidth'----------------
 library("MASS")
@@ -166,11 +166,11 @@ postgoggle$contrasts
 postgoggle
 
 ## ----eval=FALSE-------------------------------------------------------
-#  set.seed(123)
-#  med2way(attractiveness ~ gender*alcohol, data = goggles)
-#  mcp2a(attractiveness ~ gender*alcohol, data = goggles, est = "median")
-#  pbad2way(attractiveness ~ gender*alcohol, data = goggles, est = "mom")
-#  mcp2a(attractiveness ~ gender*alcohol, data = goggles, est = "mom")
+# set.seed(123)
+# med2way(attractiveness ~ gender*alcohol, data = goggles)
+# mcp2a(attractiveness ~ gender*alcohol, data = goggles, est = "median")
+# pbad2way(attractiveness ~ gender*alcohol, data = goggles, est = "mom")
+# mcp2a(attractiveness ~ gender*alcohol, data = goggles, est = "mom")
 
 ## ----swim-plot1, echo=FALSE, fig.height = 6, fig.width = 12-----------
 optpes.male <- subset(swimming, Sex == "Male")
@@ -229,36 +229,36 @@ set.seed(123)
 sppbi(errorRatio ~ group*essay, id, data = essays)
 
 ## ----smooth-plot, eval=FALSE, echo=FALSE, message=FALSE---------------
-#  library(colorspace)
-#  colpal <- c(rainbow_hcl(5, c = 100))
-#  pal <- palette(colpal)
-#  attach(chile)
-#  op <- par(mfrow = c(2,1))
-#  plot(length, heat, pch = 20, col = "gray", main = "Chile Smoothing I", xlab = "Length", ylab = "Heat")
-#  fitmean <- runmean(length, heat)
-#  fitmest <- rungen(length, heat)
-#  fitmed <- rungen(length, heat, est = "median")
-#  fitbag <- runmbo(length, heat, est = "onestep")
-#  orderx <- order(length)
-#  lines(length[orderx], fitmean[orderx], lwd = 2, col = 1)
-#  lines(length[orderx], fitmest[orderx], lwd = 2, col = 2)
-#  lines(length[orderx], fitmed[orderx], lwd = 2, col = 3)
-#  lines(length[orderx], fitbag[orderx], lwd = 2, col = 4)
-#  legend("topright", legend = c("Trimmed Mean", "MOM", "Median", "Bagged Onestep"), col = 1:4, lty = 1)
-#  plot(length, heat, pch = 20, col = "gray", main = "Chile Smoothing II", xlab = "Length", ylab = "Heat")
-#  fitmean1 <- runmean(length, heat, fr = 0.2)
-#  fitmean2 <- runmean(length, heat, fr = 0.5)
-#  fitmean3 <- runmean(length, heat, fr = 1)
-#  fitmean4 <- runmean(length, heat, fr = 5)
-#  orderx <- order(length)
-#  lines(length[orderx], fitmean1[orderx], lwd = 2, col = 1)
-#  lines(length[orderx], fitmean2[orderx], lwd = 2, col = 2)
-#  lines(length[orderx], fitmean3[orderx], lwd = 2, col = 3)
-#  lines(length[orderx], fitmean4[orderx], lwd = 2, col = 4)
-#  legend("topright", legend = c("f = 0.2", "f = 0.5", "f = 1", "f = 5"), col = 1:4, lty = 1)
-#  par(op)
-#  palette(pal)
-#  detach(chile)
+# library(colorspace)
+# colpal <- c(rainbow_hcl(5, c = 100))
+# pal <- palette(colpal)
+# attach(chile)
+# op <- par(mfrow = c(2,1))
+# plot(length, heat, pch = 20, col = "gray", main = "Chile Smoothing I", xlab = "Length", ylab = "Heat")
+# fitmean <- runmean(length, heat)
+# fitmest <- rungen(length, heat)
+# fitmed <- rungen(length, heat, est = "median")
+# fitbag <- runmbo(length, heat, est = "onestep")
+# orderx <- order(length)
+# lines(length[orderx], fitmean[orderx], lwd = 2, col = 1)
+# lines(length[orderx], fitmest[orderx], lwd = 2, col = 2)
+# lines(length[orderx], fitmed[orderx], lwd = 2, col = 3)
+# lines(length[orderx], fitbag[orderx], lwd = 2, col = 4)
+# legend("topright", legend = c("Trimmed Mean", "MOM", "Median", "Bagged Onestep"), col = 1:4, lty = 1)
+# plot(length, heat, pch = 20, col = "gray", main = "Chile Smoothing II", xlab = "Length", ylab = "Heat")
+# fitmean1 <- runmean(length, heat, fr = 0.2)
+# fitmean2 <- runmean(length, heat, fr = 0.5)
+# fitmean3 <- runmean(length, heat, fr = 1)
+# fitmean4 <- runmean(length, heat, fr = 5)
+# orderx <- order(length)
+# lines(length[orderx], fitmean1[orderx], lwd = 2, col = 1)
+# lines(length[orderx], fitmean2[orderx], lwd = 2, col = 2)
+# lines(length[orderx], fitmean3[orderx], lwd = 2, col = 3)
+# lines(length[orderx], fitmean4[orderx], lwd = 2, col = 4)
+# legend("topright", legend = c("f = 0.2", "f = 0.5", "f = 1", "f = 5"), col = 1:4, lty = 1)
+# par(op)
+# palette(pal)
+# detach(chile)
 
 ## ----smooth-plot1, echo=FALSE, fig.height = 12, fig.width = 12--------
 library(colorspace)

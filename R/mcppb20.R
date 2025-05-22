@@ -131,8 +131,6 @@ mcppb20 <- function(formula, data, tr = 0.2, nboot = 599, ...){
 
  list(psihat=psihat,crit.p.value=2*crit,con=con)
 
- fnames <- as.character(unique(mf[,2]))
-
  groups <- t(apply(con, 2, function(cc) {
    c(which(cc == 1), which(cc == -1))
  }))
@@ -140,6 +138,8 @@ mcppb20 <- function(formula, data, tr = 0.2, nboot = 599, ...){
  psihat1 <- cbind(groups, psihat[, -c(1, 3)])
  colnames(psihat1)[1:2] <- c("Group")
 
+ fnames <- names(x)
+ 
  result <- list(comp = psihat1, fnames = fnames, call = cl)
  class(result) <- "mcp1"
  result
